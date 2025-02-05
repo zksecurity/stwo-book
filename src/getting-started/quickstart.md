@@ -1,6 +1,6 @@
 # Quickstart
 
-The fastest way to get started with STWO is to clone the official repository:
+The fastest way to get started with Stwo is to clone the official repository:
 
 ```bash
 git clone https://github.com/starkware-libs/stwo-cairo
@@ -11,7 +11,7 @@ For detailed setup instructions, see the [Installation](installation.md) section
 
 ## Repository Structure
 
-The STWO repository contains:
+The Stwo repository contains:
 
 - Core zkVM implementation
 - Cairo integration components
@@ -19,7 +19,7 @@ The STWO repository contains:
 
 ## Next Steps
 
-After setting up STWO:
+After setting up Stwo:
 
 1. Follow the [Installation](installation.md) guide for detailed setup
 2. Check [Troubleshooting](troubleshooting.md) if you encounter any issues

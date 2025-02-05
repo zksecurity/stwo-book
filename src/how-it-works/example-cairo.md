@@ -1,6 +1,6 @@
 # Example: Cairo
 
-This section walks through how STWO processes a Cairo program to generate zero-knowledge proofs. The process consists of several key steps:
+This section walks through how Stwo processes a Cairo program to generate zero-knowledge proofs. The process consists of several key steps:
 
 ## 1. Compilation and VM Execution
 
@@ -8,7 +8,7 @@ First, the Cairo program is compiled into CASM (Cairo Assembly) and executed in 
 
 ## 2. Trace Generation
 
-For each operation in the program execution, STWO generates specific traces:
+For each operation in the program execution, Stwo generates specific traces:
 
 - Opcode execution traces
 - Range check operation traces
@@ -33,4 +33,4 @@ Different lookup tables are combined via interaction into a single polynomial th
 
 ## 5. FRI Protocol
 
-Finally, STWO performs FRI (Fast Reed-Solomon Interactive Oracle Proof) on the final polynomial in the extended domain to generate the proof.
+Finally, Stwo performs FRI (Fast Reed-Solomon Interactive Oracle Proof) on the final polynomial in the extended domain to generate the proof.

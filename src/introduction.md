@@ -4,6 +4,6 @@ Stwo is a next-generation zkVM framework that brings several innovative features
 
 - Leverages Circle STARKs over the Mersenne31 prime field for fast prover performance
 - Seamlessly integrated with Cairo
-- Features efficient lookup tables with LogUp (optionally with GKR)
+- Features efficient lookup tables with LogUp (future integration with GKR)
 
 This documentation will guide you through understanding and using Stwo, from basic concepts to advanced features.

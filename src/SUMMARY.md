@@ -11,15 +11,17 @@
 # How It Works
 
 - [Architecture Overview](how-it-works/architecture.md)
-- [Example: Cairo](how-it-works/example-cairo.md)
-- [Example: Poseidon](how-it-works/example-poseidon.md)
-- [Recursion](how-it-works/recursion.md)
+- [Proving a Cairo Program](how-it-works/cairo.md)
+- [AIR](how-it-works/air.md)
+- [Columns](how-it-works/columns.md)
+- [Lookups](how-it-works/lookups.md)
 
 # Background
 
 - [Cairo](background/cairo.md)
 - [Circle STARKs & Circle FRI](background/circle-starks.md)
-- [Lookups](background/lookups.md)
 - [Builtins](background/builtins.md)
 
-# [Roadmap](roadmap.md)
+# Roadmap
+
+- [Roadmap](roadmap.md)

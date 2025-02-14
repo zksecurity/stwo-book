@@ -7,7 +7,6 @@
 Clarify that Stwo-Cairo is a "particular application" of Stwo.
 
 - [Quickstart](getting-started/quickstart.md)
-- [Installation](getting-started/installation.md)
 - [Programming](getting-started/programming.md)
 - [Bootloading](getting-started/bootloading.md)
 - [Troubleshooting](getting-started/troubleshooting.md)

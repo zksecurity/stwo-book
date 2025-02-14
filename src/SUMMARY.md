@@ -8,17 +8,17 @@ Clarify that Stwo-Cairo is a "particular application" of Stwo.
 
 - [Quickstart](getting-started/quickstart.md)
 - [Installation](getting-started/installation.md)
-- [Programming]
-- [Bootloading]
+- [Programming](getting-started/programming.md)
+- [Bootloading](getting-started/bootloading.md)
 - [Troubleshooting](getting-started/troubleshooting.md)
 
 # AIR Development
 
-- [Stwo As a "Universal AIR Prover/Verifier"]
-- [How to Write an AIR using Stwo abtractions]
-- ["Maya's Simple M31 AIR" example]
-- [Lookup Abstraction]
-- [Seperate OpCode, Seperate AIRs] (composition of AIRs)
+- [Stwo As a "Universal AIR Prover/Verifier"](air-development/universal-air.md)
+- [How to Write an AIR using Stwo abtractions](air-development/how-to-write-an-air.md)
+- [Simple M31 AIR" example](air-development/simple-m31-air-example.md)
+- [Lookup Abstraction](air-development/lookups.md)
+- [Seperate OpCode, Seperate AIRs](air-development/air-composition.md)
 
 # Cairo as a Stwo AIR
 

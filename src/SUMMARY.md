@@ -15,7 +15,7 @@ Clarify that Stwo-Cairo is a "particular application" of Stwo.
 
 - [Stwo As a "Universal AIR Prover/Verifier"](air-development/universal-air.md)
 - [How to Write an AIR using Stwo abtractions](air-development/how-to-write-an-air.md)
-- [Simple M31 AIR" example](air-development/simple-m31-air-example.md)
+- ["Simple M31 AIR" example](air-development/simple-m31-air-example.md)
 - [Lookup Abstraction](air-development/lookups.md)
 - [Seperate OpCode, Seperate AIRs](air-development/air-composition.md)
 
@@ -23,17 +23,15 @@ Clarify that Stwo-Cairo is a "particular application" of Stwo.
 
 How Cairo is build upon Stwo.
 
-- [Cairo](background/cairo.md)
-- [Builtins](background/builtins.md)
+- [Cairo](cairo/cairo.md)
+- [Builtins](cairo/builtins.md)
 
 # How Does Circle-STARK Work?
 
 (Some of the contents is porting Leo LaTex doc)
 
-- [Architecture Overview](how-it-works/architecture.md)
-- [Proving a Cairo Program](how-it-works/cairo.md)
 - [AIR](how-it-works/air.md)
-- [Columns](how-it-works/columns.md)
+- [Circle STARKs](how-it-works/circle-starks.md)
 - [Lookups](how-it-works/lookups.md)
 
 # Users of Stwo

@@ -35,3 +35,5 @@ How Cairo is build upon Stwo.
 # Users of Stwo
 
 (other people using stwo)
+
+- [Nexus zkVM](https://github.com/nexus-xyz/nexus-zkvm) ([spec](https://specification.nexus.xyz/))

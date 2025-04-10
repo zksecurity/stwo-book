@@ -4,3 +4,10 @@ language = "en"
 multilingual = false
 src = "src"
 title = "stwo-book"
+
+[output.html]
+theme = "theme"
+mathjax-support = true
+mathjax-src = "https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"
+mathjax-css = "https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+additional-js = ["theme/book.js"]

@@ -10,7 +10,7 @@
 - [AIR Development](air-development/index.md)
 
   - [Stwo As a "Universal AIR Prover/Verifier"](air-development/universal-air.md)
-  - [How to Write an AIR using Stwo abtractions](air-development/how-to-write-an-air.md)
+  - [AIR example walkthrough (Read-Write Memory)](air-development/read-write-memory-air-example.md)
   - ["Simple M31 AIR" example](air-development/simple-m31-air-example.md)
   - [Lookup Abstraction](air-development/lookups.md)
   - [Seperate OpCode, Seperate AIRs](air-development/air-composition.md)

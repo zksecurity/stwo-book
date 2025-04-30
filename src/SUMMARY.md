@@ -9,7 +9,7 @@
 
 - [AIR Development](air-development/index.md)
 
-  - [Stwo As a "Universal AIR Prover/Verifier"](air-development/universal-air.md)
+  - [Concepts](air-development/concepts.md)
   - [AIR example walkthrough (Read-Write Memory)](air-development/read-write-memory-air-example.md)
   - ["Simple M31 AIR" example](air-development/simple-m31-air-example.md)
   - [Lookup Abstraction](air-development/lookups.md)

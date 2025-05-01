@@ -423,6 +423,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "program"
+version = "0.1.0"
+dependencies = [
+ "stwo-prover",
+ "stwo_custom_air",
+]
+
+[[package]]
 name = "quote"
 version = "1.0.38"
 source = "registry+https://github.com/rust-lang/crates.io-index"

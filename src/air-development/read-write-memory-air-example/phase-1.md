@@ -10,6 +10,8 @@ In this phase, we will only be checking the first part.
 To do that, first, we need to create a function that takes in a list of memory accesses and returns a proof.
 
 ```rust,ignore
+{{#include ../../../stwo-examples/crates/air/src/phase1.rs:memory_op}}
+
 {{#include ../../../stwo-examples/crates/air/src/phase1.rs:prove_read_write_memory_fn_start}}
 {{#include ../../../stwo-examples/crates/air/src/phase1.rs:prove_read_write_memory_fn_end}}
 ```

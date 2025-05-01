@@ -14,27 +14,33 @@ An AIR is simply a table where each cell is populated by an element from a finit
 
 The cells of each column of the table are considered to be evaluations of a polynomial over a domain of the finite field, and since the constraints are the same for every row, we can represent the constraints as equations over these polynomials.
 
-There are multiple ways to represent the same computation as an AIR. For example, if we look at the figure below, we can see a Fibonacci sequence represented as three different AIRs. The top left AIR is perhaps the most intuitive, as it represents each Fibonacci step as a single row, but it is also inefficient as we need to duplicate most of the Fibonacci numbers in the table. The top right AIR is a bit more efficient in that we duplicate less values, while the bottom AIR is the most efficient as it does not duplicate any values.
+There are multiple ways to represent the same computation as an AIR. For example, if we look at the figure below, we can see a Fibonacci sequence represented as three different AIRs. The top left AIR is perhaps the most intuitive, as it represents each Fibonacci step as a single row, but it is also inefficient as we need to add most of the numbers in the table three times (twice as an input and once as an output). The top right AIR is a bit more efficient in that we duplicate less values, while the bottom AIR is the most efficient as it does not duplicate any values.
 
-<figure>
+<figure id="fig-fibonacci-airs">
   <img src="./concepts-1.png" width="100%" style="height: auto;">
   <figcaption><center><span style="font-size: 0.9em">Figure 1: Multiple representations of the Fibonacci sequence</span></center></figcaption>
 </figure>
 
-The main takeaway is that we can generally choose a representation that is most efficient for our use-case. As a general rule of thumb, using more rows and less columns will result in a smaller proof size and a slower prover time because we need to commit to less columns but need to perform more FFTs. On the other hand, using more columns and less rows will result in a larger proof size and a faster prover time because we need to commit to more columns but need to perform less FFTs.
+So in theory, the bottom AIR seems to be the best choice, but in practice, the choice should be more complicated. Generally speaking, a single column will be converted into a merkle tree and its root will need to be committed to as part of the proof. This means that the more columns we have, the larger the proof size will be.
+
+At the same time, we also need to perform FFTs over each column, whose time increases polylogarithmically (i.e. $O(n\log n)$) in the size of the rows. As a result, the more rows we have, the longer the prover time will take.
+
+[Figure 2](#fig-trade-off-rows-columns) below shows this trade-off between the number of rows and columns.
 
 <div style="text-align: center;">
-<figure>
+<figure id="fig-trade-off-rows-columns">
   <img src="./concepts-2.png" width="80%" style="height: auto;">
   <figcaption><center><span style="font-size: 0.9em">Figure 2: The trade-off between rows and columns</span></center></figcaption>
 </figure>
 </div>
 
+The takeaway is that as an AIR developer, we need to find the right balance between the number of rows and columns to optimize for our use-case.
+
 ## Lookups
 
-Lookups are simply a way to connect one part of the table to another. When we "look up" a value, we are doing nothing more than creating a constraint that allows us to use that value in another part of the table without breaking soundness.
+Lookups are simply a way to connect one part of the table to another. When we "look up" a value, we are doing nothing more than creating a constraint that allows us to use that value in another part of the table without breaking soundness. For example, in our Fibonacci example in the previous section, we can use a lookup to connect the output of a current Fibonacci step to the input of the next step.
 
-Some use-cases of lookups include:
+More generally speaking, lookups support the following use-cases:
 
 1. Prove equality: we want to prove that the values of the first column are equal to the values of the second column.
 2. Prove permutation: we want to prove that the values of the first column are a permutation of the values of the second column.
@@ -42,7 +48,9 @@ Some use-cases of lookups include:
 
 ### LogUp
 
-LogUp is a technique used to constrain lookups. It's a successor to Plookup, and is especially useful for proving permutation with multiplicities. Plookup and its variants use a technique called the Grand Product Check.
+LogUp is a technique used to constrain lookups. It's a successor to Plookup, and is especially useful for proving permutation with multiplicities. Here, we'll briefly explain why this is the case.
+
+Plookup and its variants use a technique called the Grand Product Check to prove permutation.
 
 $$
 \prod_{i=0}^{n-1} (X - a_i) = \prod_{i=0}^{n-1} (X - b_i)
@@ -56,7 +64,7 @@ $$
 \prod_{i=0}^{n-1} (X - a_i) = \prod_{i=0}^{n-1} (X - b_i)^{m_i}
 $$
 
-On the other hand, LogUp uses the derivative of the Grand Product Check.
+On the other hand, LogUp uses the derivative of the Grand Product Check:
 
 $$
 \sum_{i=0}^{n-1} \frac{1}{X - a_i} = \sum_{i=0}^{n-1} \frac{m_i}{X - b_i}

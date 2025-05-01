@@ -10,10 +10,10 @@ In this phase, we will only be checking the first part.
 To do that, first, we need to create a function that takes in a list of memory accesses and returns a proof.
 
 ```rust,ignore
-{{#include ../../../stwo-examples/crates/air/src/phase1.rs:memory_op}}
+{{#include ../../../stwo-examples/examples/phase1.rs:memory_op}}
 
-{{#include ../../../stwo-examples/crates/air/src/phase1.rs:prove_read_write_memory_fn_start}}
-{{#include ../../../stwo-examples/crates/air/src/phase1.rs:prove_read_write_memory_fn_end}}
+{{#include ../../../stwo-examples/examples/phase1.rs:prove_read_write_memory_fn_start}}
+{{#include ../../../stwo-examples/examples/phase1.rs:prove_read_write_memory_fn_end}}
 ```
 
 `log_size` is the log size of the trace that we want to prove, and we will explain how to construct `ReadWriteMemoryComponent` later, but for now, it is sufficient to note that it contains all the metadata about the AIR that we need to create and verify a proof.
@@ -23,12 +23,12 @@ To do that, first, we need to create a function that takes in a list of memory a
 Now let's do some setup.
 
 ```rust,ignore
-{{#include ../../../stwo-examples/crates/air/src/phase1.rs:constraint_log_expand}}
+{{#include ../../../stwo-examples/examples/phase1.rs:constraint_log_expand}}
 
-{{#include ../../../stwo-examples/crates/air/src/phase1.rs:prove_read_write_memory_fn_start}}
-{{#include ../../../stwo-examples/crates/air/src/phase1.rs:setup}}
+{{#include ../../../stwo-examples/examples/phase1.rs:prove_read_write_memory_fn_start}}
+{{#include ../../../stwo-examples/examples/phase1.rs:setup}}
     ...
-{{#include ../../../stwo-examples/crates/air/src/phase1.rs:prove_read_write_memory_fn_end}}
+{{#include ../../../stwo-examples/examples/phase1.rs:prove_read_write_memory_fn_end}}
 ```
 
 Diving into what each line of code does, `PcsConfig` contains parameters for the PoW and FRI part of the proving process, which are essential for optimizing our prover for different flavors (proving time, proof size, and verification time). However, for this example, we will simply use the default values.
@@ -55,13 +55,13 @@ Stwo defines 3 types of traces: preprocessed, original, and interaction trace. T
 In this phase, we don't need a preprocessed trace. Instead, we will create an original trace made up of 8 columns, where the first 4 are the unordered list of memory accesses, and the next 4 are the same list ordered by addresses. The following code shows how we can populate the original trace.
 
 ```rust,ignore
-{{#include ../../../stwo-examples/crates/air/src/phase1.rs:constants}}
+{{#include ../../../stwo-examples/examples/phase1.rs:constants}}
 
-{{#include ../../../stwo-examples/crates/air/src/phase1.rs:memory_op}}
+{{#include ../../../stwo-examples/examples/phase1.rs:memory_op}}
 
-{{#include ../../../stwo-examples/crates/air/src/phase1.rs:lookup_data}}
+{{#include ../../../stwo-examples/examples/phase1.rs:lookup_data}}
 
-{{#include ../../../stwo-examples/crates/air/src/phase1.rs:gen_trace}}
+{{#include ../../../stwo-examples/examples/phase1.rs:gen_trace}}
 ```
 
 This is a lot of code, but all it does is create a trace, populate it with the unordered and ordered memory accesses, and create a `CircleEvaluation` instance for each column. The complexity in the code comes from using the `SimdBackend`, which supports SIMD operations with 16 lanes. This means we need to iterate over the trace in chunks of `N_LANES=16` and add each chunk to a `PackedM31` instance. For example, if our trace has 64 rows, we will have 4 chunks of 16 rows each.
@@ -71,11 +71,11 @@ We also define a `LookupData` struct that contains the unordered and ordered tra
 Now that we have generated our original trace, we need to commit to it.
 
 ```rust,ignore
-{{#include ../../../stwo-examples/crates/air/src/phase1.rs:prove_read_write_memory_fn_start}}
+{{#include ../../../stwo-examples/examples/phase1.rs:prove_read_write_memory_fn_start}}
     ...
-{{#include ../../../stwo-examples/crates/air/src/phase1.rs:commit_trace}}
+{{#include ../../../stwo-examples/examples/phase1.rs:commit_trace}}
     ...
-{{#include ../../../stwo-examples/crates/air/src/phase1.rs:prove_read_write_memory_fn_end}}
+{{#include ../../../stwo-examples/examples/phase1.rs:prove_read_write_memory_fn_end}}
 ```
 
 We don't have a preprocessed trace, but we still need to commit to an empty vector to keep the prover happy.
@@ -89,13 +89,13 @@ But first, we need to draw random elements from our `Channel`. Why? Because want
 Thus, we create a `ReadWriteMemoryLookupElements` struct that can draw random elements from our `Channel` and combine the 4 values of a single `MemoryOp` into a single field element.
 
 ```rust,ignore
-{{#include ../../../stwo-examples/crates/air/src/phase1.rs:lookup_elements}}
+{{#include ../../../stwo-examples/examples/phase1.rs:lookup_elements}}
 
-{{#include ../../../stwo-examples/crates/air/src/phase1.rs:prove_read_write_memory_fn_start}}
+{{#include ../../../stwo-examples/examples/phase1.rs:prove_read_write_memory_fn_start}}
     ...
-{{#include ../../../stwo-examples/crates/air/src/phase1.rs:draw_lookup_elements}}
+{{#include ../../../stwo-examples/examples/phase1.rs:draw_lookup_elements}}
     ...
-{{#include ../../../stwo-examples/crates/air/src/phase1.rs:prove_read_write_memory_fn_end}}
+{{#include ../../../stwo-examples/examples/phase1.rs:prove_read_write_memory_fn_end}}
 ```
 
 An astute reader might have noticed that the function `combine` takes in values of type `&[F]`, a slice of field elements, and outputs a value of a different type, `EF`. This is because the randomness should be generated in the extension field in Stwo, instead of the base field, the Mersenne-31 prime field. This is a characteristic of working in a small field (M31 has order $2^{31} - 1$), where the bits of security are not sufficiently high, so we need to sample from an extension field.
@@ -103,7 +103,7 @@ An astute reader might have noticed that the function `combine` takes in values 
 Now that we have both the `LookupData` and the `ReadWriteMemoryLookupElements`, we can generate the interaction trace.
 
 ```rust,ignore
-{{#include ../../../stwo-examples/crates/air/src/phase1.rs:gen_interaction_trace}}
+{{#include ../../../stwo-examples/examples/phase1.rs:gen_interaction_trace}}
 ```
 
 There are a few things to note here.
@@ -119,11 +119,11 @@ Once the interaction trace is finalized, we get the claimed sum, which is the su
 Now that we have our interaction trace, we can commit to it.
 
 ```rust,ignore
-{{#include ../../../stwo-examples/crates/air/src/phase1.rs:prove_read_write_memory_fn_start}}
+{{#include ../../../stwo-examples/examples/phase1.rs:prove_read_write_memory_fn_start}}
     ...
-{{#include ../../../stwo-examples/crates/air/src/phase1.rs:commit_interaction_trace}}
+{{#include ../../../stwo-examples/examples/phase1.rs:commit_interaction_trace}}
     ...
-{{#include ../../../stwo-examples/crates/air/src/phase1.rs:prove_read_write_memory_fn_end}}
+{{#include ../../../stwo-examples/examples/phase1.rs:prove_read_write_memory_fn_end}}
 ```
 
 ## Component
@@ -131,15 +131,15 @@ Now that we have our interaction trace, we can commit to it.
 Now that we have our interaction trace, we can create a `ReadWriteMemoryComponent`, which, as we mentioned earlier, contains all the metadata needed to create and verify a proof.
 
 ```rust,ignore
-{{#include ../../../stwo-examples/crates/air/src/phase1.rs:read_write_memory_component}}
+{{#include ../../../stwo-examples/examples/phase1.rs:read_write_memory_component}}
 
-{{#include ../../../stwo-examples/crates/air/src/phase1.rs:eval}}
+{{#include ../../../stwo-examples/examples/phase1.rs:eval}}
 
-{{#include ../../../stwo-examples/crates/air/src/phase1.rs:prove_read_write_memory_fn_start}}
+{{#include ../../../stwo-examples/examples/phase1.rs:prove_read_write_memory_fn_start}}
     ...
-{{#include ../../../stwo-examples/crates/air/src/phase1.rs:create_component}}
+{{#include ../../../stwo-examples/examples/phase1.rs:create_component}}
     ...
-{{#include ../../../stwo-examples/crates/air/src/phase1.rs:prove_read_write_memory_fn_end}}
+{{#include ../../../stwo-examples/examples/phase1.rs:prove_read_write_memory_fn_end}}
 ```
 
 Note that we need to set a struct `ReadWriteMemoryEval` that implements the `FrameworkEval` trait when creating `ReadWriteMemoryComponent`. This struct contains the context and logic for evaluating the constraints.
@@ -151,7 +151,7 @@ Let's take a look at the functions in the `FrameworkEval` trait.
 The `evaluate` function is called for each row of the trace and evaluates each constraint in the evaluation domain. We can add our custom constraints in the `evaluate_constraints` function, but in this phase, we don't have any, so we'll just add the constraints that are expected when we use the LogUp.
 
 ```rust,ignore
-{{#include ../../../stwo-examples/crates/air/src/phase1.rs:evaluate_constraints}}
+{{#include ../../../stwo-examples/examples/phase1.rs:evaluate_constraints}}
 ```
 
 As [Figure 3](#fig-next-interaction-mask) below shows, calling `eval.next_interaction_mask(ORIGINAL_TRACE_IDX, [0])` multiple times will sequentially read the columns from the trace. Thus, we need to call it 8 times to read all 8 columns' values in a single row.
@@ -168,10 +168,10 @@ Using the values we read from the trace, we will call `eval.add_to_relation` wit
 Now that we have defined how to evaluate the constraints, we are finally ready to create a proof.
 
 ```rust,ignore
-{{#include ../../../stwo-examples/crates/air/src/phase1.rs:prove_read_write_memory_fn_start}}
+{{#include ../../../stwo-examples/examples/phase1.rs:prove_read_write_memory_fn_start}}
     ...
-{{#include ../../../stwo-examples/crates/air/src/phase1.rs:prove}}
-{{#include ../../../stwo-examples/crates/air/src/phase1.rs:prove_read_write_memory_fn_end}}
+{{#include ../../../stwo-examples/examples/phase1.rs:prove}}
+{{#include ../../../stwo-examples/examples/phase1.rs:prove_read_write_memory_fn_end}}
 ```
 
 And that's it! We have created a proof that the ordered list is a permutation of the unordered list.

@@ -423,14 +423,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "program"
-version = "0.1.0"
-dependencies = [
- "stwo-prover",
- "stwo_custom_air",
-]
-
-[[package]]
 name = "quote"
 version = "1.0.38"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -582,6 +574,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "stwo-examples"
+version = "0.1.0"
+dependencies = [
+ "itertools 0.12.1",
+ "num-traits",
+ "stwo-prover",
+]
+
+[[package]]
 name = "stwo-prover"
 version = "0.1.1"
 source = "git+https://github.com/starkware-libs/stwo.git?rev=92984c060b49d0db05e021883755fac0a71a2fa7#92984c060b49d0db05e021883755fac0a71a2fa7"
@@ -600,15 +601,6 @@ dependencies = [
  "starknet-ff",
  "thiserror",
  "tracing",
-]
-
-[[package]]
-name = "stwo_custom_air"
-version = "0.1.0"
-dependencies = [
- "itertools 0.12.1",
- "num-traits",
- "stwo-prover",
 ]
 
 [[package]]

@@ -13,6 +13,7 @@
 
   - [How to Write an AIR using Stwo abtractions](air-development/how-to-write-an-air.md)
   - [AIR example walkthrough (Read-Write Memory)](air-development/read-write-memory-air-example.md)
+    - [Phase 0: Setup](air-development/read-write-memory-air-example/phase-0.md)
     - [Phase 1: Permutation Check](air-development/read-write-memory-air-example/phase-1.md)
   - ["Simple M31 AIR" example](air-development/simple-m31-air-example.md)
   - [Lookup Abstraction](air-development/lookups.md)

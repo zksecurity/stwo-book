@@ -1,6 +1,6 @@
 # AIR example walkthrough (Read-Write Memory)
 
-In this section, we will show how to write an AIR using Stwo by going through an example of a read-write memory. To introduce the Stwo abstractions iteratively, we will write the AIR in 3 phases. But for those who want to jump right into the code, you can find the complete implementation [here](https://github.com/zksecurity/stwo-book/tree/air-example-rw-memory/stwo-examples/crates/air).
+In this section, we will show how to write an AIR using Stwo by going through an example of a read-write memory. To introduce the Stwo abstractions iteratively, we will write the AIR in 3 phases. But for those who want to jump right into the code, you can find the complete implementation [here](https://github.com/zksecurity/stwo-book/tree/air-example-rw-memory/stwo-examples/).
 
 Before diving in, let's define our read-write memory. Say we have a VM that can read and write to memory, which is a key-value `(address, value)` mapping. Given a list of memory accesses where each memory access is a unique tuple `(rw_flag, address, value, counter)`, we want to prove that the list is valid.
 

@@ -381,7 +381,6 @@ fn gen_interaction_trace(
 }
 // ANCHOR_END: gen_interaction_trace
 
-#[allow(dead_code)]
 fn verify_read_write_memory(
     component: ReadWriteMemoryComponent,
     proof: StarkProof<Blake2sMerkleHasher>,
@@ -391,7 +390,6 @@ fn verify_read_write_memory(
     let config = PcsConfig::default();
     let commitment_scheme = &mut CommitmentSchemeVerifier::<Blake2sMerkleChannel>::new(config);
 
-    // Decommit
     // Retrieve the expected column sizes in each commitment interaction, from the AIR.
     let sizes = component.trace_log_degree_bounds();
 
@@ -400,41 +398,36 @@ fn verify_read_write_memory(
 
     // Trace columns.
     commitment_scheme.commit(proof.commitments[1], &sizes[1], channel);
+
     // Draw lookup element.
     let lookup_elements = ReadWriteMemoryLookupElements::draw(channel);
     assert_eq!(lookup_elements, component.lookup_elements);
+
     // Interaction columns.
     commitment_scheme.commit(proof.commitments[2], &sizes[2], channel);
 
     verify(&[&component], channel, commitment_scheme, proof).unwrap();
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+fn main() {
+    let log_size = 6;
 
-    #[test]
-    fn test_prove_read_write_memory() {
-        let log_size = 6;
-        let mut memory_ops = vec![
-            MemoryOp::new(0, 1, 1, 0),
-            MemoryOp::new(1, 2, 2, 1),
-            MemoryOp::new(1, 3, 0, 2),
-            MemoryOp::new(1, 3, 1, 3),
-            MemoryOp::new(0, 2, 2, 4),
-            MemoryOp::new(0, 1, 1, 5),
-        ];
+    let mut memory_ops = vec![
+        MemoryOp::new(0, 1, 1, 0),
+        MemoryOp::new(1, 2, 2, 1),
+        MemoryOp::new(1, 3, 0, 2),
+        MemoryOp::new(1, 3, 1, 3),
+        MemoryOp::new(0, 2, 2, 4),
+        MemoryOp::new(0, 1, 1, 5),
+    ];
 
-        // Pad with dummy operations
-        let memory_ops_len = memory_ops.len() as u32;
-        memory_ops.extend(
-            (0..((1 << log_size) - memory_ops_len))
-                .map(|i| MemoryOp::new(0, (1 << log_size) - 1, 0, i + memory_ops_len)),
-        );
+    // Pad with dummy operations
+    let memory_ops_len = memory_ops.len() as u32;
+    memory_ops.extend(
+        (0..((1 << log_size) - memory_ops_len))
+            .map(|i| MemoryOp::new(0, (1 << log_size) - 1, 0, i + memory_ops_len)),
+    );
 
-        let (component, proof) = prove_read_write_memory(memory_ops, log_size).unwrap();
-        assert!(component.claimed_sum() == SecureField::zero());
-
-        verify_read_write_memory(component, proof);
-    }
+    let (component, proof) = prove_read_write_memory(memory_ops, log_size as u32).unwrap();
+    verify_read_write_memory(component, proof);
 }

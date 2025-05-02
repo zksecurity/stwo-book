@@ -7,13 +7,33 @@ As promised, we will first order our list by addresses. In an AIR, checking this
 
 In this phase, we will only be checking the first part.
 
-To do that, first, we need to create a function that takes in a list of memory accesses and returns a proof.
+Let's first set up a list of memory accesses.
+
+<figure id="fig-memory-op-list">
+  <img src="./phase-1-1.png" width="30%" style="display: block; margin: 0 auto;">
+  <figcaption><center><span style="font-size: 0.9em">Figure 1: MemoryOp list</span></center></figcaption>
+</figure>
+
+Note that we only have 6 valid memory accesses, but we pad it with dummy accesses up to 16 rows because we want to use the `SimdBackend`, which requires a trace with at least 16 rows.
 
 ```rust,ignore
 {{#include ../../../stwo-examples/examples/phase1.rs:memory_op}}
 
+{{#include ../../../stwo-examples/examples/phase1.rs:main_start}}
+{{#include ../../../stwo-examples/examples/phase1.rs:main_create_memory_ops}}
+{{#include ../../../stwo-examples/examples/phase1.rs:main_end}}
+```
+
+Now let's create a function that takes in a list of memory accesses and returns a proof.
+
+```rust,ignore
 {{#include ../../../stwo-examples/examples/phase1.rs:prove_read_write_memory_fn_start}}
 {{#include ../../../stwo-examples/examples/phase1.rs:prove_read_write_memory_fn_end}}
+
+{{#include ../../../stwo-examples/examples/phase1.rs:main_start}}
+    ...
+{{#include ../../../stwo-examples/examples/phase1.rs:main_prove}}
+{{#include ../../../stwo-examples/examples/phase1.rs:main_end}}
 ```
 
 `log_size` is the log size of the trace that we want to prove, and we will explain how to construct `ReadWriteMemoryComponent` later, but for now, it is sufficient to note that it contains all the metadata about the AIR that we need to create and verify a proof.
@@ -44,7 +64,7 @@ Lastly, we need to create a `Channel`, which is required for the Fiat-Shamir tra
 Now that we have our setup, let's create the trace.
 
 <figure id="fig-traces-phase1">
-  <img src="./phase-1-1.png" width="100%">
+  <img src="./phase-1-2.png" width="100%">
   <figcaption><center><span style="font-size: 0.9em">Figure 2: Traces in Phase 1</span></center></figcaption>
 </figure>
 

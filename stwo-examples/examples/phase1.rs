@@ -409,8 +409,11 @@ fn verify_read_write_memory(
     verify(&[&component], channel, commitment_scheme, proof).unwrap();
 }
 
+// ANCHOR: main_start
 fn main() {
-    let log_size = 6;
+    // ANCHOR_END: main_start
+    // ANCHOR: main_create_memory_ops
+    let log_size = 4;
 
     let mut memory_ops = vec![
         MemoryOp::new(0, 1, 1, 0),
@@ -427,7 +430,12 @@ fn main() {
         (0..((1 << log_size) - memory_ops_len))
             .map(|i| MemoryOp::new(0, (1 << log_size) - 1, 0, i + memory_ops_len)),
     );
+    // ANCHOR_END: main_create_memory_ops
 
+    // ANCHOR: main_prove
     let (component, proof) = prove_read_write_memory(memory_ops, log_size as u32).unwrap();
+    // ANCHOR_END: main_prove
     verify_read_write_memory(component, proof);
+    // ANCHOR: main_end
 }
+// ANCHOR_END: main_end

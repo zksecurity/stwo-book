@@ -1,5 +1,7 @@
 # Cairo as a Stwo AIR
 
+> TODO: Address who this section is for
+
 This section explains how Cairo is built upon Stwo's AIR framework. Here you'll find:
 
 - Details about how Cairo is implemented as a Stwo AIR

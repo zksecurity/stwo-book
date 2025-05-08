@@ -1,4 +1,6 @@
-# AIR example walkthrough (Read-Write Memory)
+# Example Walkthrough (Read-Write Memory)
+
+> This section is intended for developers who have completed the [Tutorial](../tutorial/index.md) section or have some experience with writing AIRs in Stwo.
 
 In this section, we will show how to write an AIR using Stwo by going through an example of a read-write memory. To introduce the Stwo abstractions iteratively, we will write the AIR in 3 phases. But for those who want to jump right into the code, you can find the complete implementation [here](https://github.com/zksecurity/stwo-book/tree/air-example-rw-memory/stwo-examples/).
 

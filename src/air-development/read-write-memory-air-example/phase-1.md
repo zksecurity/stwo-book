@@ -1,20 +1,31 @@
 # Phase 1: Permutation Check
 
-As promised, we will first order our list by addresses. In an AIR, checking this will break down to
-
-1. checking that the ordered list is a permutation of the unordered list, and
-2. checking that the ordered list is ordered by addresses.
-
-In this phase, we will only be checking the first part.
-
-Let's first set up a list of memory accesses.
-
-<figure id="fig-memory-op-list">
-  <img src="./phase-1-1.png" width="30%" style="display: block; margin: 0 auto;">
-  <figcaption><center><span style="font-size: 0.9em">Figure 1: MemoryOp list</span></center></figcaption>
+<figure id="fig-read-write-memory-check">
+  <img src="./phase-1-1.png" width="100%">
+  <figcaption><center><span style="font-size: 0.9em">Figure 1: Read-Write Memory check</span></center></figcaption>
 </figure>
 
-Note that we only have 6 valid memory accesses, but we pad it with dummy accesses up to 16 rows because we want to use the `SimdBackend`, which requires a trace with at least 16 rows.
+To check read-write consistency, we need to first order our list by addresses. Then, we need to add a check that the ordered list is ordered correctly. Checking this in an AIR can be broken down into two parts:
+
+1. check that the ordered list is a permutation of the unordered list, and
+2. check that the previous row's address is always less than or equal to the current row's address.
+
+```admonish exercise
+Is there anything missing from the 2nd constraint?
+
+Hint: the same constraints need to be satisfied for **every row** in the trace.
+```
+
+We will only be checking the first part in this phase, so the answer to the exercise will be revealed in the next phase.
+
+For now, let's set up a list of memory accesses.
+
+<figure id="fig-memory-op-list">
+  <img src="./phase-1-2.png" width="30%" style="display: block; margin: 0 auto;">
+  <figcaption><center><span style="font-size: 0.9em">Figure 2: MemoryOp list</span></center></figcaption>
+</figure>
+
+Note that we only have 6 valid memory accesses, but we pad it with dummy accesses up to 16 rows because we want to use the `SimdBackend`, which requires a trace of length multiple of 16.
 
 ```rust,ignore
 {{#include ../../../stwo-examples/examples/phase1.rs:memory_op}}
@@ -64,8 +75,8 @@ Lastly, we need to create a `Channel`, which is required for the Fiat-Shamir tra
 Now that we have our setup, let's create the trace.
 
 <figure id="fig-traces-phase1">
-  <img src="./phase-1-2.png" width="100%">
-  <figcaption><center><span style="font-size: 0.9em">Figure 2: Traces in Phase 1</span></center></figcaption>
+  <img src="./phase-1-3.png" width="100%">
+  <figcaption><center><span style="font-size: 0.9em">Figure 3: Traces in Phase 1</span></center></figcaption>
 </figure>
 
 Above is an example diagram of the columns that we need to create for this phase. Note that in practice, we need to use a trace with `log_size` at least `LOG_N_LANES + 2 = 6`.
@@ -195,3 +206,7 @@ Now that we have defined how to evaluate the constraints, we are finally ready t
 ```
 
 And that's it! We have created a proof that the ordered list is a permutation of the unordered list.
+
+```
+
+```

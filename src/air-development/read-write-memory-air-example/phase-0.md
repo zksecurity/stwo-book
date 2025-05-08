@@ -120,4 +120,4 @@ fn main() {
 }
 ```
 
-This is a lot of code, but we'll go over what each part of the code does in detail in the next sections, so please keep reading!
+This is a lot of code, but for those who went through the [Tutorial](../tutorial/index.md), it should be pretty familiar.

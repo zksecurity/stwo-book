@@ -7,10 +7,10 @@
   - [Quickstart](getting-started/quickstart.md)
   - [Troubleshooting](getting-started/troubleshooting.md)
 
+- [Why Use a Proof System?](why-use-a-proof-system.md)
+- [Why Stwo?](why-stwo.md)
 - [AIR Development](air-development/index.md)
 
-  - [Why Use a Proof System](air-development/why-use-a-proof-system.md)
-  - [Why Stwo](air-development/why-stwo.md)
   - [How to Write an AIR using Stwo abtractions](air-development/how-to-write-an-air.md)
   - ["Simple M31 AIR" example](air-development/simple-m31-air-example.md)
   - [Lookup Abstraction](air-development/lookups.md)

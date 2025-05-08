@@ -1,4 +1,4 @@
-# Why Use a Proof System
+# Why Use a Proof System?
 
 At its core, a proof system can prove the validity of a statement $C(x)=y$ where $C$ is a representation of some logic, while $x$ is an input and $y$ the output of said logic. (Assuming that we are only dealing with logic that can be expressed as a computation, we will henceforth refer to this logic as a computation). This means that we can verify the validity of a statement by either directly running the computation, or by verifying the validity of the proof produced with the proof system. The verifier can benefit from this second option in terms of time and space, if the time to verify the proof is faster than the time to run the computation, or the size of the proof is smaller than the input to the statement.
 

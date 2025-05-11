@@ -28,6 +28,7 @@ How Cairo is build upon Stwo.
 
 (Some of the contents is porting Leo LaTex doc)
 
+- [Mersenne Primes](how-it-works/mersenne-prime.md)
 - [AIR](how-it-works/air.md)
 - [Circle STARKs](how-it-works/circle-starks.md)
 - [Lookups](how-it-works/lookups.md)

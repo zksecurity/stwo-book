@@ -31,4 +31,4 @@ As mentioned above, we instantiate the `num_rows` of our table as `N_LANES=16` t
 
 Note that the values in the `BaseColumn` need to be of type `M31`, which refers to the Mersenne-31 prime field that Stwo uses. This means that the integers in the table must be in the range $[0, 2^{31}-1)$.
 
-Now that we have our table, we can move on to the next section.
+Now that we have our table, let's move on!

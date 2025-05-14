@@ -7,8 +7,6 @@
     <figcaption><center><span style="font-size: 0.9em">Figure 1: Proving workflow</span></center></figcaption>
 </figure>
 
-Welcome to Stwo AIR development tutorial!
+Welcome to the Stwo AIR tutorial!
 
-Above is a diagram showing a high-level overview of the proving workflow. It omits some details that are abstracted away by Stwo but should be sufficient to show a general idea of how the code in our example works.
-
-We will go through each step in detail in the following sections.
+In the following sections, we will go through the process of writing an AIR from scratch. This requires some understanding of the proving lifecycle in Stwo, so we added a diagram showing a high-level overview of the whole process. It omits details that are abstracted away by Stwo and some of the steps are handled internally by Stwo, but hopefully it should provide a sufficient explanation for all the code that we need to write in order to write an AIR.

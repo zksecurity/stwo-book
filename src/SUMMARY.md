@@ -12,11 +12,14 @@
 - [AIR Development](air-development/index.md)
 
   - [Tutorial](air-development/tutorial/index.md)
+
     - [Hello (ZK) World](air-development/tutorial/hello-zk-world.md)
     - [Writing a Spreadsheet](air-development/tutorial/writing-a-spreadsheet.md)
-    - [Expressing Spreadsheet Functions as Constraints](air-development/tutorial/spreadsheet-functions-as-constraints.md)
     - [From Spreadsheet to Trace Polynomials](air-development/tutorial/from-spreadsheet-to-trace-polynomials.md)
+    - [Committing to the Trace Polynomials](air-development/tutorial/committing-to-the-trace-polynomials.md)
+    - [Evaluating Constraints Over Trace Polynomials](air-development/tutorial/constraints-over-trace-polynomials.md)
     - [Proving an AIR over the Trace](air-development/tutorial/proving-an-air.md)
+
   - [Features](air-development/features/index.md)
     - [Lookups](air-development/features/lookups.md)
     - [Multiple Components](air-development/features/multiple-components.md)

@@ -2,7 +2,6 @@ use num_traits::identities::Zero;
 use stwo_prover::{
     constraint_framework::{EvalAtRow, FrameworkComponent, FrameworkEval, TraceLocationAllocator},
     core::{
-        air::Component,
         backend::{
             simd::{
                 column::BaseColumn,
@@ -13,12 +12,11 @@ use stwo_prover::{
         },
         channel::Blake2sChannel,
         fields::{m31::M31, qm31::QM31},
-        pcs::{CommitmentSchemeProver, CommitmentSchemeVerifier, PcsConfig},
+        pcs::{CommitmentSchemeProver, PcsConfig},
         poly::{
             circle::{CanonicCoset, CircleEvaluation, PolyOps},
             BitReversedOrder,
         },
-        prover::{prove, verify},
         vcs::blake2_merkle::Blake2sMerkleChannel,
         ColumnVec,
     },
@@ -101,24 +99,11 @@ fn main() {
     tree_builder.commit(channel);
 
     // Create a component
-    let component = FrameworkComponent::<TestEval>::new(
+    let _component = FrameworkComponent::<TestEval>::new(
         &mut TraceLocationAllocator::default(),
         TestEval {
             log_size: log_num_rows,
         },
         QM31::zero(),
     );
-
-    // Prove
-    let proof = prove(&[&component], channel, commitment_scheme).unwrap();
-
-    // Verify
-    let channel = &mut Blake2sChannel::default();
-    let commitment_scheme = &mut CommitmentSchemeVerifier::<Blake2sMerkleChannel>::new(config);
-    let sizes = component.trace_log_degree_bounds();
-
-    commitment_scheme.commit(proof.commitments[0], &sizes[0], channel);
-    commitment_scheme.commit(proof.commitments[1], &sizes[1], channel);
-
-    verify(&[&component], channel, commitment_scheme, proof).unwrap();
 }

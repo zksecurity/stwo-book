@@ -20,12 +20,6 @@
     - [Evaluating Constraints Over Trace Polynomials](air-development/tutorial/constraints-over-trace-polynomials.md)
     - [Proving an AIR over the Trace](air-development/tutorial/proving-an-air.md)
 
-  - [Features](air-development/features/index.md)
-    - [Lookups](air-development/features/lookups.md)
-    - [Multiple Components](air-development/features/multiple-components.md)
-  - [Example Walkthrough (Read-Write Memory)](air-development/read-write-memory-air-example/index.md)
-    - [Phase 0: Setup](air-development/read-write-memory-air-example/phase-0.md)
-    - [Phase 1: Permutation Check](air-development/read-write-memory-air-example/phase-1.md)
   - ["Simple M31 AIR" example](air-development/simple-m31-air-example.md)
   - [Lookup Abstraction](air-development/lookups.md)
   - [Seperate OpCode, Seperate Components](air-development/air-composition.md)

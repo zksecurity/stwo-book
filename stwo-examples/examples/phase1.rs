@@ -148,11 +148,7 @@ fn evaluate_constraints<E: EvalAtRow>(
     let [value] = eval.next_interaction_mask(ORIGINAL_TRACE_IDX, [0]);
     let [counter] = eval.next_interaction_mask(ORIGINAL_TRACE_IDX, [0]);
 
-    let mut memory_op: [_; MEM_OP_COL_NUM] = std::array::from_fn(|_| E::F::zero());
-    memory_op[0] = rw_flag;
-    memory_op[1] = addr;
-    memory_op[2] = value;
-    memory_op[3] = counter;
+    let memory_op: [_; MEM_OP_COL_NUM] = [rw_flag, addr, value, counter];
 
     // Get ordered memory operation fields
     let [rw_flag] = eval.next_interaction_mask(ORIGINAL_TRACE_IDX, [0]);
@@ -160,11 +156,7 @@ fn evaluate_constraints<E: EvalAtRow>(
     let [value] = eval.next_interaction_mask(ORIGINAL_TRACE_IDX, [0]);
     let [counter] = eval.next_interaction_mask(ORIGINAL_TRACE_IDX, [0]);
 
-    let mut ordered_memory_op: [_; MEM_OP_COL_NUM] = std::array::from_fn(|_| E::F::zero());
-    ordered_memory_op[0] = rw_flag;
-    ordered_memory_op[1] = addr;
-    ordered_memory_op[2] = value;
-    ordered_memory_op[3] = counter;
+    let ordered_memory_op: [_; MEM_OP_COL_NUM] = [rw_flag, addr, value, counter];
 
     eval.add_to_relation(RelationEntry::new(
         lookup_elements,

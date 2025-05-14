@@ -15,15 +15,7 @@ $ echo -e "[toolchain]\nchannel = \"nightly-2025-01-02\"" > rust-toolchain.toml
 Now let's edit the `Cargo.toml` file as follows:
 
 ```toml
-[package]
-name = "stwo-example"
-version = "0.1.0"
-edition = "2024"
-
-[dependencies]
-stwo-prover = { git = "https://github.com/starkware-libs/stwo.git", rev = "92984c060b49d0db05e021883755fac0a71a2fa7" }
-num-traits = "0.2.17"
-itertools = "0.12.0"
+{{#include ../../../stwo-examples/Cargo.toml}}
 ```
 
 ## Simplest AIR

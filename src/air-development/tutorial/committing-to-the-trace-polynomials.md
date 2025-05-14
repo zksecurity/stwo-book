@@ -24,7 +24,7 @@ First, we need to do some setup.
 
 We create a `PcsConfig` instance, which sets various parameters for FRI and PoW operations. Both are related to the security of the proof, but for now we can just use the default values.
 
-We also need to precompute twiddles, which are the $x_i$ values that represent each row in the table and on which the trace polynomials will be interpolated. This value is set to `log_num_rows + CONSTRAINT_EVAL_BLOWUP_FACTOR + config.fri_config.log_blowup_factor`, and we talked about why `config.fri_config.log_blowup_factor` is needed above. The `CONSTRAINT_EVAL_BLOWUP_FACTOR` will be explained in the next section.
+We also need to precompute twiddles, which are the \\(x_i\\) values that represent each row in the table and on which the trace polynomials will be interpolated. This value is set to `log_num_rows + CONSTRAINT_EVAL_BLOWUP_FACTOR + config.fri_config.log_blowup_factor`, and we talked about why `config.fri_config.log_blowup_factor` is needed above. The `CONSTRAINT_EVAL_BLOWUP_FACTOR` will be explained in the next section.
 
 The final setup is to create a commitment scheme and a channel. The commitment scheme will be used to commit to the trace polynomials, and the channel will be used to hash the commitments (i.e. merkle roots) and other information in the proving process (i.e. transcript) so that it can be used to draw random values for Fiat-Shamir transformation.
 

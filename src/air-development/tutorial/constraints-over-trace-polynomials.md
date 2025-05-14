@@ -24,7 +24,7 @@ In the same vein, we can create a new column in our table that computes the sum 
 
 As can be seen in [Figure 2](#fig-constraints-over-trace-polynomials-2), the constraint is satisfied for every row and thus the constraint can just be expressed as a constraint over the trace polynomials.
 
-Thus, `col1_row1 * col2_row1 + col1_row1 - col3_row1 = 0` becomes $f_1(x) \cdot f_2(x) + f_1(x) - f_3(x) = 0$.
+Thus, `col1_row1 * col2_row1 + col1_row1 - col3_row1 = 0` becomes \\(f_1(x) \cdot f_2(x) + f_1(x) - f_3(x) = 0\\).
 
 ```admonish
 The idea that all rows must have the same constraint may seem restrictive, compared to say a spreadsheet where we can define different functions for different rows. However, we will show in later sections how to handle such use-cases. (Spoiler: uses selectors and components)
@@ -32,7 +32,7 @@ The idea that all rows must have the same constraint may seem restrictive, compa
 
 ## Composition Polynomial
 
-We refer to the polynomial $E(x) = f_1(x) \cdot f_2(x) + f_1(x) - f_3(x)$ as the composition polynomial.
+We refer to the polynomial \\(E(x) = f_1(x) \cdot f_2(x) + f_1(x) - f_3(x)\\) as the composition polynomial.
 
 As can be seen in [Figure 1](#fig-constraints-over-trace-polynomials-1), we need to expand the evaluations of the trace polynomials before evaluating the composition polynomial. (Note that this results in the same evaluations as the previous "Expand evaluations (for FRI)" step, but this is not always the case.)
 

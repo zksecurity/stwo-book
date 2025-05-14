@@ -1,6 +1,6 @@
 # Tutorial
 
-> This section is intended for developers who want to learn how to write an AIR from scratch using Stwo. Please refer to the [Example Walkthrough (Read-Write Memory)](../read-write-memory-air-example/index.md) section if you have some experience writing AIRs in Stwo and just want to see a practical example.
+> This section is intended for developers who want to learn how to write an AIR from scratch using Stwo.
 
 <figure id="fig-tutorial-1">
     <img src="./index-1.png" width="100%" />

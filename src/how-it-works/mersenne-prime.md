@@ -6,20 +6,20 @@ A Mersenne prime is defined as a prime number that is one less than a power of t
 
 Consider the Mersenne prime field \\( \mathbb{F}_p \\) where \\( p = 2^{31} - 1 \\). Our objective is to perform field multiplication \\( a \cdot b \\), where \\( a, b \in \mathbb{F}_p \\). This operation involves a 31-bit integer multiplication, producing a 62-bit intermediate result, which is then reduced modulo \\( p \\).
 
-Let \\( x = a \cdot b \\), where \\( a, b \\) are 31-bit values, resulting in a 62-bit product \\( x \\). We can decompose \\( x \\) into two 31-bit values \\( h \\) and \\( l \\), such that \\( x = 2^{31} \cdot h + l \\), as shown in the following figure.
+Let \\( x = a \cdot b \\), where \\( a, b \\) are 31-bit values, resulting in a 62-bit product \\( x \\). We can decompose \\( x \\) into two 31-bit values \\( b \\) and \\( s \\), such that \\( x = 2^{31} \cdot b + s \\), as shown in the following figure.
 
 <div style="text-align: center;">
     <img src="./mersenne-mult.svg" alt="Mersenne Prime Multiplication" width="400px">
 </div>
 
 To perform modular reduction, we start with:
-\\[ x \equiv (2^{31} \cdot h + l) \quad mod \quad (2^{31} - 1) \\]
+\\[ x \equiv (2^{31} \cdot b + s) \quad mod \quad (2^{31} - 1) \\]
 Substituting \\( 2^{31} \equiv 1 \mod (2^{31} - 1) \\) gives:
-\\[ x \equiv (h + l) \quad mod \quad (2^{31} - 1) \\]
+\\[ x \equiv (b + s) \quad mod \quad (2^{31} - 1) \\]
 
-Since \\( h \\) and \\( l \\) are both 31-bit values, they can be directly represented as field elements. Consequently, modular reduction is performed with a single field addition. This makes arithmetic over Mersenne primes exceptionally fast, making them an ideal choice for our STARK protocol.
+Since \\( b \\) and \\( s \\) are both 31-bit values, they can be directly represented as field elements. Consequently, modular reduction is performed with a single field addition. This makes arithmetic over Mersenne primes exceptionally fast, making them an ideal choice for our STARK protocol.
 
-However, we instantiate STARK protocols over an FFT-friendly field, meaning a field that contains a multiplicative subgroup of order that is a large power of two (commonly referred to as a smooth group).
+However, we instantiate STARK protocols over an FFT-friendly field, meaning a field that contains a multiplicative subgroup of order that is a large power of two (commonly referred to as a smooth subgroup).
 
 \\[ |\mathbb{F}_p^*| = p-1 = 2^k-2\\]
 
@@ -46,6 +46,7 @@ For Mersenne primes of the form \\( p = 2^k - 1 \\), this becomes:
 
 As shown above, \\( 2^k \\, | \\, |\mathbb{F}\_{p^2}^\*| \\) i.e. \\( \mathbb{F}_{p^2}^* \\) contains a subgroup of size that is a large power of two. This makes it suitable for instantiating STARKs. This subgroup is what we refer to as the Circle group (explored further in the next section).
 
+## Secure Field 
 For the soundness of the protocol, it is crucial that the verifier samples random challenges from a sufficiently large field to ensure that an adversary cannot guess or brute-force the challenges and generate a proof that passes verification without knowledge of the witness.
 
 If we use \\( p = 2^{31} -1 \\), then 31-bit random challenges are not sufficient to maintain the security of the protocol. To address this, the verifier draws random challenges from a degree-4 extension of \\( \mathbb{F}\_{p} \\), which is equivalent to degree-2 extension of \\( \mathbb{F}\_{p^2} \\), denoted as 

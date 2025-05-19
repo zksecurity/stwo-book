@@ -24,14 +24,11 @@ How Cairo is build upon Stwo.
 - [Cairo](cairo/cairo.md)
 - [Builtins](cairo/builtins.md)
 
-# How Does Circle-STARK Work?
-
-(Some of the contents is porting Leo LaTex doc)
-
-- [Mersenne Primes](how-it-works/mersenne-prime.md)
-- [AIR](how-it-works/air.md)
-- [Circle STARKs](how-it-works/circle-starks.md)
-- [Lookups](how-it-works/lookups.md)
+- [How Does Circle-STARK Work?](how-it-works/index.md)
+    - [Mersenne Primes](how-it-works/mersenne-prime.md)
+    - [AIR](how-it-works/air.md)
+    - [Circle STARKs](how-it-works/circle-starks.md)
+    - [Lookups](how-it-works/lookups.md)
 
 # Users of Stwo
 

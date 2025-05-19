@@ -4,3 +4,7 @@ language = "en"
 multilingual = false
 src = "src"
 title = "stwo-book"
+
+# for LaTeX
+[preprocessor.katex]
+renderer = "katex"

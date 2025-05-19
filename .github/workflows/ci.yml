@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      - name: Run clippy
+        run: |
+          cd stwo-examples
+          cargo clippy -- -D warnings
+      - name: Install cargo-examples
+        run: |
+          cargo install cargo-examples
+      - name: Run examples
+        run: |
+          cd stwo-examples
+          cargo examples --manifest-path ./Cargo.toml

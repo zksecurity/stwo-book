@@ -12,7 +12,7 @@ Stwo's backend is also optimized for prover performance. This is due to largely 
 
 1. It implements **STARKs**, or hash-based SNARKs, which boasts a faster prover compared to elliptic curve-based SNARKs like Groth16 or PLONK. This improvement comes mainly from running the majority of the computation in a small prime field (32 bits); Elliptic curve-based SNARKs, on the other hand, need to use big prime fields (e.g. 254-bit prime fields), which incur a lot of overhead as most computation does not require that many bits.
 
-2. Even amongst multiple STARK backends, however, Stwo provides state-of-the-art prover performance by running the **Mersenne-31 prime field** (modulo $2^{31} - 1$), which is faster than another popular 32-bit prime field like BabyBear (modulo $2^{31} - 2^{27} + 1$). We suggest going through [this post](https://blog.zksecurity.xyz/posts/circle-starks-1/) for a breakdown of why this is the case.
+2. Even amongst multiple STARK backends, however, Stwo provides state-of-the-art prover performance by running the **Mersenne-31 prime field** (modulo \\(2^{31} - 1\\)), which is faster than another popular 32-bit prime field like BabyBear (modulo \\(2^{31} - 2^{27} + 1\\)). We suggest going through [this post](https://blog.zksecurity.xyz/posts/circle-starks-1/) for a breakdown of why this is the case.
 
 3. Finally, Stwo offers **various CPU and GPU optimizations** that improves prover performance as shown in [Figure 1](#fig-optimizations) below.
 

@@ -30,9 +30,9 @@
   - [Builtins](cairo/builtins.md)
 
 - [How Does Circle-STARK Work?](how-it-works/index.md)
-
-  - [AIR](how-it-works/air.md)
-  - [Circle STARKs](how-it-works/circle-starks.md)
-  - [Lookups](how-it-works/lookups.md)
+    - [Mersenne Primes](how-it-works/mersenne-prime.md)
+    - [AIR](how-it-works/air.md)
+    - [Circle STARKs](how-it-works/circle-starks.md)
+    - [Lookups](how-it-works/lookups.md)
 
 - [Users of Stwo](users/index.md)

@@ -2,27 +2,32 @@
 
 [Introduction](introduction.md)
 
-# Getting Started With Stwo-Cairo
+- [Getting Started With Stwo-Cairo](getting-started/index.md)
 
-Clarify that Stwo-Cairo is a "particular application" of Stwo.
+  - [Quickstart](getting-started/quickstart.md)
+  - [Troubleshooting](getting-started/troubleshooting.md)
 
-- [Quickstart](getting-started/quickstart.md)
-- [Troubleshooting](getting-started/troubleshooting.md)
+- [Why Use a Proof System?](why-use-a-proof-system.md)
+- [Why Stwo?](why-stwo.md)
+- [AIR Development](air-development/index.md)
 
-# AIR Development
+  - [Tutorial](air-development/tutorial/index.md)
 
-- [Stwo As a "Universal AIR Prover/Verifier"](air-development/universal-air.md)
-- [How to Write an AIR using Stwo abtractions](air-development/how-to-write-an-air.md)
-- ["Simple M31 AIR" example](air-development/simple-m31-air-example.md)
-- [Lookup Abstraction](air-development/lookups.md)
-- [Seperate OpCode, Seperate AIRs](air-development/air-composition.md)
+    - [Hello (ZK) World](air-development/tutorial/hello-zk-world.md)
+    - [Writing a Spreadsheet](air-development/tutorial/writing-a-spreadsheet.md)
+    - [From Spreadsheet to Trace Polynomials](air-development/tutorial/from-spreadsheet-to-trace-polynomials.md)
+    - [Committing to the Trace Polynomials](air-development/tutorial/committing-to-the-trace-polynomials.md)
+    - [Evaluating Constraints Over Trace Polynomials](air-development/tutorial/constraints-over-trace-polynomials.md)
+    - [Proving an AIR over the Trace](air-development/tutorial/proving-an-air.md)
 
-# Cairo as a Stwo AIR
+  - ["Simple M31 AIR" example](air-development/simple-m31-air-example.md)
+  - [Lookup Abstraction](air-development/lookups.md)
+  - [Seperate OpCode, Seperate Components](air-development/air-composition.md)
 
-How Cairo is build upon Stwo.
+- [Cairo as a Stwo AIR](cairo/index.md)
 
-- [Cairo](cairo/cairo.md)
-- [Builtins](cairo/builtins.md)
+  - [Cairo](cairo/cairo.md)
+  - [Builtins](cairo/builtins.md)
 
 - [How Does Circle-STARK Work?](how-it-works/index.md)
     - [Mersenne Primes](how-it-works/mersenne-prime.md)
@@ -30,6 +35,4 @@ How Cairo is build upon Stwo.
     - [Circle STARKs](how-it-works/circle-starks.md)
     - [Lookups](how-it-works/lookups.md)
 
-# Users of Stwo
-
-(other people using stwo)
+- [Users of Stwo](users/index.md)

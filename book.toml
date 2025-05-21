@@ -5,6 +5,22 @@ multilingual = false
 src = "src"
 title = "stwo-book"
 
-# for LaTeX
-[preprocessor.katex]
-renderer = "katex"
+[preprocessor.admonish]
+command = "mdbook-admonish"
+assets_version = "3.0.3" # do not edit: managed by `mdbook-admonish install`
+
+[output]
+
+[output.html]
+mathjax-support = true
+additional-css = ["./mdbook-admonish.css", "./mdbook-admonish-custom.css"]
+
+[[preprocessor.admonish.custom]]
+directive = "exercise"
+icon = "./idea.svg"
+color = "#FFA62B"
+
+[[preprocessor.admonish.custom]]
+directive = "definition"
+icon = "./definition.svg"
+color = "#FFA62B"

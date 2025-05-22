@@ -36,3 +36,5 @@
     - [Lookups](how-it-works/lookups.md)
 
 - [Users of Stwo](users/index.md)
+
+- [Benchmarks](benchmarks/index.md)

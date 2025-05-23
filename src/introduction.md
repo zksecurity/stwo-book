@@ -1,11 +1,10 @@
 # Introduction
 
-<img src="./introduction-1.jpg" width="100%" style="height: auto;">
+Stwo is a state-of-the-art framework for creating ZK proofs that boasts many compelling features to the ZK ecosystem, some of which include:
 
-Stwo is a next-generation zkVM framework that brings several innovative features to the zero-knowledge proof ecosystem:
-
-- Leverages Circle STARKs over the Mersenne31 prime field for fast prover performance
+- Provides both the frontend and backend of creating ZK proofs
+- Frontend is designed to be flexible to allow you to express your own proof system
+- Backend leverages Circle STARKs over the Mersenne31 prime field for fast prover performance
 - Seamlessly integrated with Cairo
-- Features efficient lookup tables with LogUp (future integration with GKR)
 
-This documentation will guide you through understanding and using Stwo, from basic concepts to advanced features.
+This book will guide you through why you should create a proof system using Stwo, guide you through the process of creating your own proof system, and also provide in-depth explanations of the inner workings of Stwo.

@@ -1,9 +1,9 @@
 # Users of Stwo
 
-This section showcases projects and organizations that are using Stwo. Here you'll find:
+This is a non-exhaustive list of projects and organizations that are currently using or planning to use Stwo. If you are using Stwo and would like to be added to this list, please [open an issue](https://github.com/zksecurity/stwo-book/issues/new) or [submit a PR](https://github.com/zksecurity/stwo-book/pulls).
 
-- Examples of real-world applications of Stwo
-- Case studies of how different projects are leveraging Stwo's capabilities
-- Information about the Stwo ecosystem
+## Projects
 
-Stwo's flexibility and efficiency make it suitable for a wide range of applications. This section will help you understand how others are using Stwo and potentially inspire your own projects.
+- [Stwo Cairo](https://github.com/starkware-libs/stwo-cairo)
+- [Nexus zkVM](https://github.com/nexus-xyz/nexus-zkvm)
+- [Giza LuminAIR](https://github.com/gizatechxyz/LuminAIR)

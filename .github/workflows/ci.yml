@@ -25,4 +25,4 @@ jobs:
       - name: Run examples
         run: |
           cd stwo-examples
-          cargo examples --manifest-path ./Cargo.toml
+          cargo examples --manifest-path ./Cargo.toml --skip=local_row_constraints_fails_1,local_row_constraints_fails_2,local_row_constraints_fails_3

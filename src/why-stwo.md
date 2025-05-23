@@ -1,6 +1,6 @@
 # Why Stwo?
 
-Before we dive into why we should choose Stwo, let's define some terminology. When we talked about proof systems in the previous section, we were only referring to the part that takes a statement and outputs a proof. In reality, however, we also need to structure the statement in a way that it can be proven by the proof system. This structuring part is often referred to as the **frontend**, and the proof system is commonly called the **backend**.
+Before we dive into why we should choose Stwo, let's define some terminology. When we talked about proof systems in the previous section, we were only referring to the part that takes a statement and outputs a proof. In reality, however, we first need to structure the statement in a way that it can be proven by the proof system. This structuring part is often referred to as the **frontend**, and the proof system is commonly called the **backend**.
 
 With that out of the way, let's dive into some of the advantages of using Stwo.
 
@@ -14,7 +14,7 @@ Stwo's backend is also optimized for prover performance. This is due to largely 
 
 2. Even amongst multiple STARK backends, however, Stwo provides state-of-the-art prover performance by running the **Mersenne-31 prime field** (modulo \\(2^{31} - 1\\)), which is faster than another popular 32-bit prime field like BabyBear (modulo \\(2^{31} - 2^{27} + 1\\)). We suggest going through [this post](https://blog.zksecurity.xyz/posts/circle-starks-1/) for a breakdown of why this is the case.
 
-3. Finally, Stwo offers **various CPU and GPU optimizations** that improves prover performance as shown in [Figure 1](#fig-optimizations) below.
+3. Finally, Stwo offers **various CPU and GPU optimizations** that improves prover performance as shown in [Figure 1](#fig-optimizations) below. It can also be compiled to WASM, allowing for fast proving in web environments.
 
 <div style="text-align: center;">
 <figure id="fig-optimizations">
@@ -25,4 +25,8 @@ Stwo's backend is also optimized for prover performance. This is due to largely 
 
 One of the drawbacks of STARKs is that they have a larger proof size compared to elliptic curve-based SNARKs. One way to mitigate this drawback is by batching multiple proofs together to form a single proof.
 
-_A note on zero-knowledge: As of the time of this writing, Stwo does not provide the "zero-knowledge" feature. "Zero-knowledge" here refers to the fact that the proof should not reveal any additional information other than the validity of the statement, which is not true for Stwo as it reveals to the verifier commitments to its witness values without hiding them by e.g. adding randomness. This reveals **some information** about the witness values, which may be used in conjunction with other information to infer the witness values._
+```admonish
+On zero-knowledge:
+
+As of the time of this writing, Stwo does not provide the "zero-knowledge" feature. "Zero-knowledge" here refers to the fact that the proof should not reveal any additional information other than the validity of the statement, which is not true for Stwo as it reveals to the verifier commitments to its witness values without hiding them by e.g. adding randomness. This reveals **some information** about the witness values, which may be used in conjunction with other information to infer the witness values.
+```

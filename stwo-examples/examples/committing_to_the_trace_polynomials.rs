@@ -7,7 +7,7 @@ use stwo_prover::core::{
         },
         Column,
     },
-    channel::Blake2sChannel,
+    channel::{Blake2sChannel, Channel},
     fields::m31::M31,
     pcs::{CommitmentSchemeProver, PcsConfig},
     poly::{
@@ -18,9 +18,13 @@ use stwo_prover::core::{
     ColumnVec,
 };
 
+// ANCHOR: here_1
 const CONSTRAINT_EVAL_BLOWUP_FACTOR: u32 = 1;
 
 fn main() {
+    // --snip--
+
+    // ANCHOR_END: here_1
     let num_rows = N_LANES;
     let log_num_rows = LOG_N_LANES;
 
@@ -40,6 +44,7 @@ fn main() {
         .map(|col| CircleEvaluation::new(domain, col))
         .collect();
 
+    // ANCHOR: here_2
     // Config for FRI and PoW
     let config = PcsConfig::default();
 
@@ -62,8 +67,12 @@ fn main() {
     tree_builder.extend_evals(vec![]);
     tree_builder.commit(channel);
 
+    // Commit to the size of the trace
+    channel.mix_u64(log_num_rows as u64);
+
     // Commit to the original trace
     let mut tree_builder = commitment_scheme.tree_builder();
     tree_builder.extend_evals(trace);
     tree_builder.commit(channel);
 }
+// ANCHOR_END: here_2

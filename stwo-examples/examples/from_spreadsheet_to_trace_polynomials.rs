@@ -15,7 +15,9 @@ use stwo_prover::core::{
     ColumnVec,
 };
 
+// ANCHOR: main_start
 fn main() {
+    // ANCHOR_END: main_start
     let num_rows = N_LANES;
     let log_num_rows = LOG_N_LANES;
 
@@ -28,8 +30,8 @@ fn main() {
     col_2.set(0, M31::from(5));
     col_2.set(1, M31::from(11));
 
-    //////////////////////////////////////////////////////////////
-    // ADDED CODE START
+    // ANCHOR: main_end
+    // --snip--
 
     // Convert table to trace polynomials
     let domain = CanonicCoset::new(log_num_rows).circle_domain();
@@ -38,7 +40,5 @@ fn main() {
             .into_iter()
             .map(|col| CircleEvaluation::new(domain, col))
             .collect();
-
-    // ADDED CODE END
-    //////////////////////////////////////////////////////////////
 }
+// ANCHOR_END: main_end

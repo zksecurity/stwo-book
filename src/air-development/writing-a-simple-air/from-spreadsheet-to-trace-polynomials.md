@@ -17,7 +17,8 @@ As we can see in [Figure 2](#fig-from-spreadsheet-to-trace-polynomials-2), the c
 We will explain why using a polynomial representation is useful in the next section, but for now, let's see how we can create trace polynomials for our code. Note that we are building upon the code from the previous section, so there's not much new code here.
 
 ```rust,ignore
-{{#include ../../../stwo-examples/examples/from_spreadsheet_to_trace_polynomials.rs}}
+{{#include ../../../stwo-examples/examples/from_spreadsheet_to_trace_polynomials.rs:main_start}}
+{{#include ../../../stwo-examples/examples/from_spreadsheet_to_trace_polynomials.rs:main_end}}
 ```
 
 Here, `domain` refers to the \\(x_i\\) values used to interpolate the trace polynomials. For example, \\(x_1, x_2\\) values in [Figure 2](#fig-from-spreadsheet-to-trace-polynomials-2) are the domain values for our example (in reality, we need the size of the domain needs to be 16 as we have 16 rows). We can ignore terms like `CanonicCoset` and `.circle_domain()` for now, but should note that the `log_num_rows` in `CanonicCoset::new(log_num_rows).circle_domain()` needs to be equal to the log of the actual number of rows that are used in the table.

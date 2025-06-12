@@ -27,6 +27,7 @@
 - [How Does It Work?](how-it-works/index.md)
 
   - [Mersenne Primes](how-it-works/mersenne-prime.md)
+  - [Circle Group](how-it-works/circle-group.md)
   - [Lookups](how-it-works/lookups.md)
 
 - [Users of Stwo](users/index.md)

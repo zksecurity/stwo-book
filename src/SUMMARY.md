@@ -29,4 +29,4 @@
   - [Mersenne Primes](how-it-works/mersenne-prime.md)
   - [Lookups](how-it-works/lookups.md)
 
-- [Users of Stwo](users/index.md)
+- [Awesome Stwo](awesome-stwo/index.md)

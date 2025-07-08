@@ -30,4 +30,4 @@
   - [Circle Group](how-it-works/circle-group.md)
   - [Lookups](how-it-works/lookups.md)
 
-- [Users of Stwo](users/index.md)
+- [Awesome Stwo](awesome-stwo/index.md)

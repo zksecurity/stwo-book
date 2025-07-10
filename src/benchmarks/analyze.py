@@ -1,7 +1,6 @@
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
-import itertools
 import numpy as np
 from jinja2 import Environment, FileSystemLoader
 from tabulate import tabulate

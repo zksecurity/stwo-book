@@ -30,3 +30,5 @@
   - [Lookups](how-it-works/lookups.md)
 
 - [Awesome Stwo](awesome-stwo/index.md)
+
+- [Benchmarks Report](benchmarks/index.md)

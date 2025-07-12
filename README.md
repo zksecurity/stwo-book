@@ -6,13 +6,13 @@ This is the repository for the Stwo Book, a book about Starkware's [Stwo prover]
 
 Install `mdbook` following the instructions [here](https://rust-lang.github.io/mdBook/guide/installation.html).
 
-Then, setup `mdbook-admonish` by first installing it with the following command:
+Then, install `mdbook` plugins with the following command:
 
 ```bash
-cargo install mdbook-admonish
+cargo install mdbook-admonish mdbook-webinclude
 ```
 
-and then running the following command at the root of this repository:
+Run the following command at the root of this repository to setup `mdbook-admonish`:
 
 ```bash
 mdbook-admonish install .

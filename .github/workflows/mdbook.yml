@@ -44,6 +44,23 @@ jobs:
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5
+      - name: Download Benchmark Results
+        run: |
+          curl -s https://api.github.com/repos/zksecurity/zkvm-benchmarks/releases/latest \
+            | grep "browser_download_url.*benchmark-results\.zip" \
+            | cut -d : -f 2,3 \
+            | tr -d \" \
+            | wget -qi -
+          mkdir -p src/benchmarks/benchmark-results
+          unzip benchmark-results.zip -d src/benchmarks/benchmark-results/
+          rm benchmark-results.zip
+      - name: Build Benchmark Report
+        run: |
+          sudo apt update
+          sudo apt install -y python3 python3-pip
+          pip3 install pandas matplotlib numpy jinja2 tabulate
+          cd src/benchmarks
+          python3 analyze.py
       - name: Build with mdBook
         run: mdbook build
       - name: Upload artifact

@@ -7,13 +7,11 @@
 
 Until now, we have only considered constraints that apply over values in a single row. But what if we want to express constraints over multiple rows? For example, we may want to ensure that the difference between the values in two adjacent rows is always the same.
 
-Turns out we can implement this as an AIR constraint, as long as the same constraints are applied to all rows. However, actually implementing this requires some background knowledge about
-
-In this section, we will see how to implement this.
+Turns out we can implement this as an AIR constraint, as long as the same constraints are applied to all rows. In this section, we will see how to implement this.
 
 We will build upon the example in the previous section, where we created a two columns and proved that they are permutations of each other by asserting that the second column looks up all values in the first column exactly once.
 
-In this section, we will create two columns and prove that not only are they permutations of each other, but also that the second row is a sorted version of the first row.
+Here, we will create two columns and prove that not only are they permutations of each other, but also that the second row is a sorted version of the first row.
 
 More specifically, the sorted column will contain in order the values \\([0,num\\\_rows)\\), which means that the difference between every current row and the previous row should be \\(1\\).
 

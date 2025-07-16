@@ -49,7 +49,7 @@ Still, however, this will fail with the same `ConstraintsNotSatisfied` error. (Y
 
 ## Third Try
 
-So when we were creating `CircleEvaluation` instances from our `BaseColumn` instances, the order of the elements that we were creating it with was actually not the order that Stwo understands it to be. Instead, it assumes that the values are in the bit-reversed, circle domain order. It's not important to understand what this order is, specifically, but this does mean that when Stwo tries to find the `-1` offset when calling `evaluate`, it will find the previous value assuming that it's in a different order. This means that when we create a `CircleEvaluation` instance, we need to make sure that the values are in the order that Stwo expects.
+So when we were creating `CircleEvaluation` instances from our `BaseColumn` instances, the order of the elements that we were creating it with was actually not the order that Stwo understands it to be. Instead, it assumes that the values are in the bit-reversed, circle domain order. It's not important to understand what this order is, specifically, but this does mean that when Stwo tries to find the `-1` offset when calling `evaluate`, it will find the previous value assuming that it's in a different order. This means that when we create a `CircleEvaluation` instance, we need to convert it to a bit-reversed circle domain order.
 
 Thus, every time we create a `CircleEvaluation` instance, we need to convert the order of the values in the `BaseColumn` beforehand.
 

@@ -37,9 +37,9 @@ def load_json_data(file_path):
         verifier_time_ms = np.mean(result["verifier_durations_ms"]) if result["verifier_durations_ms"] else 0
         
         # Convert units
-        prover_time_s = prover_time_ms / 1000  # Convert ms to seconds
-        proof_size_kb = result["proof_size_bytes"] / 1000  # Convert bytes to KB
-        peak_memory_gb = result["peak_memory_bytes"] / (1024 * 1024 * 1024)  # Convert bytes to GB
+        prover_time_s = round(prover_time_ms / 1000, 2)  # Convert ms to seconds
+        proof_size_kb = round(result["proof_size_bytes"] / 1000, 2)  # Convert bytes to KB
+        peak_memory_gb = round(result["peak_memory_bytes"] / (1024 * 1024 * 1024), 2)  # Convert bytes to GB
         
         return (True, {
             "n": config["n"],
@@ -230,12 +230,23 @@ def get_tables(bench_tuple):
     tables = {}
 
     for i, df_original in enumerate(data_dfs_tuple):
-        # Format all numbers to plain string (no scientific notation)
+        # Format numbers based on table type
+        table_name = df_names[i]
         for col in df_original.columns:
-            if pd.api.types.is_numeric_dtype(df_original[col]):
-                df_original[col] = df_original[col].map(
-                    lambda x: f"{x:.0f}" if isinstance(x, (int, float)) and abs(x) >= 1e5 else str(x)
-                )
+            if col == "n":
+                # Keep 'n' column as integers
+                df_original[col] = df_original[col].astype(str)
+            elif pd.api.types.is_numeric_dtype(df_original[col]):
+                if table_name == "cycle_count":
+                    # Keep cycle count as integers
+                    df_original[col] = df_original[col].map(
+                        lambda x: f"{int(x)}" if isinstance(x, (int, float)) and not pd.isna(x) else str(x)
+                    )
+                else:
+                    # Format other tables with 2 decimal places
+                    df_original[col] = df_original[col].map(
+                        lambda x: f"{x:.2f}" if isinstance(x, (int, float)) else str(x)
+                    )
             else:
                 df_original[col] = df_original[col].astype(str)
 

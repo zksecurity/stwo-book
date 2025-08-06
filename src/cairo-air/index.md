@@ -1,0 +1,3 @@
+# Cairo AIR
+
+The following sections will go over how Cairo (referring to the CairoVM, not to be confused with the [Cairo programming language](https://www.starknet.io/cairo-book/)) is expressed as an AIR and proven using Stwo. This explanation is based on [this commit](https://github.com/starkware-libs/stwo-cairo/tree/b712c77887f8f8ce0d39a8a9741221c89846836e) of the Stwo Cairo repository.

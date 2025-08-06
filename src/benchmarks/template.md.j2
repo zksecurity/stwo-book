@@ -5,8 +5,8 @@
 | zkVM / Proof System   | Architecture   | Frontend   | Backend       | Security Bits |
 |:----------------------|:---------------|:-----------|:--------------|:--------------|
 | [RISC Zero](https://github.com/risc0/risc0)             | RISC-V         | Rust       | STARK-based   | 96 bits       |
-| [SP1](https://github.com/succinctlabs/sp1)       | RISC-V         | Rust       | STARK-based   | 100 bits      |
-| [OpenVM](https://github.com/openvm-org/openvm)       | RISC-V         | Rust       | STARK-based   | 100 bits      |
+| [SP1](https://github.com/succinctlabs/sp1)       | RISC-V         | Rust       | STARK-based   | 116 bits      |
+| [OpenVM](https://github.com/openvm-org/openvm)       | RISC-V         | Rust       | STARK-based   | 104 bits      |
 | [Jolt](https://github.com/a16z/jolt)                  | RISC-V         | Rust       | Lookup-based  | -             |
 | [Stone](https://github.com/starkware-libs/stone-prover)                 | Cairo VM       | Cairo      | STARK-based   | 100 bits      |
 | [Stwo](https://github.com/starkware-libs/stwo)                  | Cairo VM       | Cairo      | STARK-based   | 96 bits       |
@@ -14,6 +14,8 @@
 - All benchmarks presented here are **CPU-only** and do not utilize any GPU acceleration.
 - Stone benchmarks were generated using the `dynamic` layout with these [configurations](https://github.com/zksecurity/zkvm-benchmarks/tree/master/stone/configs).
 - The benchmarks for SP1, R0 and OpenVM use compressed or succinct prover type, which aggregates all the STARK proofs into a single STARK proof.
+- Security bits indicate the conjectured security bit of each system, computed as follows:
+    $$(\text{number of queries}) \times (\text{log of blowup}) + (\text{proof of work bits})$$
 - Benchmarks which run out of memory have been indicated by `💾` and benchmarks which generate errors in proof generation have been indicated by `❌` in the tables.
 
 ## Time and Commit Hash
@@ -180,6 +182,64 @@ Benchmark Keccak256 hash of 32 bytes for `n` iteration.
 {{ sha3_chain_data.tables.peak_memory }}
 
 ![]({{ sha3_chain_data.plots.peak_memory_plot }})
+
+
+## BLAKE
+Benchmark Blake2s256 hash of `n` bytes. For the **Stwo** benchmarks, a dedicated opcode for BLAKE was used, as illustrated in [this Cairo source file](https://github.com/starkware-libs/cairo-lang/blob/ab8be40403a7634ba296c467b26b8bd945ba5cfa/src/starkware/cairo/common/cairo_blake2s/blake2s.cairo#L671). **SP1** and **R0** do not support precompiles for BLAKE.
+
+### Prover Time (s)
+{{ blake_data.tables.prover_time }}
+
+![]({{ blake_data.plots.prover_time_plot }})
+
+### Verifier Time (ms)
+{{ blake_data.tables.verifier_time }}
+
+![]({{ blake_data.plots.verifier_time_plot }})
+
+### Proof Size (KB)
+{{ blake_data.tables.proof_size }}
+
+![]({{ blake_data.plots.proof_size_plot }})
+
+### Cycle Count
+{{ blake_data.tables.cycle_count }}
+
+![]({{ blake_data.plots.cycle_count_plot }})
+
+### Peak Memory (GB)
+{{ blake_data.tables.peak_memory }}
+
+![]({{ blake_data.plots.peak_memory_plot }})
+
+
+## BLAKE-Chain
+Benchmark Blake2s256 hash of 32 bytes for `n` iteration. For the **Stwo** benchmarks, a dedicated opcode for BLAKE was used, as illustrated in [this Cairo source file](https://github.com/starkware-libs/cairo-lang/blob/ab8be40403a7634ba296c467b26b8bd945ba5cfa/src/starkware/cairo/common/cairo_blake2s/blake2s.cairo#L671). **SP1** and **R0** do not support precompiles for BLAKE.
+
+### Prover Time (s)
+{{ blake_chain_data.tables.prover_time }}
+
+![]({{ blake_chain_data.plots.prover_time_plot }})
+
+### Verifier Time (ms)
+{{ blake_chain_data.tables.verifier_time }}
+
+![]({{ blake_chain_data.plots.verifier_time_plot }})
+
+### Proof Size (KB)
+{{ blake_chain_data.tables.proof_size }}
+
+![]({{ blake_chain_data.plots.proof_size_plot }})
+
+### Cycle Count
+{{ blake_chain_data.tables.cycle_count }}
+
+![]({{ blake_chain_data.plots.cycle_count_plot }})
+
+### Peak Memory (GB)
+{{ blake_chain_data.tables.peak_memory }}
+
+![]({{ blake_chain_data.plots.peak_memory_plot }})
 
 
 ## Matrix Multiplication

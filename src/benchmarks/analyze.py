@@ -6,67 +6,149 @@ from jinja2 import Environment, FileSystemLoader
 from tabulate import tabulate
 import math
 from matplotlib.ticker import FixedLocator
+import json
+import glob
 
-# Function to preprocess the dataframes
-def preprocess_data(df, column_name):
-    """Preprocess the dataframe by dropping NaN values and converting units."""
-    df = df.dropna(subset=["n", column_name])
-    df = df.sort_values(by="n").reset_index(drop=True)
-
-    # Convert units if applicable
-    if "prover time(ms)" in column_name:
-        df[column_name] = df[column_name] / 1000  # Convert ms to s
-    elif "proof size(bytes)" in column_name:
-        df[column_name] = df[column_name] / 1000  # Convert bytes to KB
-
-    return df[["n", column_name]]
+# Function to load and process JSON benchmark data
+def load_json_data(file_path):
+    """Load JSON benchmark data and extract relevant metrics."""
+    try:
+        with open(file_path, 'r') as f:
+            data = json.load(f)
+        
+        if "success" not in data["result"]:
+            n_value = data["config"]["n"]
+            failure_data = data["result"]["failure"]
+            placeholder = {
+                "n": n_value,
+                "prover time(s)": failure_data,
+                "verifier time(ms)": failure_data,
+                "proof size(kb)": failure_data,
+                "cycle count": failure_data,
+                "peak memory(gb)": failure_data
+            }
+            return (False, placeholder)
+        
+        result = data["result"]["success"]
+        config = data["config"]
+        
+        # Calculate average times and convert units
+        prover_time_ms = np.mean(result["prover_durations_ms"]) if result["prover_durations_ms"] else 0
+        verifier_time_ms = np.mean(result["verifier_durations_ms"]) if result["verifier_durations_ms"] else 0
+        
+        # Convert units
+        prover_time_s = prover_time_ms / 1000  # Convert ms to seconds
+        proof_size_kb = result["proof_size_bytes"] / 1000  # Convert bytes to KB
+        peak_memory_gb = result["peak_memory_bytes"] / (1024 * 1024 * 1024)  # Convert bytes to GB
+        
+        return (True, {
+            "n": config["n"],
+            "prover time(s)": prover_time_s,
+            "verifier time(ms)": verifier_time_ms,
+            "proof size(kb)": proof_size_kb,
+            "cycle count": result["cycle_count"],
+            "peak memory(gb)": peak_memory_gb
+        })
+    
+    except (FileNotFoundError, json.JSONDecodeError, KeyError) as e:
+        print(f"Error loading {file_path}: {e}")
+        return None
 
 # Function to combine benchmark data
 def combine_benchmark(bench_tuple, column_name):
     """Combine benchmark data for a given column from multiple sources."""
     bench_name, is_precompile, is_builtin = bench_tuple
-    file_paths = {
-        "jolt": f'./benchmark-results/jolt-{bench_name}.csv',
-        "sp1": f'./benchmark-results/sp1-{bench_name}.csv',
-        "openvm": f'./benchmark-results/openvm-{bench_name}.csv',
-        "r0": f'./benchmark-results/risczero-{bench_name}.csv',
-        "stone": f'./benchmark-results/stone-{bench_name}.csv',
-        "stwo": f'./benchmark-results/stwo-{bench_name}.csv',
-    }
-
-    if is_precompile:
-        file_paths["sp1-precompile"] = f'./benchmark-results/sp1-{bench_name}-precompile.csv'
-        file_paths["r0-precompile"] = f'./benchmark-results/risczero-{bench_name}-precompile.csv'
-        file_paths["openvm-precompile"] = f'./benchmark-results/openvm-{bench_name}-precompile.csv'
-
-    if is_builtin:
-        file_paths["stone-precompile"] = f'./benchmark-results/stone-{bench_name}-builtin.csv'
-
-    if bench_name == "ec":
-        file_paths.pop("sp1-precompile", None)
-        file_paths.pop("openvm-precompile", None)
-        file_paths.pop("r0-precompile", None)
-
-    if bench_name == "blake" or bench_name == "blake-chain":
-        file_paths = {
-            "sp1": f'./benchmark-results/sp1-{bench_name}.csv',
-            "r0": f'./benchmark-results/risczero-{bench_name}.csv',
-            "stwo-precompile": f'./benchmark-results/stwo-{bench_name}.csv',
-        }
-
     
-    combined_df = None
+    # Define VM names
+    if bench_name == "blake" or bench_name == "blake-chain":
+        vm_names = ["jolt", "sp1", "openvm", "risc0"]
+    else: 
+        vm_names = ["jolt", "sp1", "openvm", "risc0", "stone", "stwo"]
+    
+    data_rows = []
+    
+    # Collect data for each VM
+    for vm_name in vm_names:
+        # Standard version
+        pattern = f"{vm_name}-{bench_name}-n*.json"
+        files = glob.glob(pattern)
+        
+        vm_data = []
+        for file_path in files:
+            result = load_json_data(file_path)
+            if result:
+                success, data = result
+                vm_data.append(data)  # Add both success and failure data
+        
+        if vm_data:
+            df_vm = pd.DataFrame(vm_data)
+            df_vm = df_vm[["n", column_name]].sort_values(by="n").reset_index(drop=True)
+            df_vm.rename(columns={column_name: vm_name}, inplace=True)
+            data_rows.append(df_vm)
+        
+        # Precompile/builtin versions
+        if is_precompile and vm_name in ["sp1", "risc0", "openvm"]:
+            precompile_name = f"{vm_name}-precompile"
+            pattern = f"{vm_name}-{bench_name}-precompile-n*.json"
+            files = glob.glob(pattern)
+            
+            vm_data = []
+            for file_path in files:
+                result = load_json_data(file_path)
+                if result:
+                    success, data = result
+                    vm_data.append(data)  # Add both success and failure data
+            
+            if vm_data:
+                df_vm = pd.DataFrame(vm_data)
+                df_vm = df_vm[["n", column_name]].sort_values(by="n").reset_index(drop=True)
+                df_vm.rename(columns={column_name: precompile_name}, inplace=True)
+                data_rows.append(df_vm)
+        
+        if is_builtin and vm_name == "stone":
+            builtin_name = "stone-precompile"
+            pattern = f"{vm_name}-{bench_name}-builtin-n*.json"
+            files = glob.glob(pattern)
+            
+            vm_data = []
+            for file_path in files:
+                result = load_json_data(file_path)
+                if result:
+                    success, data = result
+                    vm_data.append(data)  # Add both success and failure data
+            
+            if vm_data:
+                df_vm = pd.DataFrame(vm_data)
+                df_vm = df_vm[["n", column_name]].sort_values(by="n").reset_index(drop=True)
+                df_vm.rename(columns={column_name: builtin_name}, inplace=True)
+                data_rows.append(df_vm)
 
-    for name, path in file_paths.items():
-        df = preprocess_data(pd.read_csv(path), column_name)
+    # Special handling for blake and blake-chain: add stwo-precompile
+    if bench_name == "blake" or bench_name == "blake-chain":
+        pattern = f"stwo-{bench_name}-precompile-n*.json"
+        files = glob.glob(pattern)
+        
+        vm_data = []
+        for file_path in files:
+            result = load_json_data(file_path)
+            if result:
+                success, data = result
+                vm_data.append(data)
+        
+        if vm_data:
+            df_vm = pd.DataFrame(vm_data)
+            df_vm = df_vm[["n", column_name]].sort_values(by="n").reset_index(drop=True)
+            df_vm.rename(columns={column_name: "stwo-precompile"}, inplace=True)
+            data_rows.append(df_vm)
 
-        df.rename(columns={column_name: name}, inplace=True)
-
-        if combined_df is None:
-            combined_df = df
-        else:
-            combined_df = pd.merge(combined_df, df, on="n", how="outer")
-
+    # Combine all dataframes
+    if not data_rows:
+        return pd.DataFrame()
+    
+    combined_df = data_rows[0]
+    for df in data_rows[1:]:
+        combined_df = pd.merge(combined_df, df, on="n", how="outer")
+    
     return combined_df
 
 
@@ -77,11 +159,11 @@ def plot_benchmark(df, title, y_label, bench_tuple, column_name):
 
     style_map = {
         'jolt': ('o', '#644172'),
-        'r0': ('s', '#00FF00'),
+        'risc0': ('s', '#00FF00'),
         'sp1': ('D', '#FE11C5'),
         'stone': ('^', '#236B8E'),
         'stwo': ('v', '#EC5631'),
-        'r0-precompile': ('*', '#699C52'),
+        'risc0-precompile': ('*', '#699C52'),
         'sp1-precompile': ('P', '#DC75CD'),
         'stone-precompile': ('h', '#58C4DD'),
         'stwo-precompile': ('H', '#F2806B'),
@@ -134,12 +216,12 @@ def plot_benchmark(df, title, y_label, bench_tuple, column_name):
 
 
 def get_data(bench_tuple):
-    prover_time_df = combine_benchmark(bench_tuple, "prover time(ms)")
+    prover_time_df = combine_benchmark(bench_tuple, "prover time(s)")
     verifier_time_df = combine_benchmark(bench_tuple, "verifier time(ms)")
-    proof_size_df = combine_benchmark(bench_tuple, "proof size(bytes)")
+    proof_size_df = combine_benchmark(bench_tuple, "proof size(kb)")
     cycle_count_df = combine_benchmark(bench_tuple, "cycle count")
     cycle_count_df = cycle_count_df.drop(columns=['openvm', 'openvm-precompile'], errors='ignore')
-    peak_memory_df = combine_benchmark(bench_tuple, "peak memory")
+    peak_memory_df = combine_benchmark(bench_tuple, "peak memory(gb)")
     return prover_time_df, verifier_time_df, proof_size_df, cycle_count_df, peak_memory_df
 
 def get_tables(bench_tuple):
@@ -157,13 +239,26 @@ def get_tables(bench_tuple):
             else:
                 df_original[col] = df_original[col].astype(str)
 
-        # Replace NaN values
+        # Replace NaN values and handle failure signals
         df_processed = df_original.copy()
         for col in df_processed.columns:
-            if "stone" in col.lower():
-                df_processed[col] = df_processed[col].replace({"nan": "💾", "NaN": "💾", "": "💾"})
-            else:
-                df_processed[col] = df_processed[col].replace({"nan": "❌", "NaN": "❌", "": "❌"})
+            if col == "n":  # Skip the 'n' column
+                continue
+            
+            # Convert the column to string for processing
+            df_processed[col] = df_processed[col].astype(str)
+            
+            # Handle failure signals
+            for idx, value in enumerate(df_processed[col]):
+                if isinstance(df_original.iloc[idx][col], dict) and "signal" in str(df_original.iloc[idx][col]):
+                    # Extract signal from failure data
+                    try:
+                        if "signal" in str(value) and "9" in str(value):
+                            df_processed.iloc[idx, df_processed.columns.get_loc(col)] = "💾"
+                        else:
+                            df_processed.iloc[idx, df_processed.columns.get_loc(col)] = "❌"
+                    except:
+                        df_processed.iloc[idx, df_processed.columns.get_loc(col)] = "❌"
         
         # Convert DataFrame to table format without transposing
         table_data = df_processed.values.tolist()
@@ -190,11 +285,11 @@ def get_tables(bench_tuple):
 
 def get_plots(bench_tuple):
     prover_time_df, verifier_time_df, proof_size_df, cycle_count_df, peak_memory_df = get_data(bench_tuple)
-    prover_time_plot = plot_benchmark(prover_time_df, "Prover Time vs n", "Prover Time (s)", bench_tuple, "prover time(ms)")
+    prover_time_plot = plot_benchmark(prover_time_df, "Prover Time vs n", "Prover Time (s)", bench_tuple, "prover time(s)")
     verifier_time_plot = plot_benchmark(verifier_time_df, "Verifier Time vs n", "Verifier Time (ms)", bench_tuple, "verifier time(ms)")
-    proof_size_plot = plot_benchmark(proof_size_df, "Proof Size vs n", "Proof Size (KB)", bench_tuple, "proof size(bytes)")
+    proof_size_plot = plot_benchmark(proof_size_df, "Proof Size vs n", "Proof Size (KB)", bench_tuple, "proof size(kb)")
     cycle_count_plot = plot_benchmark(cycle_count_df, "Cycle Count vs n", "Cycle Count", bench_tuple, "cycle count")
-    peak_memory_plot = plot_benchmark(peak_memory_df, "Peak Memory vs n", "Peak Memory", bench_tuple, "peak memory")
+    peak_memory_plot = plot_benchmark(peak_memory_df, "Peak Memory vs n", "Peak Memory (GB)", bench_tuple, "peak memory(gb)")
 
     plots = {
         "prover_time_plot": prover_time_plot,
@@ -207,18 +302,18 @@ def get_plots(bench_tuple):
     return plots
 
 # Commit Info
-commit_file = "./benchmark-results/latest_commit.txt"
+commit_file = "./latest_commit.txt"
 with open(commit_file, "r") as file1:
     commit_hash = file1.readline().strip()
 
 # Timestamp Info
-time_file = "./benchmark-results/time_stamp.txt"
+time_file = "./timestamp.txt"
 with open(time_file, "r") as file1:
     time = file1.readline().strip()
 
 
 # OS Info
-os_version_file = "./benchmark-results/os_version.txt"
+os_version_file = "./os_version.txt"
 os_version = "Unknown"
 with open(os_version_file, "r") as file:
     for line in file:
@@ -227,7 +322,7 @@ with open(os_version_file, "r") as file:
             break
 
 # CPU Info
-cpuinfo_file = "./benchmark-results/cpuinfo.txt"
+cpuinfo_file = "./cpuinfo.txt"
 cpu_keys = [
     "Architecture",
     "CPU(s)",
@@ -248,7 +343,7 @@ with open(cpuinfo_file, "r") as file:
                 cpu_info[key] = value
 
 # Memory Info
-meminfo_file = "./benchmark-results/meminfo.txt"
+meminfo_file = "./meminfo.txt"
 mem_keys = [
     "MemTotal",
     "MemFree",
@@ -314,6 +409,18 @@ ec_tables = get_tables(ec_tuple)
 ec_plots = get_plots(ec_tuple)
 ec_data = {"tables": ec_tables, "plots": ec_plots}
 
+# blake
+blake_tuple = ("blake", False, False)
+blake_tables = get_tables(blake_tuple)
+blake_plots = get_plots(blake_tuple)
+blake_data = {"tables": blake_tables, "plots": blake_plots}
+
+# blake-chain
+blake_chain_tuple = ("blake-chain", False, False)
+blake_chain_tables = get_tables(blake_chain_tuple)
+blake_chain_plots = get_plots(blake_chain_tuple)
+blake_chain_data = {"tables": blake_chain_tables, "plots": blake_chain_plots}
+
 # Load template
 env = Environment(loader=FileSystemLoader("."))
 template = env.get_template("template.md.j2")
@@ -332,6 +439,8 @@ output_md = template.render(
     sha3_chain_data=sha3_chain_data,
     mat_mul_data=mat_mul_data,
     ec_data=ec_data,
+    blake_data=blake_data,
+    blake_chain_data=blake_chain_data,
 )
 
 # Save to index.md

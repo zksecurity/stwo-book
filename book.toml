@@ -26,3 +26,9 @@ color = "#FFA62B"
 directive = "definition"
 icon = "./definition.svg"
 color = "#FFA62B"
+
+[preprocessor.admonish.directive.builtin.tip]
+directive = "hint"
+icon = "./brain-circuit.svg"
+color = "#4CAF50"
+collapsible = true

@@ -3,64 +3,80 @@
 Now that we have a basic understanding of how Cairo works and the basic building blocks that are used to build the Cairo AIR, let's take a look at the main components of the Cairo AIR.
 
 ```admonish
-For readers who are unfamiliar with the concepts of components and lookups, we suggest going over [this section](../../air-development/components/index.md) of the book.
+For readers who are unfamiliar with the concepts of components and lookups, we suggest going over the [Components](../../air-development/components/index.md) section of the book.
 ```
 
 ## Fetch, Decode, Execute
 
-Cairo follows the common CPU architecture of fetching, decoding, and executing an instruction in a single CPU step. Thus, to prove the correctness of the execution of a Cairo program, the Cairo AIR can write the results of fetching, decoding, and executing an instruction at every CPU step into a trace and prove that the constraints over the trace are consistent with the semantics of Cairo.
+Cairo follows the common CPU architecture of fetching, decoding, and executing an instruction in a single CPU step. Below is a high-level diagram of what a single CPU step looks like in Cairo.
 
 <figure id="fig-cairo-air-fetch-decode-execute" style="text-align: center;">
     <img src="./fetch-decode-execute.png" width="100%" />
     <figcaption><center><span style="font-size: 0.9em">Figure 1: A single CPU step in Cairo</span></center></figcaption>
 </figure>
 
+Since we need to prove the correctness of all CPU steps, the Cairo AIR will write the results of fetching, decoding, and executing an instruction at every CPU step into a trace and prove that the constraints over the trace are done correctly, i.e. consistent with the semantics of Cairo.
+
 Let's keep this in mind while we go over the main components of the Cairo AIR.
 
-## Memory Component
+## 1. Memory Component
 
 The first component we need is a `Memory` component, which implements the non-deterministic read-only memory model of Cairo.
 
 In Cairo AIR, instead of mapping the memory address to a value directly, we first map the `address` to an `id` and then map the `id` to a `value`. This is done to classify the memory values into 2 groups: `Small` and `Big`, where `Small` values are 72-bit integers and `Big` values are 252-bit integers. As many memory values do not exceed the `Small` size, this allows us to save cost on unnecessary padding.
 
-As a result, the `Memory` component is actually 2 components, `MemoryAddressToId` and `MemoryIdToValue`.
+As a result, the `Memory` component is actually 2 components: `MemoryAddressToId` and `MemoryIdToValue`.
 
-The constraint for the `Memory` component is as follows:
+The constraints for the `MemoryAddressToId` and `MemoryIdToValue` components are as follows:
 
 1. An `address` must appear once and only once in the `MemoryAddressToId` component
-2. Each `address` is mapped to a unique `id`
+2. Each `(address, id, value)` tuple must be unique
 
-[TODO: revisit this]
+The first constraint is implemented by using a preprocessed column that contains the sequence of numbers `[0, MAX_ADDRESS)` and using this as the address values (in the actual code, memory address starts at 1, so we need to add 1 to the sequence column).
 
-The way the first constraint is implemented is by using a preprocessed column that contains the sequence of numbers `[0, MAX_ADDRESS)` and using this as the address values (in the actual code, memory address starts at 1, so we need to add 1 to the sequence).
+The second constraint is guaranteed because the `address` value is always unique.
 
-The second constraint works in a similar way. An `id` is a 31-bit integer that is incremented by 1 from 0 whenever there is a unique memory access. For example, if the addresses `[5, 1523, 142]` were accessed in that order, the id for those addresses will be `(5, 0)`, `(1523, 1)`, and `(142, 2)`. In case the value of that address is a `Big` value, the MSB of the 31-bit integer is switched to 1. Since the `id` also uses the sequence of values `[0, NUM_SMALL_VALUES_ACCESSED)` and `[2^30, NUM_BIG_VALUES_ACCESSED)`, we can use the preprocessed column as the `id` values.
+```admonish
+A short explainer on how the `id` value is computed:
 
-## VerifyInstruction Component
+The `id` value is a 31-bit integer that is incremented by 1 from 0 whenever there is a unique memory access. For example, if the addresses `[5, 1523, 142]` were accessed in that order, the id for those addresses will be `(5, 0)`, `(1523, 1)`, and `(142, 2)`.
 
-The `VerifyInstruction` component is responsible for accessing the instruction from the `Memory` component and decomposing the retrieved value. As mentioned in the [Felt252 to M31](../basic-building-blocks/index.md#felt252-to-m31) section, a 252-bit integer is stored as 28 9-bit limbs, so we need to decompose the limbs and concatenate them to get the values we need. For example, in order to get the 3 16-bit offset values, we need to decompose the first 6 limbs into `[9, [7, 2], [9], [5, 4], [9], [3, 6]]` and concatenate them as the following: `[[9, 7], [2, 9, 5], [4, 9, 3]]`. Then, the remaining `6` and the next limb will correspond to the 15-bit flags, and the next (8th) limb will be the opcode extension value. At the end, we will have decomposed the instruction value into 3 16-bit offsets, 2 chunks of flags, and a 9-bit opcode extension.
+Since an `id` value needs to include information as to whether the corresponding `value` is `Small` or `Big`, we use the MSB as a flag (0 for `Small` and 1 for `Big`). Thus, an `id` value that corresponds to a `Small` value can occupy the space `[0, 2^30)`, while an `id` value that corresponds to a `Big` value can occupy the space `[2^30, 2^31)`.
 
-Note that the decomposition will be constrained by range-checking that each of the integers in their corresponding range.
+In reality, the size of each table will be `[0, NUM_SMALL_VALUES_ACCESSED)` and `[2^30, 2^30 + NUM_BIG_VALUES_ACCESSED)`, where `NUM_SMALL_VALUES_ACCESSED` and `NUM_BIG_VALUES_ACCESSED` are values that are provided by the prover. To make sure that the `id` values are created correctly, we can use the preprocessed column as the `id` values.
+```
 
-## Opcode Component
+## 2. VerifyInstruction Component
+
+The `VerifyInstruction` component is responsible for accessing the instruction from the `Memory` component and decomposing the retrieved value. As mentioned in the [Felt252 to M31](../basic-building-blocks/index.md#felt252-to-m31) section, a 252-bit integer is stored as 28 9-bit limbs, so we need to decompose the limbs and concatenate them to get the values we need. For example, in order to get the 3 16-bit offset values, we need to decompose the first 6 limbs into `[9, [7, 2], [9], [5, 4], [9], [3, 6]]` and concatenate them as the following: `[[9, 7], [2, 9, 5], [4, 9, 3]]`. Then, the remaining 6-bit value and the next limb will correspond to the 15-bit flags, and the next (8th) limb will be the opcode extension value. The other 20 limbs should all be zeros. At the end, we will have decomposed the instruction value into 3 16-bit offsets, 2 chunks of flags, and a 9-bit opcode extension.
+
+Note that the decomposition will be constrained by range-checking that each of the integers are within their corresponding range.
+
+## 3. Opcode Component
 
 Since every Cairo instruction can be mapped to a specific `Opcode`, we can check that a Cairo instruction is executed by checking that the corresponding `Opcode` component was executed correctly. You can think of the `Opcode` component as the main component that uses the `VerifyInstruction` and `Memory` components.
 
 We define a single `Opcode` component for each predefined opcode and also a `GenericOpcode` component, which will be used for all instructions that do not map to any of the predefined opcodes.
 
-The following is a list of constraints that the `VerifyInstruction` component needs to satisfy:
+The following is a list of constraints that the `Opcode` component needs to verify:
 
-1. verifies that the offsets and flag values are correct using the `VerifyInstruction` component.
-2. verifies that the instruction is correctly mapped to the current `Opcode` component using the flags.
-3. verifies that the operand values `op0`, `op1`, and `dst` computed with the registers and the offsets are correct using the `Memory` component.
-4. verifies that the operation for the current `Opcode` component is done correctly.
-5. verifies that the state transition of the 3 registers (`pc`, `ap`, `fp`) is done correctly using the flags.
+1. the offsets and flag values are correct using the `VerifyInstruction` component.
+2. the instruction is correctly mapped to the current `Opcode` component using the flags.
+3. the operand values `op0`, `op1`, and `dst` computed with the registers and the offsets are correct using the `Memory` component.
+4. the operation for the current `Opcode` component is done correctly.
+5. the state transition of the 3 registers (`pc`, `ap`, `fp`) is done correctly using the flags.
 
 Of these constraints, the numbers 2 and 4 are self-contained, as in they do not require any other components to be verified. We will explore how the remaining 3 are verified using lookups between the different components.
 
 ## Bringing It All Together
 
-The following figure shows how each component is connected to each other using lookups. If we look at the right-hand side first, we can see that this side shows the main components of the Cairo AIR. The boxes in the components correspond to lookups added to each component and the boxes with the same fill color correspond to lookups to the same values. Lookups that are added to the claimed sum have blue edges and the ones that are subtracted from the claimed sum have red edges. On the left-hand side, we can see lookups that that the prover provides as part of the proof and therefore the verifier can compute the lookup values themselves and add to the total sum. The ultimate goal is to make the sum of all the lookups to equal to zero.
+The following figure shows how each of the main components are connected to each other using lookups.
+
+If we look at the right-hand side first, we can see that this side shows the main components of the Cairo AIR. The boxes in each component correspond to lookups in each component and the boxes with the same fill color correspond to lookups to the same values. Also, some lookups are yielded (i.e. subtracted), while others are used (i.e. added), and the ones that are yielded have red edges, while the ones that are used have blue edges.
+
+On the left-hand side, we can see lookups that are computed directly by the verifier from data provided by the prover as part of the proof.
+
+Each of the components will have a **claimed sum** value that corresponds to the sum of all the lookups in the component. These claimed sums will be provided by the prover as part of the proof and the verifier will add them together along with the lookups on the left-hand side. If the total sum is zero, the verifier will be convinced that the proof is valid.
 
 <figure id="fig-cairo-air-main-components" style="text-align: center;">
     <img src="./main-components.png" width="100%" />
@@ -69,14 +85,20 @@ The following figure shows how each component is connected to each other using l
 
 ### Memory Lookups
 
-The memory lookups correspond to looking up the `(address, id)` and `(id, value)` pairs. In the `Memory` component, each of the lookups are multiplied with a witness value `mult`, which indicates the amount of times each memory address was accessed. Since the memory accesses are **added** to the total sum and the same amount is **subtracted** from the total sum in the `Memory` component, the total sum for memory lookups should equal zero.
+The memory lookups correspond to looking up the `(address, id)` and `(id, value)` pairs. In the `Memory` component, each of the lookups are multiplied with a witness value `mult`, which indicates the amount of times each memory address was accessed. Since the memory accesses are added to the total sum and the same amount is subtracted from the total sum in the `Memory` component, the total sum for memory lookups should equal zero.
 
-Note that the verifier also adds the lookups for the Cairo program, which is necessary to ensure that the correct program is actually stored in memory and is properly executed.
+Note that the verifier also adds lookups for the Cairo program, which is necessary to ensure that the correct program is actually stored in memory and is properly executed.
 
 ### Instruction Lookups
 
-Once the `VerifyInstruction` component retrieves the instruction value using the `(pc_addr, pc_id)` and `(pc_id, pc_val)` lookups, it subtracts the lookup of the tuple `(pc, dst_off, op0_off, op1_off, flags1, flags2, opcode_extension)`, which are the decomposed values of the instruction. The reason this lookup also has a `mult` witness is because the `VerifyInstruction` component has a single row for each unique `pc` value. Thus, if the same `pc` value is invoked multiple times throughout the program, the tuple should be added multiple times to the total sum.
+Once the `VerifyInstruction` component retrieves the instruction value using the `(pc_addr, pc_id)` and `(pc_id, pc_val)` lookups, it subtracts the lookup of the tuple `(pc, dst_off, op0_off, op1_off, flags1, flags2, opcode_extension)`, which are the decomposed values of the instruction. The reason this lookup also has a `mult` witness is because the `VerifyInstruction` component has a single row for each unique `pc` value (i.e. the Cairo instruction stored at the `pc` address). Thus, the same `pc` value can be invoked multiple times throughout the program, and the `mult` value represents the number of times the same `pc` value is invoked.
+
+Since the same tuple lookup is added to the total sum whenever the `Opcode` component uses the same instruction, the total sum for instruction lookups should equal zero.
 
 ### Register Lookups
 
-🚧
+After computing over the operands, a Cairo instruction updates the register values based on the values in the flags. In an `Opcode` component, this update logic is verified using the columns `pc`, `ap`, `fp`, `new_pc`, `new_ap`, `new_fp` and constraining the values with the flags.
+
+In addition to checking that each state transition is done correctly, we also need to make sure that the initial register values (i.e. before running the program) and the final register values (i.e. after running the program) satisfy the Cairo semantics. For example, the final pc must point to an instruction that runs the `JUMPREL 0` opcode, which is an infinite loop (you can check the rest of the semantics enforced [here](https://github.com/starkware-libs/stwo-cairo/blob/95019d029fdd164091f9d17a12cb9288215fb9c3/stwo_cairo_verifier/crates/cairo_air/src/lib.cairo#L264)).
+
+Once we have verified that the initial and final register values are correct and each state transition is done correctly, we do the final check that the register values are all connected together, as in the register values used by the second instruction is the same as the new register values of the first instruction and so on. We check this by adding the lookup of the `(pc, ap, fp)` tuple and subtracting the lookup of the `(new_pc, new_ap, new_fp)` tuple for each `Opcode` row. This way, when add up all the lookups, the total sum for register lookups should be equal to `(init_pc, init_ap, init_fp) - (final_pc, final_ap, final_fp)`. Thus, the verifier can compute the lookups of the initial and final register values themselves, then subtract the first and add the second, and check that the total sum is zero.

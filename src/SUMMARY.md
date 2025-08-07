@@ -22,7 +22,12 @@
   - [Components](air-development/components/index.md)
   - [Additional Examples](air-development/additional-examples/index.md)
 
-- [Cairo as a Stwo AIR](cairo/index.md)
+- [Cairo AIR](cairo-air/index.md)
+
+  - [Overview of Cairo](cairo-air/cairo/index.md)
+  - [Basic Building Blocks](cairo-air/basic-building-blocks/index.md)
+  - [Main Components](cairo-air/main-components/index.md)
+  - [`ADD` Opcode Walkthrough](cairo-air/add-opcode/index.md)
 
 - [How Does It Work?](how-it-works/index.md)
 

@@ -1,12 +1,12 @@
 # Basic Building Blocks
 
-This section will go over the basic building blocks that are used to build the Cairo AIR.
+This section covers the basic building blocks used to build the Cairo AIR.
 
 ## Felt252 to M31
 
 Cairo works over the prime field \\(P = 2^{251} + 17 \cdot 2^{192} + 1\\), while Stwo works over the prime field \\(M31 = 2^{31} - 1\\). Thus, in order to represent the execution of Cairo with Stwo, we need to decompose the 252-bit integers into 31-bit integers. The Cairo AIR chooses to use the 9-bit decomposition, so a single 252-bit integer will result in 28 9-bit limbs.
 
-## Range Checks
+## Range checks
 
 Range-checks are very commonly used in the Cairo AIR. They are used to ensure that the values of the witness values are within a certain range, most commonly within a certain bit length. For example, in the [Felt252 to M31](../basic-building-blocks/index.md#felt252-to-m31) section, we saw that a 252-bit integer is decomposed into 28 9-bit limbs, so we need to verify that each limb is in the range \\(0 \leq \text{limb} < 2^{9}\\).
 

@@ -8,12 +8,12 @@
 
   - [Writing a Simple AIR](air-development/writing-a-simple-air/index.md)
 
-    - [Hello (ZK) World](air-development/writing-a-simple-air/hello-zk-world.md)
+    - [Hello World](air-development/writing-a-simple-air/hello-world.md)
     - [Writing a Spreadsheet](air-development/writing-a-simple-air/writing-a-spreadsheet.md)
     - [From Spreadsheet to Trace Polynomials](air-development/writing-a-simple-air/from-spreadsheet-to-trace-polynomials.md)
     - [Committing to the Trace Polynomials](air-development/writing-a-simple-air/committing-to-the-trace-polynomials.md)
     - [Evaluating Constraints Over Trace Polynomials](air-development/writing-a-simple-air/constraints-over-trace-polynomials.md)
-    - [Proving an AIR over the Trace](air-development/writing-a-simple-air/proving-an-air.md)
+    - [Proving and Verifying an AIR](air-development/writing-a-simple-air/proving-an-air.md)
 
   - [Preprocessed Trace](air-development/preprocessed-trace/index.md)
   - [Static Lookups](air-development/static-lookups/index.md)

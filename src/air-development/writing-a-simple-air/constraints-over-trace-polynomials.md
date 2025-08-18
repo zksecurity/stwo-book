@@ -11,9 +11,7 @@ When we want to perform computations over the cells in a spreadsheet, we don't w
 
 We can do the same thing with our table, except in addition to autofilling cells, we can also create a constraint that the result was computed correctly. Remember that the purpose of using a proof system is that the verifier can verify a computation was executed correctly without having to execute it themselves? Well, that's exactly why we need to create a constraint.
 
-Now let's say we want to add a new column `C` to our spreadsheet that computes the product of the previous columns plus the first column. We can set `C1` as `A1 * B1 + A1` as in [Figure 2](#fig-constraints-over-trace-polynomials-2).
-
-In the same vein, we can create a new column in our table that computes the sum of the two previous columns. And we can constrain the value of the third column by creating an equation that must equal 0: `col1_row1 * col2_row1 + col1_row1 - col3_row1 = 0`.
+Now let's say we want to add a new column `C` to our spreadsheet that computes the product of the previous columns plus the first column. We can set `C1` as `A1 * B1 + A1` as in [Figure 2](#fig-constraints-over-trace-polynomials-2). And then we can constrain the value of the third column by creating an equation that must equal 0: `col1_row1 * col2_row1 + col1_row1 - col3_row1 = 0`.
 
 <figure id="fig-constraints-over-trace-polynomials-2">
     <img src="./constraints-over-trace-polynomials-2.png" width="100%" />
@@ -40,7 +38,8 @@ We will now give a name to the polynomial that expresses the constraint: a **com
 
 Basically, in order to prove that the constraints are satisfied, we need to show that the composition polynomial evaluates to 0 over the original domain (i.e. the domain of size the number of rows in the table).
 
-But first, as can be seen in [Figure 1](#fig-constraints-over-trace-polynomials-1), we need to expand the evaluations of the trace polynomials by a factor of 2. This is because the composition polynomial has degree 2, while the trace polynomials have degree 1, and thus we need more evaluations to uniquely determine the Lagrange polynomial.
+But first, as can be seen in [Figure 1](#fig-constraints-over-trace-polynomials-1), we need to expand the evaluations of the trace polynomials by a factor of 2. This is because the composition polynomial involves a multiplication of two trace polynomials, and thus the degree of the constraint is 2 in \\(x\\), and thus we need double the number of evaluations to uniquely determine the Lagrange polynomial for the composition polynomial.
+[TODO: check again if this makes sense]
 
 Once we have the expanded evaluations, we can evaluate the composition polynomial. Checking that the composition polynomial evaluates to 0 over the original domain is done in FRI, so once again we need to expand the composition polynomial evaluations by a factor of 2 and commit to them.
 

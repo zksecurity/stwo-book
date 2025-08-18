@@ -1,4 +1,4 @@
-# Hello (ZK) World
+# Hello World
 
 Let's first set up a Rust project with Stwo.
 

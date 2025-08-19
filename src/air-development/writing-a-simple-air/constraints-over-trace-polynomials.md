@@ -11,9 +11,7 @@ When we want to perform computations over the cells in a spreadsheet, we don't w
 
 We can do the same thing with our table, except in addition to autofilling cells, we can also create a constraint that the result was computed correctly. Remember that the purpose of using a proof system is that the verifier can verify a computation was executed correctly without having to execute it themselves? Well, that's exactly why we need to create a constraint.
 
-Now let's say we want to add a new column `C` to our spreadsheet that computes the product of the previous columns plus the first column. We can set `C1` as `A1 * B1 + A1` as in [Figure 2](#fig-constraints-over-trace-polynomials-2).
-
-In the same vein, we can create a new column in our table that computes the sum of the two previous columns. And we can constrain the value of the third column by creating an equation that must equal 0: `col1_row1 * col2_row1 + col1_row1 - col3_row1 = 0`.
+Now let's say we want to add a new column `C` to our spreadsheet that computes the product of the previous columns plus the first column. We can set `C1` as `A1 * B1 + A1` as in [Figure 2](#fig-constraints-over-trace-polynomials-2). And then we can constrain the value of the third column by creating an equation that must equal 0: `col1_row1 * col2_row1 + col1_row1 - col3_row1 = 0`.
 
 <figure id="fig-constraints-over-trace-polynomials-2">
     <img src="./constraints-over-trace-polynomials-2.png" width="100%" />
@@ -40,9 +38,13 @@ We will now give a name to the polynomial that expresses the constraint: a **com
 
 Basically, in order to prove that the constraints are satisfied, we need to show that the composition polynomial evaluates to 0 over the original domain (i.e. the domain of size the number of rows in the table).
 
-But first, as can be seen in [Figure 1](#fig-constraints-over-trace-polynomials-1), we need to expand the evaluations of the trace polynomials by a factor of 2. This is because the composition polynomial has degree 2, while the trace polynomials have degree 1, and thus we need more evaluations to uniquely determine the Lagrange polynomial.
+But first, as can be seen in [Figure 1](#fig-constraints-over-trace-polynomials-1), we need to expand the evaluations of the trace polynomials by a factor of 2. This is because when you multiply two trace polynomials to compute the constraint polynomial, the degree of the constraint polynomial will be the sum of the degrees of the trace polynomials. To adjust for this increase in degree, we double the number of evaluations.
 
 Once we have the expanded evaluations, we can evaluate the composition polynomial. Checking that the composition polynomial evaluates to 0 over the original domain is done in FRI, so once again we need to expand the composition polynomial evaluations by a factor of 2 and commit to them.
+
+```admonish
+In the actual Stwo code, we commit not to the composition polynomial, but to the quotient polynomial. The quotient polynomial is the composition polynomial divided by the vanishing polynomial, i.e., a polynomial that evaluates to 0 in the original domain. However, we intentionally omit this detail for the sake of simplicity.
+```
 
 We'll see in the code below how this is implemented.
 
@@ -68,7 +70,7 @@ Inside `FrameworkEval::evaluate`, we call `eval.next_trace_mask()` consecutively
     <figcaption><center><span style="font-size: 0.9em">Figure 3: Evaluate function</span></center></figcaption>
 </figure>
 
-We also need to implement `FrameworkEval::max_constraint_log_degree_bound(&self)` for `FrameworkEval`. As mentioned in the [Composition Polynomial section](#composition-polynomial), we need to expand the trace polynomial evaluations because the degree of our composition polynomial is higher than the trace polynomial. Expanding it by the lowest value `CONSTRAINT_EVAL_BLOWUP_FACTOR=1` is sufficient for our example as the degree of our composition polynomial is not very high, so we can return `self.log_size + CONSTRAINT_EVAL_BLOWUP_FACTOR`. For those who are interested in how to set this value in general, we leave a detailed note below.
+We also need to implement `FrameworkEval::max_constraint_log_degree_bound(&self)` for `FrameworkEval`. As mentioned in the [Composition Polynomial section](#composition-polynomial), we need to expand the trace polynomial evaluations because the degree of our composition polynomial is higher than the trace polynomial. Expanding it by the lowest value `CONSTRAINT_EVAL_BLOWUP_FACTOR=1` is sufficient for our example as we only have one multiplication gate, so we return `self.log_size + CONSTRAINT_EVAL_BLOWUP_FACTOR`. For those who are interested in how to set this value in general, we leave a detailed note below.
 
 ```admonish id="max_constraint_log_degree_bound"
 **What value to set for `max_constraint_log_degree_bound(&self)`?**

@@ -42,6 +42,10 @@ But first, as can be seen in [Figure 1](#fig-constraints-over-trace-polynomials-
 
 Once we have the expanded evaluations, we can evaluate the composition polynomial. Checking that the composition polynomial evaluates to 0 over the original domain is done in FRI, so once again we need to expand the composition polynomial evaluations by a factor of 2 and commit to them.
 
+```admonish
+In the actual Stwo code, we commit not to the composition polynomial, but to the quotient polynomial. The quotient polynomial is the composition polynomial divided by the vanishing polynomial, i.e., a polynomial that evaluates to 0 in the original domain. However, we intentionally omit this detail for the sake of simplicity.
+```
+
 We'll see in the code below how this is implemented.
 
 ## Code
@@ -66,7 +70,7 @@ Inside `FrameworkEval::evaluate`, we call `eval.next_trace_mask()` consecutively
     <figcaption><center><span style="font-size: 0.9em">Figure 3: Evaluate function</span></center></figcaption>
 </figure>
 
-We also need to implement `FrameworkEval::max_constraint_log_degree_bound(&self)` for `FrameworkEval`. As mentioned in the [Composition Polynomial section](#composition-polynomial), we need to expand the trace polynomial evaluations because the degree of our composition polynomial is higher than the trace polynomial. Expanding it by the lowest value `CONSTRAINT_EVAL_BLOWUP_FACTOR=1` is sufficient for our example as the degree of our composition polynomial is not very high, so we can return `self.log_size + CONSTRAINT_EVAL_BLOWUP_FACTOR`. For those who are interested in how to set this value in general, we leave a detailed note below.
+We also need to implement `FrameworkEval::max_constraint_log_degree_bound(&self)` for `FrameworkEval`. As mentioned in the [Composition Polynomial section](#composition-polynomial), we need to expand the trace polynomial evaluations because the degree of our composition polynomial is higher than the trace polynomial. Expanding it by the lowest value `CONSTRAINT_EVAL_BLOWUP_FACTOR=1` is sufficient for our example as we only have one multiplication gate, so we return `self.log_size + CONSTRAINT_EVAL_BLOWUP_FACTOR`. For those who are interested in how to set this value in general, we leave a detailed note below.
 
 ```admonish id="max_constraint_log_degree_bound"
 **What value to set for `max_constraint_log_degree_bound(&self)`?**

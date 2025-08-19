@@ -38,8 +38,7 @@ We will now give a name to the polynomial that expresses the constraint: a **com
 
 Basically, in order to prove that the constraints are satisfied, we need to show that the composition polynomial evaluates to 0 over the original domain (i.e. the domain of size the number of rows in the table).
 
-But first, as can be seen in [Figure 1](#fig-constraints-over-trace-polynomials-1), we need to expand the evaluations of the trace polynomials by a factor of 2. This is because the composition polynomial involves a multiplication of two trace polynomials, and thus the degree of the constraint is 2 in \\(x\\), and thus we need double the number of evaluations to uniquely determine the Lagrange polynomial for the composition polynomial.
-[TODO: check again if this makes sense]
+But first, as can be seen in [Figure 1](#fig-constraints-over-trace-polynomials-1), we need to expand the evaluations of the trace polynomials by a factor of 2. This is because when you multiply two trace polynomials to compute the constraint polynomial, the degree of the constraint polynomial will be the sum of the degrees of the trace polynomials. To adjust for this increase in degree, we double the number of evaluations.
 
 Once we have the expanded evaluations, we can evaluate the composition polynomial. Checking that the composition polynomial evaluates to 0 over the original domain is done in FRI, so once again we need to expand the composition polynomial evaluations by a factor of 2 and commit to them.
 

@@ -57,7 +57,7 @@ Now given the evaluations over a domain as `CircleEvaluation` we can interpolate
 {{#webinclude https://raw.githubusercontent.com/starkware-libs/stwo/0790eba46b8af5697083d84fb75bd34b08a0b31f/crates/stwo/src/prover/poly/circle/evaluation.rs 46:58}}
 ```
 
-But before looking into the representation of the circle polynomial (i.e. `CirclePoly`), let us first look into some theory on polynomial over the circle.
+But before looking into the representation of the circle polynomial (i.e. `CirclePoly`), let us first look into some theory on polynomials over the circle.
 
 
 ### Polynomials over the circle
@@ -105,7 +105,7 @@ b^{(n)}_j(x, y) := y^{j_0} \cdot x^{j_1} \cdot \pi(x)^{j_2} \cdot \pi^2(x)^{j_3}
  
 where 
 - \\( \pi \\) is the squaring map on the \\( x \\)-coordinate i.e. \\( \pi(x) = 2x^2 - 1 \\) and \\( \pi^i \\) is applying the squaring map \\( i \\) times, for example \\( \pi^2(x) = \pi(\pi(x)) \\)
-- \\( n \\) is log of the size the `CircleDomain`
+- \\( n \\) is log of the size of the `CircleDomain`
 - \\(0 \leq j \leq 2^n - 1\\) and \\((j_0, \ldots, j_{n-1}) \in \\{0, 1\\}^n\\) is the binary representation of \\( j \\), i.e., \\[j = j_0 + j_1 \cdot 2 + \cdots + j_{n-1} \cdot 2^{n-1}\\]
 
 Thus the `interpolate` function computes coefficients \\( c_j \\) for polynomials \\( p(x, y) \\) of the form:
@@ -120,4 +120,4 @@ Now given the coefficient representation as `CirclePoly`, we can evaluate the po
 {{#webinclude https://raw.githubusercontent.com/starkware-libs/stwo/0790eba46b8af5697083d84fb75bd34b08a0b31f/crates/stwo/src/prover/poly/circle/poly.rs 51:66}}
 ```
 
-In the next section, we will look at the conversion between the two polynomial representations using the `interpolate` and `evaluate` functions. As you may have noticed, the twiddles are precomputed for efficiency, we will also explore this in the next section on Circle FFT.
+In the next section, we will see how the `interpolate` and `evaluate` functions convert between the two polynomial representations using Circle FFT. As you may have noticed, the twiddles are precomputed for efficiency, and we will also explore this in the next section on Circle FFT.

@@ -13,6 +13,7 @@ The key advantage is extremely cheap modular reduction after a 31-bit multiplica
 
 Suppose \\( x = a \cdot b \\) then we can decompose \\( x \\) into two 31-bit values \\( b \\) and \\( s \\), such that \\( x = 2^{31} \cdot b + s \\), as shown in the following figure.
 
+ <!-- TODO: update this figure using draw.io -->
 <div style="text-align: center;">
     <img src="./mersenne-mult.svg" alt="Mersenne Prime Multiplication" width="400px">
 </div>
@@ -34,7 +35,7 @@ We cannot instantiate our STARK protocols using \\( \textsf{M31} \\) since it is
 
 \\[ P-1 = 2^{31}-2\\]
 
-As shown above, the multiplicative group of \\( \textsf{M31} \\) lack a smooth subgroup of size that is a large power of two because there is no large power of two that divides \\( P-1 \\). In other words, there does not exist a sufficiently large \\( n \\) such that \\( 2^n \\, | \\, P - 1 \\). To make \\( \textsf{M31} \\) compatible with STARKs, we will work over extensions of it.
+As shown above, the multiplicative group of \\( \textsf{M31} \\) lacks a smooth subgroup of size that is a large power of two because there is no large power of two that divides \\( P-1 \\). In other words, there does not exist a sufficiently large \\( n \\) such that \\( 2^n \\, | \\, P - 1 \\). To make \\( \textsf{M31} \\) compatible with STARKs, we will work over extensions of it.
 
 ## Field Operations
 Stwo avoids code duplication by providing two Rust macros, `impl_field!` and `impl_extension_field!`, for implementing field and extension field operations.
@@ -109,3 +110,5 @@ Similar to \\( \textsf{CM31} \\), the operations of \\( \textsf{QM31} \\) are de
 {{#webinclude https://raw.githubusercontent.com/starkware-libs/stwo/0790eba46b8af5697083d84fb75bd34b08a0b31f/crates/stwo/src/core/fields/qm31.rs 26:27}}
 ```
 where `P4` is the size of \\( \textsf{QM31} \\) i.e. \\( P^4 \\).
+
+In the next section, we will explore the circle group, which is used to instantiate the STARK protocol.

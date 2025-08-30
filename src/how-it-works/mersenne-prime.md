@@ -13,9 +13,11 @@ The key advantage is extremely cheap modular reduction after a 31-bit multiplica
 
 Suppose \\( x = a \cdot b \\) then we can decompose \\( x \\) into two 31-bit values \\( b \\) and \\( s \\), such that \\( x = 2^{31} \cdot b + s \\), as shown in the following figure.
 
- <!-- TODO: update this figure using draw.io -->
 <div style="text-align: center;">
-    <img src="./mersenne-mult.svg" alt="Mersenne Prime Multiplication" width="400px">
+    <figure id="fig-mersenne-prod" style="display: inline-block;">
+    <img src="./mersenne-mult.svg" width="400px" />
+        <figcaption><span style="font-size: 0.9em">Figure: Product decomposition</span></figcaption>
+    </figure>
 </div>
 
 To perform modular reduction, we start with:

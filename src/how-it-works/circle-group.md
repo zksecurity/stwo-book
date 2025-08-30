@@ -63,6 +63,7 @@ Therefore, it suffices to store only the half coset \\( q + \langle g_{n-1} \ran
 
 The following animation shows a circle domain of size 8. It is constructed from the half coset \\( q + \langle g_2 \rangle \\) of size 4 (shown as red points) and its negation \\( -q + \langle g_2 \rangle \\) (shown as blue points).
 
+<!-- TODO: convert this into figure -->
 <video autoplay loop muted>
     <source src="./animations/vid_circle_domain.mp4" type="video/mp4">
 </video>
@@ -88,6 +89,7 @@ Here, `CanonicCoset` represents the full coset \\( q + \langle g_n \rangle \\), 
 
 The following animation shows a canonic coset of size 8. It is constructed from the coset \\( \langle g_3 \rangle \\) of size 8 followed by an offset by \\( q \\), where \\( q \\) is the generator of subgroup \\( \langle g_4 \rangle \\).
 
+<!-- TODO: convert this into figure -->
 <video autoplay loop muted>
     <source src="./animations/vid_canonic_coset.mp4" type="video/mp4">
 </video>

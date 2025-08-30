@@ -33,7 +33,11 @@
 
   - [Mersenne Primes](how-it-works/mersenne-prime.md)
   - [Circle Group](how-it-works/circle-group.md)
-  - [Circle Polynomials](how-it-works/circle-polynomials.md)
+
+  - [Circle Polynomials](how-it-works/circle-polynomials/index.md)
+    - [Columns](how-it-works/circle-polynomials/columns.md)
+    - [Circle Evaluations and Polynomials](how-it-works/circle-polynomials/evals-and-poly.md)
+    - [Secure Evaluations and Polynomials](how-it-works/circle-polynomials/secure-evals-and-poly.md)
   
   - [Circle FFT](how-it-works/circle-fft/index.md)
     - [Algorithm](how-it-works/circle-fft/algorithm.md)

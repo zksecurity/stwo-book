@@ -15,7 +15,7 @@ Suppose \\( x = a \cdot b \\) then we can decompose \\( x \\) into two 31-bit va
 
 <div style="text-align: center;">
     <figure id="fig-mersenne-prod" style="display: inline-block;">
-    <img src="./mersenne-mult.svg" width="400px" />
+    <img src="./figures/mersenne-mult.svg" width="400px" style="border-radius: 8px;" />
         <figcaption><span style="font-size: 0.9em">Figure: Product decomposition</span></figcaption>
     </figure>
 </div>

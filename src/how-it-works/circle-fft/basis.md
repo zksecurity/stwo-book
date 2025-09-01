@@ -5,7 +5,7 @@ $$
 p(x, y) = \sum_{j = 0}^{2^n - 1} c_j \cdot b_j^{(n)}(x, y)
 $$
 
-And the basis with respect to which the coefficients are computed depends on the choice of the polynomial map and the twiddles. In the concrete example of Circle FFT over twin-coset \\( D_3 \\), we saw that the algorithm computed the coefficient with respect to the following basis:
+In the concrete example of Circle FFT over twin-coset \\( D_3 \\), we saw that the algorithm computed the coefficient with respect to the following basis:
 
 $$b^{(3)}_j(x, y) = [1, x, \pi(x), x \cdot \pi(x), y, y \cdot x, y \cdot \pi(x), y \cdot x \cdot \pi(x)]$$
 
@@ -49,6 +49,4 @@ $$
 L_N(\mathbb{F}) = L'_N(\mathbb{F}) + \langle v_n \rangle
 $$
 
-A consequence of this dimension gap is that we cannot interpolate some polynomials over the circle i.e. those with \\( X^{N/2} \\). We will see how to handle this in the next part of this series.
-
-We will address how this dimension gap is handled within the FRI protocol in the upcoming sections.
+A consequence of this dimension gap is that we cannot interpolate some polynomials over the circle i.e. those with \\( X^{N/2} \\). We will address how this dimension gap is handled within the FRI protocol in the upcoming sections.

@@ -1,16 +1,16 @@
 # Algorithm
 
-In this section, we will go through the Circle FFT algorithm specifically to interpolate a bivariate polynomial given the evaluations over a circle domain. And we will also over a concrete example which will also be used to understand the implementation in the next section.
+In this section, we will go through the Circle FFT algorithm specifically to interpolate a bivariate polynomial given the evaluations over a circle domain. We will also go over a concrete example which will help us understand the algorithm.
 
 Circle FFT follows a divide-and-conquer strategy same as the classical Cooley–Tukey FFT. We recursively reduce the task of interpolating a polynomial over some domain to interpolating a lower degree polynomial over a smaller domain. Thus at each recursive layer, we have polynomials and their evaluations over smaller and smaller domains. Let us first go over this sequence of domains for the Circle FFT algorithm.
 
 ## Sequence of Domains for Circle FFT
 
-In Circle FFT, we use a 2-to-1 map to half the domain size at each recursively layer. The domain used here is the circle domain:
+In Circle FFT, we use a 2-to-1 map to half the domain size at each recursively layer. The domain used here is the [circle domain](../circle-group.md#circle-domain) \\( D_n \\) of size \\(|D_n| = 2^n\\).
 
 \\[ D_n = q + \langle g_{n-1} \rangle \cup -q + \langle g_{n-1} \rangle \\] 
 
-where \\( g_{n-1} \\) is a subgroup of the circle group of size \\(2^{n-1}\\) and \\(q \neq -q\\), hence the cosets \\( q + \langle g_{n-1} \rangle\\) and \\( -q + \langle g_{n-1} \rangle\\) are disjoint and \\(|D_n| = 2^n\\). This section describes two specific 2-to-1 maps that are central to the Circle FFT construction:
+This section describes two specific 2-to-1 maps that are central to the Circle FFT construction:
 
 1. **Projection map \\(\pi_x\\)**: The projection map \\(\pi_x\\) projects the points \\((x,y)\\) and \\((x,-y)\\)  to the same \\( x \\)-coordinate i.e.
     \\[
@@ -23,7 +23,7 @@ where \\( g_{n-1} \\) is a subgroup of the circle group of size \\(2^{n-1}\\) an
 \\[
 \pi: S_n \rightarrow S_{n-1}, \quad \pi(x) = 2x^2 - 1
 \\]
-This is obtained using the doubling map and the equality \\(y^2 = 1 - x^2\\) to compute the $x$-coordinate:
+This is obtained using the doubling map and the equality \\(y^2 = 1 - x^2\\) to compute the \\( x \\)-coordinate:
 $$
 \pi(x, y) = (x, y) + (x, y) = (2x^2-1, 2xy)
 $$
@@ -37,11 +37,11 @@ $$
 Now that we know the sequence of domains, let us dive into the Circle FFT algorithm.
 
 ## Circle FFT
-The Circle FFT interpolates a bivariate polynomial \\( p(x,y) \\) from the polynomial space \\( L_N(F) \\), given the evaluations over a circle domain \\( D_n \\) of size \\( N=2^n \\). The algorithm is a three step process described as follows.
+The Circle FFT interpolates a bivariate polynomial \\( p(x,y) \\) from the [polynomial space](../circle-polynomials/evals-and-poly.md#polynomials-over-the-circle) \\( L_N(F) \\), given the evaluations over a circle domain \\( D_n \\) of size \\( N=2^n \\). The algorithm is a three step process described as follows.
 
 
 #### Step 1: Decompose \\( p(x, y) \\) into sub-polynomials
-In the first step, we decompose the bivariate polynomial \\( p(x, y) \\) over \\( D_n \\) using the projection map \\( \pi_x \\) into two univarite polynomials \\( p_0(x) \\) and \\( p_1(x) \\) as follows:
+In the first step, we decompose the bivariate polynomial \\( p(x, y) \\) over \\( D_n \\) using the projection map \\( \pi_x \\) into two univariate polynomials \\( p_0(x) \\) and \\( p_1(x) \\) as follows:
 $$
 p(x, y) = p_0(\pi_x(x, y)) + y \cdot p_1(\pi_x(x, y)) = p_0(x) + y \cdot p_1(x)
 $$
@@ -54,7 +54,11 @@ $$
 
 Substituting all evaluations of \\( p(x, y) \\) over \\( D_n \\) in the above equations, gives the evaluations of \\( p_0(x) \\) and \\( p_1(x) \\) over the domain \\( S_n \\).
 
-> **Example**: To make all the calculations easier we will work on a comcrete example over the Mersenne prime \\( p = 2^5 - 1 = 31 \\). Thus all calculations are over \\(\mathbb{F}_{31}\\), i.e, modulo \\( 31 \\). We are given the evaluations \\( \vec{v} = [13, 16, 9, 30, 29, 27, 13, 21] \\) of \\( p(x, y) \\) over the circle domain 
+```admonish
+To compute the evaluations of \\( p_1(x) \\) over the domain \\( S_n \\), we subtract the evaluations i.e. compute \\( p(x, y) - p(x, -y) \\) and then divide by \\( 2 \cdot y \\). These values \\( y \\) are the \\( y \\)-coordinates of the points in the circle domain \\( D_n \\). They are also referred to as _circle twiddles_ and they only depend on the circle domain \\( D_n \\). Therefore they can be precomputed before the start of the FFT algorithm. We will look into these in detail in the next section.
+```
+
+> **Example**: To make all the calculations easier we will work on a concrete example over the Mersenne prime \\( p = 2^5 - 1 = 31 \\). Thus all calculations are over \\(\mathbb{F}_{31}\\), i.e, modulo \\( 31 \\). We are given the evaluations \\( \vec{v} = [13, 16, 9, 30, 29, 27, 13, 21] \\) of \\( p(x, y) \\) over the circle domain 
 > $$
 > D_3 = [(7, 18), (13, 7), (24, 13), (18, 24), (7, 13), (13, 24), (24, 18), (18, 7)]
 > $$
@@ -91,7 +95,7 @@ This step mirrors the recursive structure of the Cooley–Tukey FFT. Each polyno
 
 We begin by decomposing \\( p_0(x) \\) using the squaring map \\( \pi \\) as follows:
 $$
-p_0(x) = p_{00}(\pi(x)) + X \cdot p_{01}(\pi(x))
+p_0(x) = p_{00}(\pi(x)) + x \cdot p_{01}(\pi(x))
 $$
 
 We compute the evaluations of \\(p_{00}(x)\\) and \\(p_{01}(x)\\) over \\(S_{n-1} = \pi(S_n)\\) using the following equations.
@@ -104,6 +108,10 @@ This recursive process continues until we reach the base case: all evaluations o
 
 Finally, we reconstruct the coefficients of \\( p_0(x) \\) by working backward through the recursive calls, using the decomposition equation at each level. The same process applies to compute the coefficients of \\( p_1(x) \\).
 
+``` admonish
+Similar to _circle twiddles_, to compute the evaluations of \\(p_{01}(x)\\) over \\(S_{n-1}\\) we divide by the values \\( x \\) which are the values from the domain \\( S_n \\). These values \\( x \\) are referred to as _line twiddles_. For the next recursive layer, we divide by values from \\(S_{n-1}\\) i.e. \\( \pi(x) \\) and for the next recursive layer we divide by \\( \pi^2(x) \\) and so on. Thus the line twiddles is a vector of values \\( x, \pi(x), \pi^2(x), \ldots \\) and so on. These only depend on the initial domain \\( D_n \\) and thus can be precomputed before the start of the algorithm.
+```
+
 > **Step 2**: Given the evaluations of \\( p_0 \\) and \\( p_1 \\) over \\( S_3 = [7, 13, 24, 18] \\):
 > $$
 > \vec{v_0} = [21, 6, 11, 10], \quad \vec{v_1} = [3, 28, 7, 6]
@@ -113,7 +121,7 @@ Finally, we reconstruct the coefficients of \\( p_0(x) \\) by working backward t
 > At each layer, we decompose the polynomial using the polynomial map \\( \pi(x) \\). For example, the decomposition of \\( p_0(x) \\) is:
 >
 > $$
-> p_0(x) = p_{00}(\pi(x)) + X \cdot p_{01}(\pi(x))
+> p_0(x) = p_{00}(\pi(x)) + x \cdot p_{01}(\pi(x))
 > $$
 >
 > Omitting the intermediate steps of the recursive calls, we eventually obtain the coefficients of \\( p_0(x) \\) and \\( p_1(x) \\) as follows:
@@ -130,15 +138,15 @@ Finally, we reconstruct the coefficients of \\( p_0(x) \\) by working backward t
 
 Finally, we combine the coefficients of \\( p_0(x) \\) and \\( p_1(x) \\) to compute the coefficients of the original bivariate polynomial \\( p(x, y) \\), using the decomposition:
 $$
-p(x, y) = p_0(x) + Y \cdot p_1(x)
+p(x, y) = p_0(x) + y \cdot p_1(x)
 $$
 
 > **Step 3**: Given the coefficients of \\( p_0(x) \\) and \\( p_1(x) \\):
 > $$
-> p_0(x) = 12 + 26 \cdot X + \pi(x) + 28 \cdot X \cdot \pi(x)
+> p_0(x) = 12 + 26 \cdot x + \pi(x) + 28 \cdot x \cdot \pi(x)
 > $$
 > $$
-> p_1(x) = 11 + 26 \cdot X + 14 \cdot \pi(x) + 20 \cdot X \cdot \pi(x)
+> p_1(x) = 11 + 26 \cdot x + 14 \cdot \pi(x) + 20 \cdot x \cdot \pi(x)
 > $$
 > we reconstruct the original polynomial \\( p(x, y) \\) using the decomposition:
 > $$
@@ -147,13 +155,10 @@ $$
 >
 > Substituting the expressions for \\( p_0 \\) and \\( p_1 \\), we get:
 > $$
-> p(x) = 12 + 26 \cdot x + \pi(x) + 28 \cdot x \cdot \pi(x) + y \cdot (11 + 26 \cdot x + 14 \cdot \pi(x) + 20 \cdot x \cdot \pi(x))
+> p(x, y) = 12 + 26 \cdot x + \pi(x) + 28 \cdot x \cdot \pi(x) + y \cdot (11 + 26 \cdot x + 14 \cdot \pi(x) + 20 \cdot x \cdot \pi(x))
 > $$
 >
-> $$f(x) = 12 + 26 \cdot x + \pi(x) + 28 \cdot x \cdot \pi(x) + \quad \quad \quad \quad \quad \quad$$
+> $$p(x, y) = 12 + 26 \cdot x + \pi(x) + 28 \cdot x \cdot \pi(x) + \quad \quad \quad \quad \quad \quad$$
 > $$\quad \quad \quad \quad \quad \quad 11 \cdot y + 26 \cdot x \cdot y + 14 \cdot y \cdot \pi(x) + 20 \cdot x \cdot y \cdot \pi(x)$$
 
-
-## Interpolate v/s Evaluate
-
-## Twiddles
+This completes an overview of the interpolation algorithm using Circle FFT. In the next section, we will see how the twiddle values are computed and stored for Circle FFT.

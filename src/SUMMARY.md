@@ -41,7 +41,8 @@
   
   - [Circle FFT](how-it-works/circle-fft/index.md)
     - [Algorithm](how-it-works/circle-fft/algorithm.md)
-    - [Implementation](how-it-works/circle-fft/implementation.md)
+    - [Twiddles](how-it-works/circle-fft/twiddles.md)
+    - [Interpolate](how-it-works/circle-fft/interpolation.md)
     - [Basis and Dimension Gap](how-it-works/circle-fft/basis.md)
   
   - [Lookups](how-it-works/lookups.md)

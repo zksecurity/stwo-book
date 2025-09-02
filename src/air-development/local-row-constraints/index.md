@@ -13,7 +13,7 @@ We will build upon the example in the previous section, where we created a two c
 
 Here, we will create two columns and prove that not only are they permutations of each other, but also that the second row is a sorted version of the first row.
 
-More specifically, the sorted column will contain in order the values \\([0,num\\\_rows)\\), which means that the difference between every current row and the previous row should be \\(1\\).
+More specifically, the sorted column will contain in order the values $[0,num\\\_rows)$, which means that the difference between every current row and the previous row should be $1$.
 
 We will go through three iterations, fixing an issue in each iteration.
 

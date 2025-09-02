@@ -9,7 +9,7 @@ Install `mdbook` following the instructions [here](https://rust-lang.github.io/m
 Then, install `mdbook` plugins with the following command:
 
 ```bash
-cargo install mdbook-admonish mdbook-webinclude
+cargo install mdbook-admonish mdbook-webinclude mdbook-katex
 ```
 
 Run the following command at the root of this repository to setup `mdbook-admonish`:

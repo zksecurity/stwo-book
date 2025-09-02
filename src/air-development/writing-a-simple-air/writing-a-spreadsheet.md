@@ -29,6 +29,6 @@ Given all that, let's create this table using Stwo.
 
 As mentioned above, we instantiate the `num_rows` of our table as `N_LANES=16` to accommodate SIMD operations. Then we create a `BaseColumn` of `N_LANES=16` rows for each column and populate the first two rows with our values and the rest with dummy values.
 
-Note that the values in the `BaseColumn` need to be of type `M31`, which refers to the Mersenne-31 prime field that Stwo uses. This means that the integers in the table must be in the range \\([0, 2^{31}-1)\\).
+Note that the values in the `BaseColumn` need to be of type `M31`, which refers to the Mersenne-31 prime field that Stwo uses. This means that the integers in the table must be in the range $[0, 2^{31}-1)$.
 
 Now that we have our table, let's move on!

@@ -1,0 +1,8 @@
+html body .katex {
+  font-family: "KaTeX_Main", "Times New Roman", serif !important;
+}
+
+html body .katex .mathit {
+  font-family: "KaTeX_Math", "Times New Roman", serif !important;
+  font-style: italic !important;
+}

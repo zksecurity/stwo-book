@@ -10,7 +10,7 @@ Specifically, we will implement a **range-check**. A range-check is a technique 
 
 A range-check checks that all values in a column are within a certain range. For example, as in [Figure 1](#fig-range-check), we can check that all values in the lookup columns are between 0 and 3. We do this by creating a multiplicity column that counts the number of times each value in the preprocessed trace appears in the lookup columns.
 
-Then, we create two LogUp columns. The first column contains in each row a fraction where the nominator is the multiplicity and the denominator is the random linear combination of the value in the range-check column. For example, for row 1, the fraction should be \\(\dfrac{2}{X-0}\\). Note that in [Figure 1](#fig-range-check), the nominator is actually \\(-2\\), i.e. we apply a negation to the multiplicity, because we want the sum of the first column to be equal to the sum of the second column.
+Then, we create two LogUp columns. The first column contains in each row a fraction where the nominator is the multiplicity and the denominator is the random linear combination of the value in the range-check column. For example, for row 1, the fraction should be $\dfrac{2}{X-0}$. Note that in [Figure 1](#fig-range-check), the nominator is actually $-2$, i.e. we apply a negation to the multiplicity, because we want the sum of the first column to be equal to the sum of the second column.
 
 The second column contains fractions where the nominator is always 1 and the denominator is the random linear combination of the value in the lookup column. Note that a single row batches two lookup tables by adding two fractions together.
 
@@ -33,7 +33,7 @@ First, we need to create the range-check column as a preprocessed column. This s
 {{#include ../../../stwo-examples/examples/static_lookups.rs:gen_trace}}
 ```
 
-Next, we create the trace columns. The first two columns are random values in the range \\([0, 15]\\), and the third column contains the counts of the values in the range-check column.
+Next, we create the trace columns. The first two columns are random values in the range $[0, 15]$, and the third column contains the counts of the values in the range-check column.
 
 ```rust,ignore
 {{#include ../../../stwo-examples/examples/static_lookups.rs:gen_logup_trace}}
@@ -47,13 +47,13 @@ Next, we create the trace columns. The first two columns are random values in th
 
 Now we need to create the LogUp columns.
 
-First, note that we are creating a `LookupElements` instance using the macro `relation!`. This macro creates an API for performing random linear combinations. Under the hood, it creates two random values \\(z, \alpha\\) that can create a random linear combination of an arbitrary number of elements. In our case, we only need to combine one value (value in \\([0,15]\\)), which is why we pass in `1` to the macro.
+First, note that we are creating a `LookupElements` instance using the macro `relation!`. This macro creates an API for performing random linear combinations. Under the hood, it creates two random values $z, \alpha$ that can create a random linear combination of an arbitrary number of elements. In our case, we only need to combine one value (value in $[0,15]$), which is why we pass in `1` to the macro.
 
 Inside `gen_logup_trace`, we create a `LogupTraceGenerator` instance. This is a helper class that allows us to create LogUp columns. Every time we create a new column, we need to call `new_col()` on the `LogupTraceGenerator` instance.
 
 You may notice that we are iterating over `BaseColumn` in chunks of 16, or `1 << LOG_N_LANES` values. This is because we are using the `SimdBackend`, which runs 16 lanes simultaneously, so we need to preserve this structure. The `Packed` in `PackedSecureField` means that it packs 16 values into a single value.
 
-You may also notice that we are using a `SecureField` instead of just the `Field`. This is because the random value we created in `LookupElements` will be in the degree-4 extension field \\(\mathbb{F}\_{p^4}\\). Interested readers can refer to the [Mersenne Primes](../../how-it-works/mersenne-prime.md) section for more details.
+You may also notice that we are using a `SecureField` instead of just the `Field`. This is because the random value we created in `LookupElements` will be in the degree-4 extension field $\mathbb{F}\_{p^4}$. Interested readers can refer to the [Mersenne Primes](../../how-it-works/mersenne-prime.md) section for more details.
 
 Once we set the fractions for each `simd_row`, we need to call `finalize_col()` to finalize the column. This process modifies the LogUp columns from individual fractions to cumulative sums of the fractions as shown in [Figure 2](#fig-finalize-col).
 

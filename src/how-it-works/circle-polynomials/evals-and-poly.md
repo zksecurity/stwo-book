@@ -68,20 +68,20 @@ Given the evaluations over a domain (i.e. `CircleEvaluation`) we can compute the
 The `interpolate` function computes the coefficients with respect to the following basis:
 
 $$
-b^{(n)}_j(x, y) := y^{j_0} \cdot x^{j_1} \cdot \pi(x)^{j_2} \cdot \pi^2(x)^{j_3} \cdots \pi^{n-2}(x)^{j\_{n-1}}
+b^{(n)}_j(x, y) := y^{j_0} \cdot x^{j_1} \cdot \pi(x)^{j_2} \cdot \pi^2(x)^{j_3} \cdots \pi^{n-2}(x)^{j_{n-1}}
 $$
 
 where
 
 - $ \pi $ is the squaring map on the $ x $-coordinate i.e. $ \pi(x) = 2x^2 - 1 $ and $ \pi^i $ is applying the squaring map $ i $ times, for example $ \pi^2(x) = \pi(\pi(x)) $
 - $ n $ is log of the size of the `CircleDomain`
-- $0 \leq j \leq 2^n - 1$ and $(j_0, \ldots, j_{n-1}) \in \{0, 1\}^n$ is the binary representation of $ j $, i.e., $$j = j*0 + j_1 \cdot 2 + \cdots + j*{n-1} \cdot 2^{n-1}$$
+- $0 \leq j \leq 2^n - 1$ and $(j_0, \ldots, j_{n-1}) \in \{0, 1\}^n$ is the binary representation of $j$, i.e., $$j = j_0 + j_1 \cdot 2 + \cdots + j_{n-1} \cdot 2^{n-1}$$
 
 Thus the `interpolate` function computes coefficients $ c_j $ for polynomials $ p(x, y) $ of the form:
 <span id="eq-circle-poly"></span>
 
 $$
-p(x, y) = \sum_{j=0}^{2^n -1} c_j \cdot y^{j_0} \cdot x^{j_1} \cdot \pi(x)^{j_2} \cdot \pi^2(x)^{j_3} \cdots \pi^{n-2}(x)^{j\_{n-1}}
+p(x, y) = \sum_{j=0}^{2^n-1} c_j \cdot y^{j_0} \cdot x^{j_1} \cdot \pi(x)^{j_2} \cdot \pi^2(x)^{j_3} \cdots \pi^{n-2}(x)^{j_{n-1}}
 $$
 
 This polynomial form and its underlying basis are implicit in the Circle FFT construction, as we will see in the next section. However, as discussed earlier, you can largely ignore these details and simply view a polynomial as a set of evaluations over a domain, with its coefficients computed via the FFT algorithm.

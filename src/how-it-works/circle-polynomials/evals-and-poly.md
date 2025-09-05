@@ -29,29 +29,23 @@ Here, `PolyOps` is a trait that defines operations on `BaseField` polynomials, s
 
 ## Polynomials over the circle
 
-Let $ F $ be an extension of the Mersenne prime field $ \mathsf{M31} $. Then $ F[x, y] $ represents the ring of bivariate polynomials with coefficients in $ F $. The _circle polynomials_ are bivariate polynomials over $ F $ quotient by the ideal $ \left(x^2 + y^2 - 1\right) $. The space of these bivariate polynomials over the circle curve of total degree $ \leq N/2 $ is denoted by $ L_N(F) $.
+Let $F$ be an extension of the Mersenne prime field $\mathsf{M31}$. Then $F[x, y]$ represents the ring of bivariate polynomials with coefficients in $F$. The _circle polynomials_ are bivariate polynomials over $F$ quotient by the ideal $\left(x^2 + y^2 - 1\right)$. The space of these bivariate polynomials over the circle curve of total degree $\leq N/2$ is denoted by $L_N(F)$.
 
-$$ L_N(F) = F\left[x, y\right] / \left(x^2 + y^2 - 1\right) $$
+$$L_N(F) = F\left[x, y\right] / \left(x^2 + y^2 - 1\right)$$
 
-For any polynomial $p(x, y) \in L_N(F)$, we can substitute all the higher degree terms of $ y $ with the equation of circle $y^2 = 1 - x^2$ and reduce $p(x, y)$ to the form:
+For any polynomial $p(x, y) \in L_N(F)$, we can substitute all the higher degree terms of $y$ with the equation of circle $y^2 = 1 - x^2$ and reduce $p(x, y)$ to the form:
 
-$$
-p(x, y) = p_0(x) + y \cdot p_1(x),
-$$
+$$p(x, y) = p_0(x) + y \cdot p_1(x),$$
 
-The above form is called the _canonical representation_ of any polynomial $p(x, y) \in L_N(F)$. Since $p(x, y)$ is of total degree $\leq N/2$, $p_0$ has degree $\leq N/2$ and $p_1$ has degree $\leq N/2 - 1$. Thus an alternate representation of the space $ L_N(F) $ is as follows:
+The above form is called the _canonical representation_ of any polynomial $p(x, y) \in L_N(F)$. Since $p(x, y)$ is of total degree $\leq N/2$, $p_0$ has degree $\leq N/2$ and $p_1$ has degree $\leq N/2 - 1$. Thus an alternate representation of the space $L_N(F)$ is as follows:
 
-$$
-L_N(F) = F[x]^{ \leq N/2} + y \cdot F[x]^{ \leq N/2 - 1}
-$$
+$$L_N(F) = F[x]^{ \leq N/2} + y \cdot F[x]^{ \leq N/2 - 1}$$
 
-From the above representation we can see that the space $ L_N(F) $ is spanned by the following monomial basis:
+From the above representation we can see that the space $L_N(F)$ is spanned by the following monomial basis:
 
-$$
-1, x, \ldots, x^{N/2}, y, y \cdot x, \ldots, y \cdot x^{N/2 - 1}
-$$
+$$1, x, \ldots, x^{N/2}, y, y \cdot x, \ldots, y \cdot x^{N/2 - 1}$$
 
-The dimension of $ L_N(F) $ is the number of monomial basis elements, which is $N + 1$.
+The dimension of $L_N(F)$ is the number of monomial basis elements, which is $N + 1$.
 
 As a developer, you can usually ignore most of these details, since concepts like polynomial space and basis do not explicitly appear in the Stwo implementation. However, they do arise implicitly in the Circle FFT algorithm, as we will see in the next section.
 
@@ -67,22 +61,18 @@ Given the evaluations over a domain (i.e. `CircleEvaluation`) we can compute the
 
 The `interpolate` function computes the coefficients with respect to the following basis:
 
-$$
-b^{(n)}_j(x, y) := y^{j_0} \cdot x^{j_1} \cdot \pi(x)^{j_2} \cdot \pi^2(x)^{j_3} \cdots \pi^{n-2}(x)^{j_{n-1}}
-$$
+$$b^{(n)}_j(x, y) := y^{j_0} \cdot x^{j_1} \cdot \pi(x)^{j_2} \cdot \pi^2(x)^{j_3} \cdots \pi^{n-2}(x)^{j_{n-1}}$$
 
 where
 
-- $ \pi $ is the squaring map on the $ x $-coordinate i.e. $ \pi(x) = 2x^2 - 1 $ and $ \pi^i $ is applying the squaring map $ i $ times, for example $ \pi^2(x) = \pi(\pi(x)) $
-- $ n $ is log of the size of the `CircleDomain`
+- $\pi$ is the squaring map on the $x$-coordinate i.e. $\pi(x) = 2x^2 - 1$ and $\pi^i$ is applying the squaring map $i$ times, for example $\pi^2(x) = \pi(\pi(x))$
+- $n$ is log of the size of the `CircleDomain`
 - $0 \leq j \leq 2^n - 1$ and $(j_0, \ldots, j_{n-1}) \in \{0, 1\}^n$ is the binary representation of $j$, i.e., $$j = j_0 + j_1 \cdot 2 + \cdots + j_{n-1} \cdot 2^{n-1}$$
 
-Thus the `interpolate` function computes coefficients $ c_j $ for polynomials $ p(x, y) $ of the form:
+Thus the `interpolate` function computes coefficients $c_j$ for polynomials $p(x, y)$ of the form:
 <span id="eq-circle-poly"></span>
 
-$$
-p(x, y) = \sum_{j=0}^{2^n-1} c_j \cdot y^{j_0} \cdot x^{j_1} \cdot \pi(x)^{j_2} \cdot \pi^2(x)^{j_3} \cdots \pi^{n-2}(x)^{j_{n-1}}
-$$
+$$p(x, y) = \sum_{j=0}^{2^n-1} c_j \cdot y^{j_0} \cdot x^{j_1} \cdot \pi(x)^{j_2} \cdot \pi^2(x)^{j_3} \cdots \pi^{n-2}(x)^{j_{n-1}}$$
 
 This polynomial form and its underlying basis are implicit in the Circle FFT construction, as we will see in the next section. However, as discussed earlier, you can largely ignore these details and simply view a polynomial as a set of evaluations over a domain, with its coefficients computed via the FFT algorithm.
 

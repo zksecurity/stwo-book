@@ -1,6 +1,6 @@
 # Columns
 
-In Stwo, the computation trace is represented using multiple columns, each containing elements from the Mersenne prime field $ \mathsf{M31} $. The columns are defined via the `Column<T>` trait, where `T` is typically `BaseField` (an alias for `M31`).
+In Stwo, the computation trace is represented using multiple columns, each containing elements from the Mersenne prime field $\mathsf{M31}$. The columns are defined via the `Column<T>` trait, where `T` is typically `BaseField` (an alias for `M31`).
 
 ```rust,no_run,noplayground
 {{#webinclude https://raw.githubusercontent.com/starkware-libs/stwo/0790eba46b8af5697083d84fb75bd34b08a0b31f/crates/stwo/src/prover/backend/mod.rs 45:64}}

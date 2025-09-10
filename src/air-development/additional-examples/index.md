@@ -45,4 +45,13 @@ In Stwo, we can achieve this by adding the public input portion of the trace as 
 
 ## XOR
 
-🚧
+We can also handle XOR operations as part of the AIR. First, as we did in the [Components](../components/index.md) section, we create a computing component and a scheduling component. Then, we connect the two components using lookups: the computing component sets the LogUp value as a negative multiplicity and the scheduling component sets the same value as a positive multiplicity.
+
+For example, [Figure 4](#fig-xor) shows the XOR operation for 4-bit integers. To accommodate the entire combination of inputs, the size of the trace for the computing component is \\(2^8=256\\) rows. Note that the size of the trace for the scheduling component does not have to be the same as the computing component.
+
+<figure id="fig-xor" style="text-align: center;">
+    <img src="./xor.png" width="100%" />
+    <figcaption><center><span style="font-size: 0.9em">Figure 4: XOR operations for 4-bit integers</span></center></figcaption>
+</figure>
+
+Note that the M31 field does not fully support XOR operations for 31-bit integers since we cannot use \\(2^{31} -1\\). If we want to use XOR operations for 31-bit integers, we need to decompose the integers into smaller limbs and perform the XOR operation separately on each of the limbs.

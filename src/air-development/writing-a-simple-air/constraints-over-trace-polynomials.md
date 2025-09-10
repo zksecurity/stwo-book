@@ -38,7 +38,7 @@ We will now give a name to the polynomial that expresses the constraint: a **com
 
 Basically, in order to prove that the constraints are satisfied, we need to show that the composition polynomial evaluates to 0 over the original domain (i.e. the domain of size the number of rows in the table).
 
-But first, as can be seen in [Figure 1](#fig-constraints-over-trace-polynomials-1), we need to expand the evaluations of the trace polynomials by a factor of 2. This is because when you multiply two trace polynomials to compute the constraint polynomial, the degree of the constraint polynomial will be the sum of the degrees of the trace polynomials. To adjust for this increase in degree, we double the number of evaluations.
+But first, as can be seen in [Figure 1](#fig-constraints-over-trace-polynomials-1), we need to expand the evaluations of the trace polynomials by a factor of 2. This is because when you multiply two trace polynomials of degree `n-1` (where `n` is the number of rows) to compute the constraint polynomial, the degree of the constraint polynomial will be the sum of the degrees of the trace polynomials, which is `2n-2`. To adjust for this increase in degree, we double the number of evaluations.
 
 Once we have the expanded evaluations, we can evaluate the composition polynomial. Checking that the composition polynomial evaluates to 0 over the original domain is done in FRI, so once again we need to expand the composition polynomial evaluations by a factor of 2 and commit to them.
 
@@ -70,7 +70,7 @@ Inside `FrameworkEval::evaluate`, we call `eval.next_trace_mask()` consecutively
     <figcaption><center><span style="font-size: 0.9em">Figure 3: Evaluate function</span></center></figcaption>
 </figure>
 
-We also need to implement `FrameworkEval::max_constraint_log_degree_bound(&self)` for `FrameworkEval`. As mentioned in the [Composition Polynomial section](#composition-polynomial), we need to expand the trace polynomial evaluations because the degree of our composition polynomial is higher than the trace polynomial. Expanding it by the lowest value `CONSTRAINT_EVAL_BLOWUP_FACTOR=1` is sufficient for our example as we only have one multiplication gate, so we return `self.log_size + CONSTRAINT_EVAL_BLOWUP_FACTOR`. For those who are interested in how to set this value in general, we leave a detailed note below.
+We also need to implement `FrameworkEval::max_constraint_log_degree_bound(&self)` for `FrameworkEval`. As mentioned in the [Composition Polynomial section](#composition-polynomial), we need to expand the trace polynomial evaluations because the degree of our composition polynomial is higher than the trace polynomial. Expanding it by the lowest value `LOG_CONSTRAINT_EVAL_BLOWUP_FACTOR=1` is sufficient for our example as we only have one multiplication gate, so we return `self.log_size + LOG_CONSTRAINT_EVAL_BLOWUP_FACTOR`. For those who are interested in how to set this value in general, we leave a detailed note below.
 
 ```admonish id="max_constraint_log_degree_bound"
 **What value to set for `max_constraint_log_degree_bound(&self)`?**
@@ -91,14 +91,14 @@ Now that we know the degree of the composition polynomial, we can also explain t
     // Precompute twiddles for evaluating and interpolating the trace
     let twiddles = SimdBackend::precompute_twiddles(
         CanonicCoset::new(
-            log_num_rows + CONSTRAINT_EVAL_BLOWUP_FACTOR + config.fri_config.log_blowup_factor,
+            log_num_rows + LOG_CONSTRAINT_EVAL_BLOWUP_FACTOR + config.fri_config.log_blowup_factor,
         )
         .circle_domain()
         .half_coset,
     );
 ```
 
-Why is the `log_size` of the domain set to `log_num_rows + CONSTRAINT_EVAL_BLOWUP_FACTOR + config.fri_config.log_blowup_factor` here? As we can see in [Figure 1](#fig-constraints-over-trace-polynomials-1), once we have the composition polynomial, we need to expand it again for before committing to it for the FRI step. Thus, the maximum size of the domain that we need in the entire proving process is the FRI blow-up factor times the degree of the composition polynomial.
+Why is the `log_size` of the domain set to `log_num_rows + LOG_CONSTRAINT_EVAL_BLOWUP_FACTOR + config.fri_config.log_blowup_factor` here? As we can see in [Figure 1](#fig-constraints-over-trace-polynomials-1), once we have the composition polynomial, we need to expand it again for before committing to it for the FRI step. Thus, the maximum size of the domain that we need in the entire proving process is the FRI blow-up factor times the degree of the composition polynomial.
 
 ````
 

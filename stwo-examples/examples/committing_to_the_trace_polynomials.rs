@@ -19,7 +19,7 @@ use stwo_prover::core::{
 };
 
 // ANCHOR: here_1
-const CONSTRAINT_EVAL_BLOWUP_FACTOR: u32 = 1;
+const LOG_CONSTRAINT_EVAL_BLOWUP_FACTOR: u32 = 1;
 
 fn main() {
     // --snip--
@@ -51,7 +51,7 @@ fn main() {
     // Precompute twiddles for evaluating and interpolating the trace
     let twiddles = SimdBackend::precompute_twiddles(
         CanonicCoset::new(
-            log_num_rows + CONSTRAINT_EVAL_BLOWUP_FACTOR + config.fri_config.log_blowup_factor,
+            log_num_rows + LOG_CONSTRAINT_EVAL_BLOWUP_FACTOR + config.fri_config.log_blowup_factor,
         )
         .circle_domain()
         .half_coset,

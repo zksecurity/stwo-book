@@ -1,21 +1,12 @@
 # Local Row Constraints
 
-```admonish info
-1. Change the order of elements in `BaseColumn` in-place via `bit_reverse_coset_to_circle_domain_order` before creating a `CircleEvaluation` instance.
-2. The previous row in the first row will point to the last row, so you may need to disable the constraint for the first row.
-```
-
 Until now, we have only considered constraints that apply over values in a single row. But what if we want to express constraints over multiple rows? For example, we may want to ensure that the difference between the values in two adjacent rows is always the same.
 
-Turns out we can implement this as an AIR constraint, as long as the same constraints are applied to all rows. In this section, we will see how to implement this.
+Turns out we can implement this as an AIR constraint, as long as the same constraints are applied to all rows. We will build upon the example in the previous section, where we created two columns and proved that they are permutations of each other by asserting that the second column looks up all values in the first column exactly once.
 
-We will build upon the example in the previous section, where we created a two columns and proved that they are permutations of each other by asserting that the second column looks up all values in the first column exactly once.
+Here, we will create two columns and prove that not only are they permutations of each other, but also that the second row is a sorted version of the first row. Since the sorted column will contain in order the values \\([0,num\\\_rows)\\), this is equivalent to asserting that **the difference between every current row and the previous row is \\(1\\)**.
 
-Here, we will create two columns and prove that not only are they permutations of each other, but also that the second row is a sorted version of the first row.
-
-More specifically, the sorted column will contain in order the values \\([0,num\\\_rows)\\), which means that the difference between every current row and the previous row should be \\(1\\).
-
-We will go through three iterations, fixing an issue in each iteration.
+We will implement this in three iterations, fixing a different issue in each iteration.
 
 ## First Try
 
@@ -23,9 +14,9 @@ We will go through three iterations, fixing an issue in each iteration.
 {{#include ../../../stwo-examples/examples/local_row_constraints_fails_1.rs:evaluate}}
 ```
 
-Basically, the same logic for creating the trace and LogUp columns are equal to the previous section, so we omit them for brevity.
+The logic for creating the trace and LogUp columns is basically the same as in the previous section (except that one of the columns is now sorted), so we omit them for brevity.
 
-What does change is the `evaluate` function, where we call `next_interaction_mask` on the `EvalAtRow` instance. This function can retrieve values from arbitrary row offsets, which means we can access the previous row value using `-1`. Since we call this function with offsets `[-1, 0]`, we will retrieve the values for the previous and current rows.
+Another change is in the `evaluate` function, where we call `eval.next_interaction_mask(ORIGINAL_TRACE_IDX, [-1, 0])` instead of `eval.next_trace_mask()`. The function `next_trace_mask()` is a wrapper for `next_interaction_mask(ORIGINAL_TRACE_IDX, [0])`, where the first parameter specifies which part of the trace to retrieve values from (see [this figure](../static-lookups/index.md#fig-range-check) for an example of the different parts of a trace). Since we want to retrieve values from the original trace, we set the value of the first parameter to `ORIGINAL_TRACE_IDX`. Next, the second parameter indicates the row offset of the value we want to retrieve. Since we want to retrieve both the previous and current row values for the sorted column, we set the value of the second parameter to `[-1, 0]`.
 
 Once we have these values, we can now assert that the difference between the current and previous row is always `1` with the constraint: `E::F::one() - (sorted_col_curr_row.clone() - sorted_col_prev_row.clone())`.
 
@@ -64,3 +55,9 @@ Thus, every time we create a `CircleEvaluation` instance, we need to convert the
 ```
 
 And voilà, we have successfully implemented the constraint. You can run it [here](https://github.com/zksecurity/stwo-book/blob/main/stwo-examples/examples/local_row_constraints.rs).
+
+```admonish summary
+Things to consider when implementing constraints over multiple rows:
+1. Change the order of elements in `BaseColumn` in-place via `bit_reverse_coset_to_circle_domain_order` before creating a `CircleEvaluation` instance. This is required because Stwo assumes that the values are in the bit-reversed, circle domain order.
+2. For the first row, the 'previous' row is the last row of the trace, so you may need to disable the constraint for the first row. This is typically done by using a preprocessed column.
+```

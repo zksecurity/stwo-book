@@ -30,7 +30,8 @@ As a result, the `Memory` component is actually 2 components: `MemoryAddressToId
 The constraints for the `MemoryAddressToId` and `MemoryIdToValue` components are as follows:
 
 1. An `address` must appear once and only once in the `MemoryAddressToId` component.
-2. Each `(address, id, value)` tuple must be unique.
+2. An `id` must appear once and only once in the `MemoryIdToValue` component.
+3. Each `(address, id, value)` tuple must be unique.
 
 The first constraint is implemented by using a preprocessed column that contains the sequence of numbers `[0, MAX_ADDRESS)` and using this as the address values (in the actual code, the memory address starts at 1, so we need to add 1 to the sequence column).
 
@@ -48,7 +49,12 @@ In reality, the size of each table will be `[0, NUM_SMALL_VALUES_ACCESSED)` and 
 
 ## 2. VerifyInstruction Component
 
-The `VerifyInstruction` component is responsible for accessing the instruction from the `Memory` component and decomposing the retrieved value. As mentioned in the [Felt252 to M31](../basic-building-blocks/index.md#felt252-to-m31) section, a 252-bit integer is stored as 28 9-bit limbs, so we need to decompose the limbs and concatenate them to get the values we need. For example, in order to get the 3 16-bit offset values, we need to decompose the first 6 limbs into `[9, [7, 2], [9], [5, 4], [9], [3, 6]]` and concatenate them as the following: `[[9, 7], [2, 9, 5], [4, 9, 3]]`. Then, the remaining 6-bit value and the next limb will correspond to the 15-bit flags, and the next (8th) limb will be the opcode extension value. The other 20 limbs should all be zeros. At the end, we will have decomposed the instruction value into 3 16-bit offsets, 2 chunks of flags, and a 9-bit opcode extension.
+The `VerifyInstruction` component is responsible for accessing the instruction from the `Memory` component and decomposing the retrieved value. As mentioned in the [Felt252 to M31](../basic-building-blocks/index.md#felt252-to-m31) section, a 252-bit integer is stored as 28 9-bit limbs, so we need to decompose the limbs and concatenate them to get the values we need. For example, as in [Figure 2](#fig-limb-decomposition) in order to get the 3 16-bit offset values, we need to decompose the first 6 limbs into `[9, [7, 2], [9], [5, 4], [9], [3, 6]]` and concatenate them as the following: `[[9, 7], [2, 9, 5], [4, 9, 3]]`. Then, the remaining 6-bit value and the next limb will correspond to the 15-bit flags, and the next (8th) limb will be the opcode extension value. The other 20 limbs should all be zeros. At the end, we will have decomposed the instruction value into 3 16-bit offsets, 2 chunks of flags, and a 9-bit opcode extension.
+
+<figure id="fig-limb-decomposition" style="text-align: center;">
+    <img src="./limb-decomposition.png" width="100%" />
+    <figcaption><center><span style="font-size: 0.9em">Figure 2: Limb decomposition</span></center></figcaption>
+</figure>
 
 Note that the decomposition will be constrained by range checking that each integer is within its corresponding range.
 
@@ -80,7 +86,7 @@ Each component has a **claimed sum** value that corresponds to the sum of all th
 
 <figure id="fig-cairo-air-main-components" style="text-align: center;">
     <img src="./main-components.png" width="100%" />
-    <figcaption><center><span style="font-size: 0.9em">Figure 2: Lookups between the main components</span></center></figcaption>
+    <figcaption><center><span style="font-size: 0.9em">Figure 3: Lookups between the main components</span></center></figcaption>
 </figure>
 
 ### Memory Lookups

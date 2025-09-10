@@ -1,6 +1,6 @@
 # Preprocessed Trace
 
-> This section and the following sections are intended for developers who have completed the [Writing a Simple AIR](air-development/writing-a-simple-air/index.md) section or are already familiar with the workflow of creating an AIR. If you have not gone through the [Writing a Simple AIR](air-development/writing-a-simple-air/index.md) section, we recommend you to do so first as the following sections gloss over a lot of boilerplate code.
+> This section and the following sections are intended for developers who have completed the [Writing a Simple AIR](air-development/writing-a-simple-air/index.md) section or are already familiar with the workflow of creating an AIR. If you have not gone through the previous section, we recommend you to do so first as the following sections gloss over a lot of boilerplate code.
 
 For those of you who have completed the [Writing a Simple AIR](air-development/writing-a-simple-air/index.md) tutorial, you should now be familiar with the concept of a trace as a table of integers that are filled in by the prover (we will now refer to this as the **original trace**).
 

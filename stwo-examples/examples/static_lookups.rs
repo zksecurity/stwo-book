@@ -52,7 +52,7 @@ impl RangeCheckColumn {
 struct TestEval {
     range_check_id: PreProcessedColumnId,
     log_size: u32,
-    lookup_elements: LookupElements,
+    lookup_elements: SmallerThan16Elements,
 }
 
 impl FrameworkEval for TestEval {
@@ -61,7 +61,7 @@ impl FrameworkEval for TestEval {
     }
 
     fn max_constraint_log_degree_bound(&self) -> u32 {
-        self.log_size + CONSTRAINT_EVAL_BLOWUP_FACTOR
+        self.log_size + LOG_CONSTRAINT_EVAL_BLOWUP_FACTOR
     }
 
     fn evaluate<E: EvalAtRow>(&self, mut eval: E) -> E {
@@ -96,22 +96,22 @@ impl FrameworkEval for TestEval {
 }
 // ANCHOR_END: test_eval
 
-const CONSTRAINT_EVAL_BLOWUP_FACTOR: u32 = 1;
+const LOG_CONSTRAINT_EVAL_BLOWUP_FACTOR: u32 = 1;
 
 // ANCHOR: gen_trace
 fn gen_trace(log_size: u32) -> Vec<CircleEvaluation<SimdBackend, M31, BitReversedOrder>> {
     // Create a table with random values
     let mut rng = rand::thread_rng();
-    let mut lookup_col_1 =
+    let lookup_col_1 =
         BaseColumn::from_iter((0..(1 << log_size)).map(|_| M31::from(rng.gen_range(0..16))));
-    let mut lookup_col_2 =
+    let lookup_col_2 =
         BaseColumn::from_iter((0..(1 << log_size)).map(|_| M31::from(rng.gen_range(0..16))));
 
     let mut multiplicity_col = BaseColumn::zeros(1 << log_size);
     lookup_col_1
-        .as_mut_slice()
+        .as_slice()
         .iter()
-        .chain(lookup_col_2.as_mut_slice().iter())
+        .chain(lookup_col_2.as_slice().iter())
         .for_each(|value| {
             let index = value.0 as usize;
             multiplicity_col.set(index, multiplicity_col.at(index) + M31::from(1));
@@ -131,23 +131,24 @@ fn gen_trace(log_size: u32) -> Vec<CircleEvaluation<SimdBackend, M31, BitReverse
 // ANCHOR_END: gen_trace
 
 // ANCHOR: gen_logup_trace
-relation!(LookupElements, 1);
+relation!(SmallerThan16Elements, 1);
 
 fn gen_logup_trace(
+    range_log_size: u32,
     log_size: u32,
     range_check_col: &BaseColumn,
     lookup_col_1: &BaseColumn,
     lookup_col_2: &BaseColumn,
     multiplicity_col: &BaseColumn,
-    lookup_elements: &LookupElements,
+    lookup_elements: &SmallerThan16Elements,
 ) -> (
     Vec<CircleEvaluation<SimdBackend, M31, BitReversedOrder>>,
     SecureField,
 ) {
-    let mut logup_gen = LogupTraceGenerator::new(log_size);
+    let mut logup_gen = LogupTraceGenerator::new(range_log_size);
 
     let mut col_gen = logup_gen.new_col();
-    for simd_row in 0..(1 << (log_size - LOG_N_LANES)) {
+    for simd_row in 0..(1 << (range_log_size - LOG_N_LANES)) {
         let numerator: PackedSecureField = PackedSecureField::from(multiplicity_col.data[simd_row]);
         let denom: PackedSecureField = lookup_elements.combine(&[range_check_col.data[simd_row]]);
         col_gen.write_frac(simd_row, -numerator, denom);
@@ -174,7 +175,8 @@ fn gen_logup_trace(
 // ANCHOR: main_start
 fn main() {
     // ANCHOR_END: main_start
-    let log_size = LOG_N_LANES;
+    let range_log_size = LOG_N_LANES;
+    let log_num_rows = range_log_size;
 
     // Config for FRI and PoW
     let config = PcsConfig::default();
@@ -182,7 +184,7 @@ fn main() {
     // Precompute twiddles for evaluating and interpolating the trace
     let twiddles = SimdBackend::precompute_twiddles(
         CanonicCoset::new(
-            log_size + CONSTRAINT_EVAL_BLOWUP_FACTOR + config.fri_config.log_blowup_factor,
+            log_num_rows + LOG_CONSTRAINT_EVAL_BLOWUP_FACTOR + config.fri_config.log_blowup_factor,
         )
         .circle_domain()
         .half_coset,
@@ -194,27 +196,28 @@ fn main() {
         CommitmentSchemeProver::<SimdBackend, Blake2sMerkleChannel>::new(config, &twiddles);
 
     // Create and commit to the preprocessed columns
-    let range_check_col = RangeCheckColumn::new(log_size).gen_column();
+    let range_check_col = RangeCheckColumn::new(range_log_size).gen_column();
     let mut tree_builder = commitment_scheme.tree_builder();
     tree_builder.extend_evals(vec![range_check_col.clone()]);
     tree_builder.commit(channel);
 
     // Commit to the size of the trace
-    channel.mix_u64(log_size as u64);
+    channel.mix_u64((log_num_rows) as u64);
 
     // Create and commit to the trace columns
-    let trace = gen_trace(log_size);
+    let trace = gen_trace(log_num_rows);
     let mut tree_builder = commitment_scheme.tree_builder();
     tree_builder.extend_evals(trace.clone());
     tree_builder.commit(channel);
 
     // ANCHOR: logup_start
     // Draw random elements to use when creating the random linear combination of lookup values in the LogUp columns
-    let lookup_elements = LookupElements::draw(channel);
+    let lookup_elements = SmallerThan16Elements::draw(channel);
 
     // Create and commit to the LogUp columns
     let (logup_cols, claimed_sum) = gen_logup_trace(
-        log_size,
+        range_log_size,
+        log_num_rows,
         &range_check_col,
         &trace[0],
         &trace[1],
@@ -230,8 +233,8 @@ fn main() {
     let component = FrameworkComponent::<TestEval>::new(
         &mut TraceLocationAllocator::default(),
         TestEval {
-            range_check_id: RangeCheckColumn::new(log_size).id(),
-            log_size,
+            range_check_id: RangeCheckColumn::new(range_log_size).id(),
+            log_size: log_num_rows,
             lookup_elements,
         },
         claimed_sum,
@@ -249,7 +252,7 @@ fn main() {
     let sizes = component.trace_log_degree_bounds();
 
     commitment_scheme.commit(proof.commitments[0], &sizes[0], channel);
-    channel.mix_u64(log_size as u64);
+    channel.mix_u64((log_num_rows) as u64);
     commitment_scheme.commit(proof.commitments[1], &sizes[1], channel);
     commitment_scheme.commit(proof.commitments[2], &sizes[2], channel);
 

@@ -35,23 +35,23 @@ impl FrameworkEval for TestEval {
     }
 
     fn max_constraint_log_degree_bound(&self) -> u32 {
-        self.log_size + CONSTRAINT_EVAL_BLOWUP_FACTOR
+        self.log_size + LOG_CONSTRAINT_EVAL_BLOWUP_FACTOR
     }
 
     fn evaluate<E: EvalAtRow>(&self, mut eval: E) -> E {
-        let original_col = eval.next_trace_mask();
-        let permuted_col = eval.next_trace_mask();
+        let random_col = eval.next_trace_mask();
+        let ordered_col = eval.next_trace_mask();
 
         eval.add_to_relation(RelationEntry::new(
             &self.lookup_elements,
             E::EF::one(),
-            &[original_col],
+            &[random_col],
         ));
 
         eval.add_to_relation(RelationEntry::new(
             &self.lookup_elements,
             -E::EF::one(),
-            &[permuted_col],
+            &[ordered_col],
         ));
 
         eval.finalize_logup_in_pairs();
@@ -60,25 +60,28 @@ impl FrameworkEval for TestEval {
     }
 }
 // ANCHOR_END: test_eval
-const CONSTRAINT_EVAL_BLOWUP_FACTOR: u32 = 1;
+const LOG_CONSTRAINT_EVAL_BLOWUP_FACTOR: u32 = 1;
 
 relation!(LookupElements, 1);
 
 // ANCHOR: gen_trace
 fn gen_trace(log_size: u32) -> Vec<CircleEvaluation<SimdBackend, M31, BitReversedOrder>> {
-    // Create a table with values [0, 1 << log_size)
     let mut rng = rand::thread_rng();
     let values = (0..(1 << log_size)).map(|i| i).collect::<Vec<_>>();
-    let original_col = BaseColumn::from_iter(values.iter().map(|v| M31::from(*v)));
 
     // Create a random permutation of the values
-    let mut permutation = values.clone();
-    permutation.shuffle(&mut rng);
-    let permuted_col = BaseColumn::from_iter(permutation.iter().map(|v| M31::from(*v)));
+    let mut random_values = values.clone();
+    random_values.shuffle(&mut rng);
+    let random_col_1 = BaseColumn::from_iter(random_values.iter().map(|v| M31::from(*v)));
+
+    // Create another random permutation of the values
+    let mut random_values = random_values.clone();
+    random_values.shuffle(&mut rng);
+    let random_col_2 = BaseColumn::from_iter(random_values.iter().map(|v| M31::from(*v)));
 
     // Convert table to trace polynomials
     let domain = CanonicCoset::new(log_size).circle_domain();
-    vec![original_col, permuted_col]
+    vec![random_col_1, random_col_2]
         .into_iter()
         .map(|col| CircleEvaluation::new(domain, col))
         .collect()
@@ -86,8 +89,8 @@ fn gen_trace(log_size: u32) -> Vec<CircleEvaluation<SimdBackend, M31, BitReverse
 
 fn gen_logup_trace(
     log_size: u32,
-    original_col: &BaseColumn,
-    permuted_col: &BaseColumn,
+    random_col_1: &BaseColumn,
+    random_col_2: &BaseColumn,
     lookup_elements: &LookupElements,
 ) -> (
     Vec<CircleEvaluation<SimdBackend, M31, BitReversedOrder>>,
@@ -97,14 +100,10 @@ fn gen_logup_trace(
 
     let mut col_gen = logup_gen.new_col();
     for row in 0..(1 << (log_size - LOG_N_LANES)) {
-        // 1 / original - 1 / permuted = (permuted - original) / (original * permuted)
-        let original_val: PackedSecureField = lookup_elements.combine(&[original_col.data[row]]);
-        let permuted_val: PackedSecureField = lookup_elements.combine(&[permuted_col.data[row]]);
-        col_gen.write_frac(
-            row,
-            permuted_val - original_val,
-            original_val * permuted_val,
-        );
+        // 1 / random - 1 / ordered = (ordered - random) / (random * ordered)
+        let random_val: PackedSecureField = lookup_elements.combine(&[random_col_1.data[row]]);
+        let ordered_val: PackedSecureField = lookup_elements.combine(&[random_col_2.data[row]]);
+        col_gen.write_frac(row, ordered_val - random_val, random_val * ordered_val);
     }
     col_gen.finalize_col();
 
@@ -123,7 +122,7 @@ fn main() {
     // Precompute twiddles for evaluating and interpolating the trace
     let twiddles = SimdBackend::precompute_twiddles(
         CanonicCoset::new(
-            log_size + CONSTRAINT_EVAL_BLOWUP_FACTOR + config.fri_config.log_blowup_factor,
+            log_size + LOG_CONSTRAINT_EVAL_BLOWUP_FACTOR + config.fri_config.log_blowup_factor,
         )
         .circle_domain()
         .half_coset,

@@ -72,7 +72,7 @@ impl FrameworkEval for TestEval {
     }
 
     fn max_constraint_log_degree_bound(&self) -> u32 {
-        self.log_size + CONSTRAINT_EVAL_BLOWUP_FACTOR
+        self.log_size + LOG_CONSTRAINT_EVAL_BLOWUP_FACTOR
     }
 
     fn evaluate<E: EvalAtRow>(&self, mut eval: E) -> E {
@@ -105,7 +105,7 @@ impl FrameworkEval for TestEval {
     }
 }
 
-const CONSTRAINT_EVAL_BLOWUP_FACTOR: u32 = 1;
+const LOG_CONSTRAINT_EVAL_BLOWUP_FACTOR: u32 = 1;
 
 relation!(LookupElements, 1);
 
@@ -168,7 +168,7 @@ fn main() {
     // Precompute twiddles for evaluating and interpolating the trace
     let twiddles = SimdBackend::precompute_twiddles(
         CanonicCoset::new(
-            log_size + CONSTRAINT_EVAL_BLOWUP_FACTOR + config.fri_config.log_blowup_factor,
+            log_size + LOG_CONSTRAINT_EVAL_BLOWUP_FACTOR + config.fri_config.log_blowup_factor,
         )
         .circle_domain()
         .half_coset,

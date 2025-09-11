@@ -53,7 +53,7 @@ Inside `gen_logup_trace`, we create a `LogupTraceGenerator` instance. This is a 
 
 You may notice that we are iterating over `BaseColumn` in chunks of 16, or `1 << LOG_N_LANES` values. This is because we are using the `SimdBackend`, which runs 16 lanes simultaneously, so we need to preserve this structure. The `Packed` in `PackedSecureField` means that it packs 16 values into a single value.
 
-You may also notice that we are using a `SecureField` instead of just the `Field`. This is because the random value we created in `LookupElements` will be in the degree-4 extension field $\mathbb{F}\_{p^4}$. Interested readers can refer to the [Mersenne Primes](../../how-it-works/mersenne-prime.md) section for more details.
+You may also notice that we are using a `SecureField` instead of just the `Field`. This is because the random value we created in `LookupElements` will be in the degree-4 extension field $\mathbb{F_{p^4}}$. Interested readers can refer to the [Mersenne Primes](../../how-it-works/mersenne-prime.md) section for more details.
 
 Once we set the fractions for each `simd_row`, we need to call `finalize_col()` to finalize the column. This process modifies the LogUp columns from individual fractions to cumulative sums of the fractions as shown in [Figure 2](#fig-finalize-col).
 

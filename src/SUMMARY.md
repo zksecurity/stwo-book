@@ -32,6 +32,7 @@
 - [How Does It Work?](how-it-works/index.md)
 
   - [Mersenne Primes](how-it-works/mersenne-prime.md)
+
   - [Circle Group](how-it-works/circle-group.md)
 
   - [Circle Polynomials](how-it-works/circle-polynomials/index.md)
@@ -44,6 +45,11 @@
     - [Twiddles](how-it-works/circle-fft/twiddles.md)
     - [Interpolate](how-it-works/circle-fft/interpolation.md)
     - [Basis and Dimension Gap](how-it-works/circle-fft/basis.md)
+  
+  - [Vector Commitment Scheme](how-it-works/vcs/index.md)
+    - [Hash Functions](how-it-works/vcs/hash_functions.md)
+    - [Merkle Prover](how-it-works/vcs/merkle_prover.md)
+    - [Merkle Verifier](how-it-works/vcs/merkle_verifier.md)
   
   - [Lookups](how-it-works/lookups.md)
 

@@ -59,7 +59,8 @@ To compute the evaluations of $p_1(x)$ over the domain $S_n$, we subtract the ev
 > Given the evaluations $\vec{v}$ of $p(x, y)$ over the circle domain $D_3$ we aim to compute the evaluations of $p_0$ and $p_1$ over the smaller domain $S_3$:
 > $$S_3 = \pi_x(D_3) = [7, 13, 24, 18]$$
 > For $(x, y)=(7, 18)$ and $(x, -y) = (7, 13)$ in $D_3$, substituting them into the following equations give:
-> $$p_0(x) = \frac{p(x, y) + p(x, -y)}{2} = \frac{p(7, 18) + p(7, 13)}{2} = \frac{13 + 29}{2} = 21$$ > $$p_1(x) = \frac{p(x, y) - p(x, -y)}{2 \cdot y} = \frac{p(7, 18) - p(7, 13)}{2 \cdot 18} = \frac{13 - 29}{2 \cdot 18} = 3$$
+> $$p_0(x) = \frac{p(x, y) + p(x, -y)}{2} = \frac{p(7, 18) + p(7, 13)}{2} = \frac{13 + 29}{2} = 21$$ 
+> $$p_1(x) = \frac{p(x, y) - p(x, -y)}{2 \cdot y} = \frac{p(7, 18) - p(7, 13)}{2 \cdot 18} = \frac{13 - 29}{2 \cdot 18} = 3$$
 >
 > Repeating this process for other pairs $(x, y)$ and $(x, -y)$ in $D_3$, we obtain:
 > $$\vec{v_0} = [21, 6, 11, 10], \quad \vec{v_1} = [3, 28, 7, 6]$$
@@ -97,7 +98,8 @@ Similar to _circle twiddles_, to compute the evaluations of $p_{01}(x)$ over $S_
 > $$p_0(x) = p_{00}(\pi(x)) + x \cdot p_{01}(\pi(x))$$
 >
 > Omitting the intermediate steps of the recursive calls, we eventually obtain the coefficients of $p_0(x)$ and $p_1(x)$ as follows:
-> $$p_0(x) = 12 + 26 \cdot x + \pi(x) + 28 \cdot x \cdot \pi(x)$$ > $$p_1(x) = 11 + 26 \cdot x + 14 \cdot \pi(x) + 20 \cdot x \cdot \pi(x)$$
+> $$p_0(x) = 12 + 26 \cdot x + \pi(x) + 28 \cdot x \cdot \pi(x)$$ 
+> $$p_1(x) = 11 + 26 \cdot x + 14 \cdot \pi(x) + 20 \cdot x \cdot \pi(x)$$
 
 #### Step 3: Combine the coefficients
 
@@ -105,11 +107,14 @@ Finally, we combine the coefficients of $p_0(x)$ and $p_1(x)$ to compute the coe
 $$p(x, y) = p_0(x) + y \cdot p_1(x)$$
 
 > **Step 3**: Given the coefficients of $p_0(x)$ and $p_1(x)$:
-> $$p_0(x) = 12 + 26 \cdot x + \pi(x) + 28 \cdot x \cdot \pi(x)$$ > $$p_1(x) = 11 + 26 \cdot x + 14 \cdot \pi(x) + 20 \cdot x \cdot \pi(x)$$
+> $$p_0(x) = 12 + 26 \cdot x + \pi(x) + 28 \cdot x \cdot \pi(x)$$ 
+> $$p_1(x) = 11 + 26 \cdot x + 14 \cdot \pi(x) + 20 \cdot x \cdot \pi(x)$$
 > we reconstruct the original polynomial $p(x, y)$ using the decomposition:
 > $$p(x, y) = p_0(x) + y \cdot p_1(x)$$
 >
 > Substituting the expressions for $p_0$ and $p_1$, we get:
-> $$p(x, y) = 12 + 26 \cdot x + \pi(x) + 28 \cdot x \cdot \pi(x) + y \cdot (11 + 26 \cdot x + 14 \cdot \pi(x) + 20 \cdot x \cdot \pi(x))$$ >$$p(x, y) = 12 + 26 \cdot x + \pi(x) + 28 \cdot x \cdot \pi(x) + \quad \quad \quad \quad \quad \quad$$ > $$\quad \quad \quad \quad \quad \quad 11 \cdot y + 26 \cdot x \cdot y + 14 \cdot y \cdot \pi(x) + 20 \cdot x \cdot y \cdot \pi(x)$$
+> $$p(x, y) = 12 + 26 \cdot x + \pi(x) + 28 \cdot x \cdot \pi(x) + y \cdot (11 + 26 \cdot x + 14 \cdot \pi(x) + 20 \cdot x \cdot \pi(x))$$ 
+> $$p(x, y) = 12 + 26 \cdot x + \pi(x) + 28 \cdot x \cdot \pi(x) + \quad \quad \quad \quad \quad \quad$$ 
+> $$\quad \quad \quad \quad \quad \quad 11 \cdot y + 26 \cdot x \cdot y + 14 \cdot y \cdot \pi(x) + 20 \cdot x \cdot y \cdot \pi(x)$$
 
 This completes an overview of the interpolation algorithm using Circle FFT. In the next section, we will see how the twiddle values are computed and stored for Circle FFT.

@@ -22,7 +22,7 @@ j = j_0 + j_1 \cdot 2 + \cdots + j_{n-1} \cdot 2^{n-1}
 $$ 
 
 # Dimension Gap
-Let the space spanned by the basis polynomials in \\(b^{(n)}(x, y)\\) be \\( L'_N(\mathbb{F}) \\). The basis \\(b^{(n)}(x, y)\\) has a total \\( N=2^n \\) elements and thus the dimension of the space \\( L'_N(\mathbb{F}) \\) is \\( N \\). However, the space of bivariate polynomials over the circle curve is \\( L_N(\mathbb{F}) \\) which has dimension \\( N+1 \\).
+We will now explore the space of polynomials interpolated using Circle FFT. Let the space spanned by the basis polynomials in \\(b^{(n)}(x, y)\\) be \\( L'_N(\mathbb{F}) \\). The basis \\(b^{(n)}(x, y)\\) has a total of \\( N=2^n \\) elements and thus the dimension of the space \\( L'_N(\mathbb{F}) \\) is \\( N \\). However, the space of bivariate polynomials over the circle curve is \\( L_N(\mathbb{F}) \\), which has dimension \\( N+1 \\).
 
 We can identify the missing highest total degree element in \\( L'_N(\mathbb{F}) \\) by examining the basis. The highest total degree element in basis \\(b^{(n)}(x, y)\\) is:
 $$y \cdot x \cdot \pi(x) \cdot \pi^2(x) \cdot \pi^3(x) \cdots \pi^{n-2}(x)$$

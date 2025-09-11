@@ -2,11 +2,11 @@
 
 In this section, we will go through the Circle FFT algorithm specifically to interpolate a bivariate polynomial given the evaluations over a circle domain. We will also go over a concrete example which will help us understand the algorithm.
 
-Circle FFT follows a divide-and-conquer strategy same as the classical Cooley–Tukey FFT. We recursively reduce the task of interpolating a polynomial over some domain to interpolating a lower degree polynomial over a smaller domain. Thus at each recursive layer, we have polynomials and their evaluations over smaller and smaller domains. Let us first go over this sequence of domains for the Circle FFT algorithm.
+Circle FFT follows a divide-and-conquer strategy, as in the classical Cooley–Tukey FFT. We recursively reduce the task of interpolating a polynomial over some domain to interpolating a lower degree polynomial over a smaller domain. Thus at each recursive layer, we have "smaller" polynomials and their evaluations over "smaller" domains. Let us first go over this sequence of domains for the Circle FFT algorithm.
 
 ## Sequence of Domains for Circle FFT
 
-In Circle FFT, we use a 2-to-1 map to half the domain size at each recursively layer. The domain used here is the [circle domain](../circle-group.md#circle-domain) \\( D_n \\) of size \\(|D_n| = 2^n\\).
+In Circle FFT, we use a 2-to-1 map to halve the domain size at each recursive layer. The domain used here is the [circle domain](../circle-group.md#circle-domain) \\( D_n \\) of size \\(|D_n| = 2^n\\).
 
 \\[ D_n = q + \langle g_{n-1} \rangle \cup -q + \langle g_{n-1} \rangle \\] 
 
@@ -25,7 +25,7 @@ This section describes two specific 2-to-1 maps that are central to the Circle F
 \\]
 This is obtained using the doubling map and the equality \\(y^2 = 1 - x^2\\) to compute the \\( x \\)-coordinate:
 $$
-\pi(x, y) = (x, y) + (x, y) = (2x^2-1, 2xy)
+\pi(x, y) = (x, y) + (x, y) = (x^2 - y^2, 2xy) = (2x^2-1, 2xy)
 $$
 
  
@@ -52,7 +52,7 @@ p_0(x) = \frac{p(x, y) + p(x, -y)}{2}, \quad
 p_1(x) = \frac{p(x, y) - p(x, -y)}{2 \cdot y}
 $$
 
-Substituting all evaluations of \\( p(x, y) \\) over \\( D_n \\) in the above equations, gives the evaluations of \\( p_0(x) \\) and \\( p_1(x) \\) over the domain \\( S_n \\).
+Substituting all evaluations of \\( p(x, y) \\) over \\( D_n \\) in the above equations gives the evaluations of \\( p_0(x) \\) and \\( p_1(x) \\) over the domain \\( S_n \\).
 
 ```admonish
 To compute the evaluations of \\( p_1(x) \\) over the domain \\( S_n \\), we subtract the evaluations i.e. compute \\( p(x, y) - p(x, -y) \\) and then divide by \\( 2 \cdot y \\). These values \\( y \\) are the \\( y \\)-coordinates of the points in the circle domain \\( D_n \\). They are also referred to as _circle twiddles_ and they only depend on the circle domain \\( D_n \\). Therefore they can be precomputed before the start of the FFT algorithm. We will look into these in detail in the next section.

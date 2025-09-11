@@ -1,6 +1,6 @@
 # Algorithm
 
-In this section, we will go through the Circle FFT algorithm specifically to interpolate a bivariate polynomial given the evaluations over a circle domain. We will also go over a concrete example which will help us understand the algorithm.
+In this section, we will go through the Circle FFT algorithm specifically, to interpolate a bivariate polynomial given the evaluations over a circle domain. We will also go over a concrete example which will help us understand the algorithm.
 
 Circle FFT follows a divide-and-conquer strategy, as in the classical Cooley–Tukey FFT. We recursively reduce the task of interpolating a polynomial over some domain to interpolating a lower degree polynomial over a smaller domain. Thus at each recursive layer, we have "smaller" polynomials and their evaluations over "smaller" domains. Let us first go over this sequence of domains for the Circle FFT algorithm.
 
@@ -16,7 +16,7 @@ This section describes two specific 2-to-1 maps that are central to the Circle F
     \\[
     \pi_x: D_n \rightarrow S_n, \quad \pi_x((x, y)) = x
     \\]
-     where \\( S_n \\) is the set containing all the \\( x \\)-coordinates from \\( D_n \\). This can be interpreted as saying that two points are considered equivalent if they differ only by sign. Since \\(\pi_x\\) maps two points from \\(D_n\\) to a single element in \\( S_n \\), the size of \\( S_n \\) will be half the size of \\( D_n \\).
+     where \\( S_n \\) is the set containing all the \\( x \\)-coordinates from \\( D_n \\). This can be interpreted as saying that two points are considered equivalent if they differ only by sign, since negation of $(x, y)$ is $(x, -y)$. As \\(\pi_x\\) maps two points from \\(D_n\\) to a single element in \\( S_n \\), the size of \\( S_n \\) will be half the size of \\( D_n \\).
 
 
 2. **Squaring map \\(\pi\\)**: The squaring map \\( \pi \\) is a 2-to-1 map defined by:

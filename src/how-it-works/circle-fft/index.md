@@ -1,3 +1,10 @@
 # Circle FFT
 
-> This section introduces the Circle FFT algorithm, used to interpolate bivariate polynomials over the circle domain using a divide-and-conquer approach. It explains the sequence of domains, the projection and squaring maps and provides a step-by-step explanation of the interpolate function.
+> This section introduces the Circle FFT algorithm, used to interpolate bivariate polynomials over the circle domain using a divide-and-conquer approach.
+
+This section is organized as follows:
+
+- **[Algorithm](./algorithm.md)**: Overview of the Circle FFT algorithm with concrete examples showing the three-step interpolation process.
+- **[Twiddles](./twiddles.md)**: Precomputation and storage of twiddle values required for efficient FFT operations.
+- **[Interpolate](./interpolation.md)**: Detailed implementation walkthrough of the interpolation function with code breakdown.
+- **[Basis and Dimension Gap](./basis.md)**: FFT basis for Circle FFT and analysis of the dimension gap in circle polynomial spaces.

@@ -8,6 +8,7 @@ The circle FFT algorithm changes the order of the input. Since the `CircleEvalua
 {{#webinclude https://raw.githubusercontent.com/starkware-libs/stwo/0790eba46b8af5697083d84fb75bd34b08a0b31f/crates/stwo/src/prover/backend/cpu/circle.rs 19:72}}
 ```
 
+
 The function includes hardcoded implementations for circle domains of small sizes for efficiency. Lets breakdown the function step by step.
 
 1. **Compute Twiddles:** Given the `TwiddleTree`, the function computes the line twiddles and circle twiddles.

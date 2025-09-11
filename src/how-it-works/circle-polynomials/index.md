@@ -1,3 +1,9 @@
 # Circle Polynomials
 
-> This section describes how Stwo represents columns and how polynomials over the circle are stored and manipulated, covering both point-value and coefficient forms and their implementation.
+> In STARK protocols, the computation trace is organized into columns and represented as polynomials. This section explains how Stwo represents and manipulates polynomials over the circle, covering both point-value (evaluations) and coefficient representations.
+
+This section is organized as follows:
+
+- **[Columns](./columns.md)**: How computation trace data is stored in columns, including both base field and secure field representations.
+- **[Circle Evaluations and Polynomials](./evals-and-poly.md)**: Point-value and coefficient representations of polynomials, their mathematical foundations, and conversion between forms.
+- **[Secure Evaluations and Polynomials](./secure-evals-and-poly.md)**: Extension to secure field polynomials using the quartic extension QM31, with implementation details.

@@ -14,7 +14,7 @@ In this subsection, we will look at the implementations of both these representa
 In Stwo, the evaluations of a polynomial over a `CircleDomain` are stored using the struct `CircleEvaluation`, implemented as follows:
 
 ```rust,no_run,noplayground
-{{#webinclude https://raw.githubusercontent.com/starkware-libs/stwo/0790eba46b8af5697083d84fb75bd34b08a0b31f/crates/stwo/src/prover/poly/circle/evaluation.rs 15:23}}
+{{#webinclude https://raw.githubusercontent.com/starkware-libs/stwo/0790eba46b8af5697083d84fb75bd34b08a0b31f/crates/stwo/src/prover/poly/circle/evaluation.rs 19:23}}
 ```
 
 Here, the domain (i.e. `CircleDomain`) and the evaluations (i.e. `values`) have the same ordering (i.e. `EvalOrder`) which can either be `NaturalOrder` or `BitReversedOrder`.
@@ -56,7 +56,7 @@ Now let us describe the coefficient representation and how the circle polynomial
 Given the evaluations over a domain (i.e. `CircleEvaluation`) we can compute the coefficients of a polynomial (i.e. `CirclePoly`) with respect to some basis using the `interpolate` function. The coefficients are stored as follows:
 
 ```rust,no_run,noplayground
-{{#webinclude https://raw.githubusercontent.com/starkware-libs/stwo/0790eba46b8af5697083d84fb75bd34b08a0b31f/crates/stwo/src/prover/poly/circle/poly.rs 10:21}}
+{{#webinclude https://raw.githubusercontent.com/starkware-libs/stwo/0790eba46b8af5697083d84fb75bd34b08a0b31f/crates/stwo/src/prover/poly/circle/poly.rs 12:21}}
 ```
 
 The `interpolate` function computes the coefficients with respect to the following basis:

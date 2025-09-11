@@ -73,7 +73,7 @@ The following figure shows a circle domain of size 8. It is constructed from the
 <div style="text-align: center;">
     <figure id="fig-circle-domain" style="display: inline-block;">
     <img src="./figures/circle-domain.svg" width="800px" style="border-radius: 8px;" />
-        <figcaption><span style="font-size: 0.9em">Figure: Circle Domain of size 8</span></figcaption>
+        <figcaption><span style="font-size: 0.9em">Figure 1: Circle Domain of size 8</span></figcaption>
     </figure>
 </div>
 
@@ -104,7 +104,7 @@ The following figure shows a canonic coset of size 8. It is constructed from the
 <div style="text-align: center;">
     <figure id="fig-canonic-coset" style="display: inline-block;">
     <img src="./figures/canonic-coset.svg" width="800px" style="border-radius: 8px;" />
-        <figcaption><span style="font-size: 0.9em">Figure: Canonic Coset of size 8</span></figcaption>
+        <figcaption><span style="font-size: 0.9em">Figure 2: Canonic Coset of size 8</span></figcaption>
     </figure>
 </div>
 

@@ -17,7 +17,7 @@ Suppose $x = a \cdot b$ then we can decompose $x$ into two 31-bit values $b$ and
 <div style="text-align: center;">
     <figure id="fig-mersenne-prod" style="display: inline-block;">
     <img src="./figures/mersenne-mult.svg" width="400px" style="border-radius: 8px;" />
-        <figcaption><span style="font-size: 0.9em">Figure: Product decomposition</span></figcaption>
+        <figcaption><span style="font-size: 0.9em">Figure 1: Product decomposition</span></figcaption>
     </figure>
 </div>
 
@@ -73,7 +73,7 @@ $$a + i \cdot b$$
 where $a, b \in \textsf{M31}$ and $i$ is the root of the polynomial $X^2 + 1$ i.e. $i^2 + 1 = 0$. This is implemented as follows:
 
 ```rust,no_run,noplayground
-{{#webinclude https://raw.githubusercontent.com/starkware-libs/stwo/0790eba46b8af5697083d84fb75bd34b08a0b31f/crates/stwo/src/core/fields/cm31.rs 13:17}}
+{{#webinclude https://raw.githubusercontent.com/starkware-libs/stwo/0790eba46b8af5697083d84fb75bd34b08a0b31f/crates/stwo/src/core/fields/cm31.rs 17:17}}
 ```
 
 The order of the multiplicative group of $\textsf{CM31}$ is calculated as follows:
@@ -104,7 +104,7 @@ $$r + u \cdot s$$
 where $r, s \in \textsf{CM31}$ and $u$ is the root of the polynomial $X^2 - 2 - i$ i.e. $u^2 - 2 - i = 0$. This is implemented as follows:
 
 ```rust,no_run,noplayground
-{{#webinclude https://raw.githubusercontent.com/starkware-libs/stwo/0790eba46b8af5697083d84fb75bd34b08a0b31f/crates/stwo/src/core/fields/qm31.rs 16:21}}
+{{#webinclude https://raw.githubusercontent.com/starkware-libs/stwo/0790eba46b8af5697083d84fb75bd34b08a0b31f/crates/stwo/src/core/fields/qm31.rs 20:21}}
 ```
 
 Since the verifier uses the field $\textsf{QM31}$ to sample random challenges it is given the type alias `SecureField`.

@@ -1,12 +1,12 @@
 # Algorithm
 
-In this section, we will go through the Circle FFT algorithm specifically to interpolate a bivariate polynomial given the evaluations over a circle domain. We will also go over a concrete example which will help us understand the algorithm.
+In this section, we will go through the Circle FFT algorithm specifically, to interpolate a bivariate polynomial given the evaluations over a circle domain. We will also go over a concrete example which will help us understand the algorithm.
 
-Circle FFT follows a divide-and-conquer strategy same as the classical Cooley–Tukey FFT. We recursively reduce the task of interpolating a polynomial over some domain to interpolating a lower degree polynomial over a smaller domain. Thus at each recursive layer, we have polynomials and their evaluations over smaller and smaller domains. Let us first go over this sequence of domains for the Circle FFT algorithm.
+Circle FFT follows a divide-and-conquer strategy, as in the classical Cooley–Tukey FFT. We recursively reduce the task of interpolating a polynomial over some domain to interpolating a lower degree polynomial over a smaller domain. Thus at each recursive layer, we have "smaller" polynomials and their evaluations over "smaller" domains. Let us first go over this sequence of domains for the Circle FFT algorithm.
 
 ## Sequence of Domains for Circle FFT
 
-In Circle FFT, we use a 2-to-1 map to half the domain size at each recursively layer. The domain used here is the [circle domain](../circle-group.md#circle-domain) $D_n$ of size $|D_n| = 2^n$.
+In Circle FFT, we use a 2-to-1 map to halve the domain size at each recursive layer. The domain used here is the [circle domain](../circle-group.md#circle-domain) $D_n$ of size $|D_n| = 2^n$.
 
 $$D_n = q + \langle g_{n-1} \rangle \cup -q + \langle g_{n-1} \rangle$$
 
@@ -19,7 +19,7 @@ This section describes two specific 2-to-1 maps that are central to the Circle F
 2. **Squaring map $\pi$**: The squaring map $\pi$ is a 2-to-1 map defined by:
    $$\pi: S_n \rightarrow S_{n-1}, \quad \pi(x) = 2x^2 - 1$$
    This is obtained using the doubling map and the equality $y^2 = 1 - x^2$ to compute the $x$-coordinate:
-   $$\pi(x, y) = (x, y) + (x, y) = (2x^2-1, 2xy)$$
+   $$\pi(x, y) = (x, y) + (x, y) = (x^2 - y^2, 2xy) = (2x^2-1, 2xy)$$
 
 In Circle FFT, we use both the projection map $\pi_x$ and the squaring map $\pi$ to construct the sequence of domains. The sequence of domains for Circle FFT is shown as follows:
 $$D_n \xrightarrow{\pi_x} S_n \xrightarrow{\pi} S_{n-1} \xrightarrow{\pi} \cdots \xrightarrow{\pi} S_1$$

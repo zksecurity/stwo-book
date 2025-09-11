@@ -3,10 +3,10 @@
 Similar to `CircleEvaluation`, `SecureEvaluation` is a [point-value representation](./evals-and-poly.md#point-value-representation) of a polynomial whose evaluations over the `CircleDomain` are from the `SecureField` (an alias for `QM31`). This is implemented as follows:
 
 ```rust,no_run,noplayground
-{{#webinclude https://raw.githubusercontent.com/starkware-libs/stwo/0790eba46b8af5697083d84fb75bd34b08a0b31f/crates/stwo/src/prover/poly/circle/secure_poly.rs 60:69}}
+{{#webinclude https://raw.githubusercontent.com/starkware-libs/stwo/0790eba46b8af5697083d84fb75bd34b08a0b31f/crates/stwo/src/prover/poly/circle/secure_poly.rs 65:69}}
 ```
 
-As discussed in the [previous subsection](./columns.md#secure-field-columns), each `SecureField` element is represented by four base field elements and stored in four parallel columns. Thus the evaluations are represented as `SecureColumnByCoords`, as shown above.
+As discussed in the [previous subsection](./columns.md#secure-field-columns), each `SecureField` element is represented by four base field elements and stored in four consecutive columns. Thus the evaluations are represented as `SecureColumnByCoords`, as shown above. 
 
 Similar to `CircleEvaluation`, we can interpolate a `SecureCirclePoly` with coefficients from the `SecureField` as shown below:
 
@@ -47,4 +47,4 @@ Similar to `CirclePoly`, we can evaluate the `SecureCirclePoly` at points on the
 {{#webinclude https://raw.githubusercontent.com/starkware-libs/stwo/0790eba46b8af5697083d84fb75bd34b08a0b31f/crates/stwo/src/prover/poly/circle/secure_poly.rs 37:45}}
 ```
 
-In the next section, we will see how the `interpolate` and `evaluate` functions convert between the two polynomial representations using Circle FFT. As you may have noticed, the twiddles are precomputed for efficiency, we will also explore this in the next section on Circle FFT.
+In the next section, we will see how the `interpolate` and `evaluate` functions convert between the two polynomial representations using Circle FFT. As you may have noticed, the twiddles are precomputed for efficiency, and we will explore this in the next section on Circle FFT.

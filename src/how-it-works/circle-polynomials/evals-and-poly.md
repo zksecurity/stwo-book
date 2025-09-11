@@ -1,53 +1,18 @@
-# Circle Polynomials
-
-This section describes how computation traces are represented in Stwo, how polynomial data is stored, and how polynomials over the circle are implemented.
-
-## Columns
-
-In Stwo, the computation trace is represented using multiple columns, each containing elements from the Mersenne prime field \\( \mathsf{M31} \\). The columns are defined via the `Column<T>` trait, where `T` is typically `BaseField` (an alias for `M31`).
-
-```rust,no_run,noplayground
-{{#webinclude https://raw.githubusercontent.com/starkware-libs/stwo/0790eba46b8af5697083d84fb75bd34b08a0b31f/crates/stwo/src/prover/backend/mod.rs 45:64}}
-```
-
-The operations over a column such as bit reversal of elements is provided using the `ColumnOps<T>` trait and they also implement the type alias `Col<B, T>` to conveniently represent a column.
-
-```rust,no_run,noplayground
-{{#webinclude https://raw.githubusercontent.com/starkware-libs/stwo/0790eba46b8af5697083d84fb75bd34b08a0b31f/crates/stwo/src/prover/backend/mod.rs 37:42}}
-```
-
-### Secure Field Columns
-
-An element of the secure field (`SecureField` = `QM31`) cannot be stored in a single `BaseField` column because it is a quartic extension of `M31`. Instead, each secure field element is represented by four base field coordinates and stored in four parallel columns.
-
-```rust,no_run,noplayground
-{{#webinclude https://raw.githubusercontent.com/starkware-libs/stwo/0790eba46b8af5697083d84fb75bd34b08a0b31f/crates/stwo/src/prover/secure_column.rs 8:13}}
-```
-
-Here, `SECURE_EXTENSION_DEGREE` is the extension degree of `QM31` i.e. 4. You can think of each row of the 4 columns containing a single element of the `SecureField`. Thus accessing an element by index reconstructs it from its base field coordinates, implemented as follows:
-
-```rust,no_run,noplayground
-{{#webinclude https://raw.githubusercontent.com/starkware-libs/stwo/0790eba46b8af5697083d84fb75bd34b08a0b31f/crates/stwo/src/prover/secure_column.rs 21:23}}
-```
-
-Now that we know how columns are represented, we can explore their use in storing evaluations over the circle domain and in interpolating polynomials.
-
-
-## Circle Evaluations and Polynomials
+# Circle Evaluations and Polynomials
 
 A polynomial can be represented in two main ways:
 1. **Point-value representation**: as evaluations over a domain
 2. **Coefficient representation**: as coefficients with respect to some basis
 
-The conversion from point-value representation to coefficient representation is called _interpolation_ and the conversion from coefficient representation to point-value representation is called _evaluation_. Both these conversions are based on fast Fourier transform (FFT), which will be covered in the next section. 
+The conversion from point-value representation to coefficient representation is called _interpolation_ and the conversion from coefficient representation to point-value representation is called _evaluation_. Both these conversions are based on fast Fourier transform (FFT), which will be covered in the upcoming sections. 
 
-In this subsection, we will look at the implementations of both the representations in Stwo and the respective functions defined on them to interpolate and evaluate polynomials.
+In this subsection, we will look at the implementations of both these representations in Stwo and the respective functions defined on them to interpolate and evaluate polynomials.
 
-### Point-value representation
+## Point-value representation
 In Stwo, the evaluations of a polynomial over a `CircleDomain` are stored using the struct `CircleEvaluation`, implemented as follows:
 
 ```rust,no_run,noplayground
-{{#webinclude https://raw.githubusercontent.com/starkware-libs/stwo/0790eba46b8af5697083d84fb75bd34b08a0b31f/crates/stwo/src/prover/poly/circle/evaluation.rs 15:23}}
+{{#webinclude https://raw.githubusercontent.com/starkware-libs/stwo/0790eba46b8af5697083d84fb75bd34b08a0b31f/crates/stwo/src/prover/poly/circle/evaluation.rs 19:23}}
 ```
 Here, the domain (i.e. `CircleDomain`) and the evaluations (i.e. `values`) have the same ordering (i.e. `EvalOrder`) which can either be `NaturalOrder` or `BitReversedOrder`.
 
@@ -57,10 +22,10 @@ Now given the evaluations over a domain as `CircleEvaluation` we can interpolate
 {{#webinclude https://raw.githubusercontent.com/starkware-libs/stwo/0790eba46b8af5697083d84fb75bd34b08a0b31f/crates/stwo/src/prover/poly/circle/evaluation.rs 46:58}}
 ```
 
-But before looking into the representation of the circle polynomial (i.e. `CirclePoly`), let us first look into some theory on polynomials over the circle.
+Here, `PolyOps` is a trait that defines operations on `BaseField` polynomials, such as interpolation and evaluation. Now before looking into the representation of the circle polynomial (i.e. `CirclePoly`), let us first look into some theory on polynomials over the circle.
 
 
-### Polynomials over the circle
+## Polynomials over the circle
 
 Let \\( F \\) be an extension of the Mersenne prime field \\( \mathsf{M31} \\). Then \\( F[x, y] \\) represents the ring of bivariate polynomials with coefficients in \\( F \\). The _circle polynomials_ are bivariate polynomials over \\( F \\) quotient by the ideal \\( \left(x^2 + y^2 - 1\right) \\). The space of these bivariate polynomials over the circle curve of total degree \\( \leq N/2 \\) is denoted by \\( L_N(F) \\).
 
@@ -91,11 +56,11 @@ As a developer, you can usually ignore most of these details, since concepts lik
 
 Now let us describe the coefficient representation and how the circle polynomials are implemented in Stwo.
 
-### Coefficient representation
+## Coefficient representation
 
 Given the evaluations over a domain (i.e. `CircleEvaluation`) we can compute the coefficients of a polynomial (i.e. `CirclePoly`) with respect to some basis using the `interpolate` function. The coefficients are stored as follows:
 ```rust,no_run,noplayground
-{{#webinclude https://raw.githubusercontent.com/starkware-libs/stwo/0790eba46b8af5697083d84fb75bd34b08a0b31f/crates/stwo/src/prover/poly/circle/poly.rs 10:21}}
+{{#webinclude https://raw.githubusercontent.com/starkware-libs/stwo/0790eba46b8af5697083d84fb75bd34b08a0b31f/crates/stwo/src/prover/poly/circle/poly.rs 12:21}}
 ```
 
 The `interpolate` function computes the coefficients with respect to the following basis:
@@ -109,6 +74,7 @@ where
 - \\(0 \leq j \leq 2^n - 1\\) and \\((j_0, \ldots, j_{n-1}) \in \\{0, 1\\}^n\\) is the binary representation of \\( j \\), i.e., \\[j = j_0 + j_1 \cdot 2 + \cdots + j_{n-1} \cdot 2^{n-1}\\]
 
 Thus the `interpolate` function computes coefficients \\( c_j \\) for polynomials \\( p(x, y) \\) of the form:
+<span id="eq-circle-poly"></span>
 \\[
 p(x, y) = \sum_{j=0}^{2^n -1} c_j \cdot y^{j_0} \cdot x^{j_1} \cdot \pi(x)^{j_2} \cdot \pi^2(x)^{j_3} \cdots \pi^{n-2}(x)^{j\_{n-1}}
 \\]
@@ -120,4 +86,4 @@ Now given the coefficient representation as `CirclePoly`, we can evaluate the po
 {{#webinclude https://raw.githubusercontent.com/starkware-libs/stwo/0790eba46b8af5697083d84fb75bd34b08a0b31f/crates/stwo/src/prover/poly/circle/poly.rs 51:66}}
 ```
 
-In the next section, we will see how the `interpolate` and `evaluate` functions convert between the two polynomial representations using Circle FFT. As you may have noticed, the twiddles are precomputed for efficiency, and we will also explore this in the next section on Circle FFT.
+In the next section, we will see how the evaluations and polynomials are represented over the `SecureField`.

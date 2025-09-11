@@ -61,11 +61,14 @@ Therefore, it suffices to store only the half coset \\( q + \langle g_{n-1} \ran
 {{#webinclude https://raw.githubusercontent.com/starkware-libs/stwo/0790eba46b8af5697083d84fb75bd34b08a0b31f/crates/stwo/src/core/poly/circle/domain.rs 18:20}}
 ```
 
-The following animation shows a circle domain of size 8. It is constructed from the half coset \\( q + \langle g_2 \rangle \\) of size 4 (shown as red points) and its negation \\( -q + \langle g_2 \rangle \\) (shown as blue points).
+The following figure shows a circle domain of size 8. It is constructed from the half coset \\( q + \langle g_2 \rangle \\) of size 4 (shown as red points) and its negation \\( -q + \langle g_2 \rangle \\) (shown as blue points).
 
-<video autoplay loop muted>
-    <source src="./animations/vid_circle_domain.mp4" type="video/mp4">
-</video>
+<div style="text-align: center;">
+    <figure id="fig-circle-domain" style="display: inline-block;">
+    <img src="./figures/circle-domain.svg" width="800px" style="border-radius: 8px;" />
+        <figcaption><span style="font-size: 0.9em">Figure 1: Circle Domain of size 8</span></figcaption>
+    </figure>
+</div>
 
 To iterate over all points in the circle domain, we can iterate over the half coset and its conjugates: 
 ```rust,no_run,noplayground
@@ -86,11 +89,14 @@ Here, `CanonicCoset` represents the full coset \\( q + \langle g_n \rangle \\), 
 {{#webinclude https://raw.githubusercontent.com/starkware-libs/stwo/0790eba46b8af5697083d84fb75bd34b08a0b31f/crates/stwo/src/core/poly/circle/canonic.rs 46:48}}
 ```
 
-The following animation shows a canonic coset of size 8. It is constructed from the coset \\( \langle g_3 \rangle \\) of size 8 followed by an offset by \\( q \\), where \\( q \\) is the generator of subgroup \\( \langle g_4 \rangle \\).
+The following figure shows a canonic coset of size 8. It is constructed from the coset \\( \langle g_3 \rangle \\) of size 8 followed by an offset by \\( q \\), where \\( q \\) is the generator of subgroup \\( \langle g_4 \rangle \\).
 
-<video autoplay loop muted>
-    <source src="./animations/vid_canonic_coset.mp4" type="video/mp4">
-</video>
+<div style="text-align: center;">
+    <figure id="fig-canonic-coset" style="display: inline-block;">
+    <img src="./figures/canonic-coset.svg" width="800px" style="border-radius: 8px;" />
+        <figcaption><span style="font-size: 0.9em">Figure 2: Canonic Coset of size 8</span></figcaption>
+    </figure>
+</div>
 
 We can verify whether a given `CircleDomain` is *canonic* by checking the step size of the half coset against the initial coset offset. In the `CircleDomain` implementation, only the *half coset* \\( q + \langle g_{n-1} \rangle \\) is explicitly stored. If `CircleDomain` is canonic, \\( q \\) must be a generator of the subgroup \\( \langle g_{n+1} \rangle \\), which has order \\( 2^{n+1} \\) i.e. \\( q = 2^{31 - (n+1)} \cdot g \\). Recall that the generator of the subgroup \\( \langle g_{n-1} \rangle \\) is \\( 2^{31 - (n-1)} \cdot g \\).
 

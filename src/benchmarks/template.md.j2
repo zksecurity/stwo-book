@@ -1,0 +1,299 @@
+# Benchmarks Report
+
+- Overview of zkVM and Proof Systems
+
+| zkVM / Proof System   | Architecture   | Frontend   | Backend       | Security Bits |
+|:----------------------|:---------------|:-----------|:--------------|:--------------|
+| [RISC Zero](https://github.com/risc0/risc0)             | RISC-V         | Rust       | STARK-based   | 96 bits       |
+| [SP1](https://github.com/succinctlabs/sp1)       | RISC-V         | Rust       | STARK-based   | 116 bits      |
+| [OpenVM](https://github.com/openvm-org/openvm)       | RISC-V         | Rust       | STARK-based   | 104 bits      |
+| [Jolt](https://github.com/a16z/jolt)                  | RISC-V         | Rust       | Lookup-based  | -             |
+| [Stone](https://github.com/starkware-libs/stone-prover)                 | Cairo VM       | Cairo      | STARK-based   | 100 bits      |
+| [Stwo](https://github.com/starkware-libs/stwo)                  | Cairo VM       | Cairo      | STARK-based   | 96 bits       |
+
+- All benchmarks presented here are **CPU-only** and do not utilize any GPU acceleration.
+- Stone benchmarks were generated using the `dynamic` layout with these [configurations](https://github.com/zksecurity/zkvm-benchmarks/tree/master/stone/configs).
+- The benchmarks for SP1, R0 and OpenVM use compressed or succinct prover type, which aggregates all the STARK proofs into a single STARK proof.
+- Security bits indicate the conjectured security bit of each system, computed as follows:
+    $$(\text{number of queries}) \times (\text{log of blowup}) + (\text{proof of work bits})$$
+- Benchmarks which run out of memory have been indicated by `💾` and benchmarks which generate errors in proof generation have been indicated by `❌` in the tables.
+
+## Time and Commit Hash
+- **Commit Hash**: {{ commit_hash }}
+- **Timestamp**: {{ time }}
+
+
+## System Information
+
+### OS Version
+{{ os_version }}
+
+### CPU Info
+{% for key, value in cpu_info.items() %}
+- **{{ key }}**: {{ value }}
+{% endfor %}
+
+### Memory Info
+{% for key, value in mem_info.items() %}
+- **{{ key }}**: {{ value }}
+{% endfor %}
+
+
+## Fibonacci
+Benchmark `n` Fibonacci iterations.
+
+### Prover Time (s)
+{{ fib_data.tables.prover_time }}
+
+![]({{ fib_data.plots.prover_time_plot }})
+
+### Verifier Time (ms) 
+{{ fib_data.tables.verifier_time }}
+
+![]({{ fib_data.plots.verifier_time_plot }})
+
+### Proof Size (KB)
+{{ fib_data.tables.proof_size }}
+
+![]({{ fib_data.plots.proof_size_plot }})
+
+### Cycle Count
+{{ fib_data.tables.cycle_count }}
+
+![]({{ fib_data.plots.cycle_count_plot }})
+
+### Peak Memory (GB)
+{{ fib_data.tables.peak_memory }}
+
+![]({{ fib_data.plots.peak_memory_plot }})
+
+
+## Sha2
+Benchmark Sha256 hash of `n` bytes. For Stone, the [cairo implementation of sha256](https://github.com/cartridge-gg/cairo-sha256) by cartridge was used for benchmarking and for other zkvms [sha2 Rust crate](https://crates.io/crates/sha2) was used for benchmarking.
+
+### Prover Time (s)
+{{ sha2_data.tables.prover_time }}
+
+![]({{ sha2_data.plots.prover_time_plot }})
+
+### Verifier Time (ms)
+{{ sha2_data.tables.verifier_time }}
+
+![]({{ sha2_data.plots.verifier_time_plot }})
+
+### Proof Size (KB)
+{{ sha2_data.tables.proof_size }}
+
+![]({{ sha2_data.plots.proof_size_plot }})
+
+### Cycle Count
+{{ sha2_data.tables.cycle_count }}
+
+![]({{ sha2_data.plots.cycle_count_plot }})
+
+### Peak Memory (GB)
+{{ sha2_data.tables.peak_memory }}
+
+![]({{ sha2_data.plots.peak_memory_plot }})
+
+
+## Sha2-Chain
+Benchmark Sha256 hash of 32 bytes for `n` iteration.
+
+### Prover Time (s)
+{{ sha2_chain_data.tables.prover_time }}
+
+![]({{ sha2_chain_data.plots.prover_time_plot }})
+
+### Verifier Time (ms)
+{{ sha2_chain_data.tables.verifier_time }}
+
+![]({{ sha2_chain_data.plots.verifier_time_plot }})
+
+### Proof Size (KB)
+{{ sha2_chain_data.tables.proof_size }}
+
+![]({{ sha2_chain_data.plots.proof_size_plot }})
+
+### Cycle Count
+{{ sha2_chain_data.tables.cycle_count }}
+
+![]({{ sha2_chain_data.plots.cycle_count_plot }})
+
+### Peak Memory (GB)
+{{ sha2_chain_data.tables.peak_memory }}
+
+![]({{ sha2_chain_data.plots.peak_memory_plot }})
+
+
+## Sha3
+Benchmark Keccak256 hash of `n` bytes. For Stone, the implementation of Keccak256 from stdlib as well as builtin was benchmarked.
+
+### Prover Time (s)
+{{ sha3_data.tables.prover_time }}
+
+![]({{ sha3_data.plots.prover_time_plot }})
+
+### Verifier Time (ms)
+{{ sha3_data.tables.verifier_time }}
+
+![]({{ sha3_data.plots.verifier_time_plot }})
+
+### Proof Size (KB)
+{{ sha3_data.tables.proof_size }}
+
+![]({{ sha3_data.plots.proof_size_plot }})
+
+### Cycle Count
+{{ sha3_data.tables.cycle_count }}
+
+![]({{ sha3_data.plots.cycle_count_plot }})
+
+### Peak Memory (GB)
+{{ sha3_data.tables.peak_memory }}
+
+![]({{ sha3_data.plots.peak_memory_plot }})
+
+
+## Sha3-Chain
+Benchmark Keccak256 hash of 32 bytes for `n` iteration.
+
+### Prover Time (s)
+{{ sha3_chain_data.tables.prover_time }}
+
+![]({{ sha3_chain_data.plots.prover_time_plot }})
+
+### Verifier Time (ms)
+{{ sha3_chain_data.tables.verifier_time }}
+
+![]({{ sha3_chain_data.plots.verifier_time_plot }})
+
+### Proof Size (KB)
+{{ sha3_chain_data.tables.proof_size }}
+
+![]({{ sha3_chain_data.plots.proof_size_plot }})
+
+### Cycle Count
+{{ sha3_chain_data.tables.cycle_count }}
+
+![]({{ sha3_chain_data.plots.cycle_count_plot }})
+
+### Peak Memory (GB)
+{{ sha3_chain_data.tables.peak_memory }}
+
+![]({{ sha3_chain_data.plots.peak_memory_plot }})
+
+
+## BLAKE
+Benchmark Blake2s256 hash of `n` bytes. For the **Stwo** benchmarks, a dedicated opcode for BLAKE was used, as illustrated in [this Cairo source file](https://github.com/starkware-libs/cairo-lang/blob/ab8be40403a7634ba296c467b26b8bd945ba5cfa/src/starkware/cairo/common/cairo_blake2s/blake2s.cairo#L671). **SP1** and **R0** do not support precompiles for BLAKE.
+
+### Prover Time (s)
+{{ blake_data.tables.prover_time }}
+
+![]({{ blake_data.plots.prover_time_plot }})
+
+### Verifier Time (ms)
+{{ blake_data.tables.verifier_time }}
+
+![]({{ blake_data.plots.verifier_time_plot }})
+
+### Proof Size (KB)
+{{ blake_data.tables.proof_size }}
+
+![]({{ blake_data.plots.proof_size_plot }})
+
+### Cycle Count
+{{ blake_data.tables.cycle_count }}
+
+![]({{ blake_data.plots.cycle_count_plot }})
+
+### Peak Memory (GB)
+{{ blake_data.tables.peak_memory }}
+
+![]({{ blake_data.plots.peak_memory_plot }})
+
+
+## BLAKE-Chain
+Benchmark Blake2s256 hash of 32 bytes for `n` iteration. For the **Stwo** benchmarks, a dedicated opcode for BLAKE was used, as illustrated in [this Cairo source file](https://github.com/starkware-libs/cairo-lang/blob/ab8be40403a7634ba296c467b26b8bd945ba5cfa/src/starkware/cairo/common/cairo_blake2s/blake2s.cairo#L671). **SP1** and **R0** do not support precompiles for BLAKE.
+
+### Prover Time (s)
+{{ blake_chain_data.tables.prover_time }}
+
+![]({{ blake_chain_data.plots.prover_time_plot }})
+
+### Verifier Time (ms)
+{{ blake_chain_data.tables.verifier_time }}
+
+![]({{ blake_chain_data.plots.verifier_time_plot }})
+
+### Proof Size (KB)
+{{ blake_chain_data.tables.proof_size }}
+
+![]({{ blake_chain_data.plots.proof_size_plot }})
+
+### Cycle Count
+{{ blake_chain_data.tables.cycle_count }}
+
+![]({{ blake_chain_data.plots.cycle_count_plot }})
+
+### Peak Memory (GB)
+{{ blake_chain_data.tables.peak_memory }}
+
+![]({{ blake_chain_data.plots.peak_memory_plot }})
+
+
+## Matrix Multiplication
+Benchmark multiplication of two matrices of size n x n.
+
+### Prover Time (s)
+{{ mat_mul_data.tables.prover_time }}
+
+![]({{ mat_mul_data.plots.prover_time_plot }})
+
+### Verifier Time (ms)
+{{ mat_mul_data.tables.verifier_time }}
+
+![]({{ mat_mul_data.plots.verifier_time_plot }})
+
+### Proof Size (KB)
+{{ mat_mul_data.tables.proof_size }}
+
+![]({{ mat_mul_data.plots.proof_size_plot }})
+
+### Cycle Count
+{{ mat_mul_data.tables.cycle_count }}
+
+![]({{ mat_mul_data.plots.cycle_count_plot }})
+
+### Peak Memory (GB)
+{{ mat_mul_data.tables.peak_memory }}
+
+![]({{ mat_mul_data.plots.peak_memory_plot }})
+
+## Elliptic Curve Addition
+Benchmark n point doubling for secp256k1.
+
+### Prover Time (s)
+{{ ec_data.tables.prover_time }}
+
+![]({{ ec_data.plots.prover_time_plot }})
+
+### Verifier Time (ms)
+{{ ec_data.tables.verifier_time }}
+
+![]({{ ec_data.plots.verifier_time_plot }})
+
+### Proof Size (KB)
+{{ ec_data.tables.proof_size }}
+
+![]({{ ec_data.plots.proof_size_plot }})
+
+### Cycle Count
+{{ ec_data.tables.cycle_count }}
+
+![]({{ ec_data.plots.cycle_count_plot }})
+
+### Peak Memory (GB)
+{{ ec_data.tables.peak_memory }}
+
+![]({{ ec_data.plots.peak_memory_plot }})

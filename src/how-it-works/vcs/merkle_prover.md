@@ -2,6 +2,8 @@
 
 This section explains the prover of the Merkle commitment scheme, focusing on how columns are committed to compute a Merkle root and how the Merkle tree layers are constructed, as well as how to generate Merkle proofs (decommitments).
 
+Stwo represents the computation trace using multiple columns of different sizes. Rather than committing to each column in separate Merkle trees, Stwo uses a modified Merkle tree structure where all columns of different sizes are committed to using a single Merkle tree. We will describe the structure of this Merkle tree in this section.
+
 ## MerkleProver Structure
 
 The `MerkleProver` struct represents a prover for a Merkle commitment scheme. It stores all layers of the Merkle tree, where each layer contains the hash values at that level.
@@ -42,7 +44,7 @@ Suppose the input column data is as shown below:
     </figure>
 </div>
 
-After sorting, the order is: $\textcolor{red}{\text{\textit{Column} 0}}$, $\textcolor{green}{\text{\textit{Column} 1}}$, $\textcolor{blue}{\text{\textit{Column} 2}}$ (from longest to shortest). We will now compute the hashes stored at each layer.
+For this example, the columns are already in the sorted order: $\textcolor{red}{\text{\textit{Column} 0}}$, $\textcolor{green}{\text{\textit{Column} 1}}$, $\textcolor{blue}{\text{\textit{Column} 2}}$ (from longest to shortest). We will now compute the hashes stored at each layer.
 
 - **First Layer (Leaves):** The hashes are computed directly from the column values:
     $[h_{00}, h_{01}, h_{10}, h_{11}] = [H(\textcolor{red}{a}, \textcolor{green}{p}), H(\textcolor{red}{b}, \textcolor{green}{q}), H(\textcolor{red}{c}, \textcolor{green}{r}), H(\textcolor{red}{d}, \textcolor{green}{s})]$
@@ -74,7 +76,7 @@ The output is a `MerkleDecommitment` struct, which contains the hash and column 
 
 The `decommit` function implemented for the `MerkleProver` takes as input:
 - `queries_per_log_size`: A map from log size to a vector of query indices for columns of that size.
-- `columns`: The column data that was committed in the Merkle tree.
+- `columns`: The column data that was committed to in the Merkle tree.
 
 It returns:
 - A vector of queried values, ordered as they are opened (from largest to smallest layer).
@@ -96,7 +98,7 @@ Let's break down the function step by step:
          - Collect all columns of the current size (`layer_columns`) and the previous layer's hashes (`previous_layer_hashes`).
          - Retrieve the queries for the current layer (`layer_column_queries`) and the previous layer's queries (`prev_layer_queries`).
          - For each node index to be decommitted in this layer:
-             - Add the necessary sibling hashes from the previous layer to the `hash_witness` in the decommitment.
+             - Check if the child node hashes of the current node can be computed by the verifier, and if not, add the missing child node hashes to the `hash_witness` in the decommitment.
              - If the node index is queried, fetch the corresponding column values and append them to `queried_values`.
              - If not queried, add the column values to the `column_witness` in the decommitment.
          - The set of node indices decommitted in this layer is propagated as queries to the next layer.

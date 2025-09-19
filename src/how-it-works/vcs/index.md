@@ -1,6 +1,6 @@
 # Vector Commitment Scheme
 
-> In STARK protocols, the prover first interpolates the computation trace as polynomials over some domain, then evaluates those interpolated polynomials over a larger domain (Reed-Solomon encoding). Finally, the prover commits to those evaluations using a vector commitment scheme.
+> In STARK protocols, the prover first interpolates the computation trace as polynomials over some domain, then evaluates those interpolated polynomials over a larger domain. Finally, the prover commits to those evaluations using a vector commitment scheme.
 >
 > Stwo uses a Merkle tree-based vector commitment scheme that enables efficient commitment to multiple columns of data and generation of Merkle proofs for queried elements. This section covers the complete workflow: from hash function implementations to the commitment and decommitment processes.
 

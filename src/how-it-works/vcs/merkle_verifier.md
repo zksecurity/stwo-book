@@ -75,7 +75,7 @@ Below is a walkthrough of the main loop in the `verify` function, showing how th
     - `prev_layer_queries`: $[0]$
     - `layer_column_queries`: $[1]$
     - For `node_index = 0`:
-        - `node_hashes`: Left child is $h_{00}$ (computed), right child $h_{01}$ read from `hash_witness`
+        - `node_hashes`: Left child is $h_{00}$ (computed from `last_layer_hashes`), right child $h_{01}$ read from `hash_witness`
         - `node_values`: Read from `column_witness` → $[\textcolor{blue}{u}]$
         - Compute hash: $h_0 = H(h_{00}, h_{01}, \textcolor{blue}{u})$
         - Add to `layer_total_queries`: $(0, h_0)$
@@ -92,7 +92,7 @@ Below is a walkthrough of the main loop in the `verify` function, showing how th
     - `prev_layer_queries`: $[0, 1]$
     - `layer_column_queries`: empty
     - For `node_index = 0`:
-        - `node_hashes`: Left child is $h_0$ (computed), right child is $h_1$ (computed)
+        - `node_hashes`: Left child is $h_0$, right child is $h_1$ (both computed from `last_layer_hashes`)
         - `node_values`: empty (no columns)
         - Compute hash: $root = H(h_0, h_1)$
         - Add to `layer_total_queries`: $(0, root)$

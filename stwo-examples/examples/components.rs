@@ -160,7 +160,7 @@ impl FrameworkEval for SchedulingEval {
     }
 
     fn max_constraint_log_degree_bound(&self) -> u32 {
-        self.log_size + CONSTRAINT_EVAL_BLOWUP_FACTOR
+        self.log_size + LOG_CONSTRAINT_EVAL_BLOWUP_FACTOR
     }
 
     // ANCHOR: scheduling_eval_evaluate
@@ -173,16 +173,10 @@ impl FrameworkEval for SchedulingEval {
         eval.add_to_relation(RelationEntry::new(
             &self.lookup_elements,
             E::EF::one(),
-            &[input_col],
+            &[input_col, output_col],
         ));
 
-        eval.add_to_relation(RelationEntry::new(
-            &self.lookup_elements,
-            -E::EF::one(),
-            &[output_col],
-        ));
-
-        eval.finalize_logup_in_pairs();
+        eval.finalize_logup();
 
         eval
     }
@@ -202,7 +196,7 @@ impl FrameworkEval for ComputingEval {
     }
 
     fn max_constraint_log_degree_bound(&self) -> u32 {
-        self.log_size + CONSTRAINT_EVAL_BLOWUP_FACTOR
+        self.log_size + LOG_CONSTRAINT_EVAL_BLOWUP_FACTOR
     }
 
     // ANCHOR: computing_eval_evaluate
@@ -225,25 +219,19 @@ impl FrameworkEval for ComputingEval {
         eval.add_to_relation(RelationEntry::new(
             &self.lookup_elements,
             -E::EF::one(),
-            &[input_col],
+            &[input_col, output_col],
         ));
 
-        eval.add_to_relation(RelationEntry::new(
-            &self.lookup_elements,
-            E::EF::one(),
-            &[output_col],
-        ));
-
-        eval.finalize_logup_in_pairs();
+        eval.finalize_logup();
 
         eval
     }
 }
 // ANCHOR_END: computing_eval_evaluate
 
-const CONSTRAINT_EVAL_BLOWUP_FACTOR: u32 = 1;
+const LOG_CONSTRAINT_EVAL_BLOWUP_FACTOR: u32 = 1;
 
-relation!(ComputationLookupElements, 1);
+relation!(ComputationLookupElements, 2);
 
 fn gen_scheduling_trace(
     log_size: u32,
@@ -308,15 +296,9 @@ fn gen_scheduling_logup_trace(
         // ANCHOR: gen_scheduling_logup_trace_row
         // --snip--
 
-        let scheduling_input: PackedSecureField =
-            lookup_elements.combine(&[scheduling_col_1.data[row]]);
-        let scheduling_output: PackedSecureField =
-            lookup_elements.combine(&[scheduling_col_2.data[row]]);
-        col_gen.write_frac(
-            row,
-            scheduling_output - scheduling_input,
-            scheduling_input * scheduling_output,
-        );
+        let scheduling_input_output: PackedSecureField =
+            lookup_elements.combine(&[scheduling_col_1.data[row], scheduling_col_2.data[row]]);
+        col_gen.write_frac(row, PackedSecureField::one(), scheduling_input_output);
 
         // --snip--
         // ANCHOR_END: gen_scheduling_logup_trace_row
@@ -346,15 +328,9 @@ fn gen_computing_logup_trace(
         // ANCHOR: gen_computing_logup_trace_row
         // --snip--
 
-        let computing_input: PackedSecureField =
-            lookup_elements.combine(&[computing_col_1.data[row]]);
-        let computing_output: PackedSecureField =
-            lookup_elements.combine(&[computing_col_3.data[row]]);
-        col_gen.write_frac(
-            row,
-            computing_input - computing_output,
-            computing_input * computing_output,
-        );
+        let computing_input_output: PackedSecureField =
+            lookup_elements.combine(&[computing_col_1.data[row], computing_col_3.data[row]]);
+        col_gen.write_frac(row, -PackedSecureField::one(), computing_input_output);
 
         // --snip--
         // ANCHOR_END: gen_computing_logup_trace_row
@@ -377,7 +353,7 @@ fn main() {
     // Precompute twiddles for evaluating and interpolating the trace
     let twiddles = SimdBackend::precompute_twiddles(
         CanonicCoset::new(
-            log_size + CONSTRAINT_EVAL_BLOWUP_FACTOR + config.fri_config.log_blowup_factor,
+            log_size + LOG_CONSTRAINT_EVAL_BLOWUP_FACTOR + config.fri_config.log_blowup_factor,
         )
         .circle_domain()
         .half_coset,

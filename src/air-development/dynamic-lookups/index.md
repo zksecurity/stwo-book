@@ -6,7 +6,7 @@ In this section, we will implement one of the simplest dynamic lookups: a permut
 
 A permutation check simply checks that two sets of values have the same elements, but not necessarily in the same order. For example, the values $[1, 2, 3]$ and $[3, 1, 2]$ are a permutation of each other, but $[1, 2, 3]$ and $[1, 2]$ are not.
 
-If you went through the previous section, you should have a good intuition for how to implement this. First, create two original trace columns that each contain a random permutation of the same set of values. Then, create a LogUp column where the first original trace column is added as a fraction with multiplicity \\(1\\) and the second original trace column is added as a fraction with multiplicity \\(-1\\). Then, check that the `claimed_sum`, or the sum of the fractions in the two LogUp columns, is \\(0\\).
+If you went through the previous section, you should have a good intuition for how to implement this. First, create two original trace columns that each contain a random permutation of the same set of values. Then, create a LogUp column where the first original trace column is added as a fraction with multiplicity $1$ and the second original trace column is added as a fraction with multiplicity $-1$. Then, check that the `claimed_sum`, or the sum of the fractions in the two LogUp columns, is $0$.
 
 <figure id="fig-permutation-check" style="text-align: center;">
     <img src="./permutation-check.png" width="50%" />

@@ -6,13 +6,13 @@ In the previous section, we showed how to create a preprocessed trace. In this s
 Readers who are unfamiliar with the concept of lookups can refer to the [Lookups](../../how-it-works/lookups.md) section for a quick introduction.
 ```
 
-An _interaction trace_ is a trace type that can express values that involve interaction between the prover and the verifier. A good example is lookups, where the LogUp values are determined by randomness provided by the verifier (e.g. in a LogUp fraction \\(\frac{1}{X-A}\\) where \\(A\\) is a lookup value, \\(X\\) is a random value).
+An _interaction trace_ is a trace type that can express values that involve interaction between the prover and the verifier. A good example is lookups, where the LogUp values are determined by randomness provided by the verifier (e.g. in a LogUp fraction $\frac{1}{X-A}$ where $A$ is a lookup value, $X$ is a random value).
 
 We will use this interaction trace to implement a static lookup, which is a lookup where the values that are being looked up are static, i.e. fixed regardless of the values of the original trace. Specifically, we will implement a **range-check AIR**, which checks that a certain value is within a given range. This is useful especially for proof systems like Stwo that use finite fields because it allows checking for underflow and overflow.
 
 A range-check checks that all values in a column are within a certain range. For example, as in [Figure 1](#fig-range-check), we can check that all values in the range-checked columns are between 0 and 3. We do this by first creating a multiplicity column that counts the number of times each value in the preprocessed trace appears in the range-checked columns.
 
-Then, we create two LogUp columns as part of the interaction trace. The first column contains in each row a fraction where the numerator is the multiplicity and the denominator is the random linear combination of the values in the range column. For example, for row 1, the fraction should be \\(\dfrac{2}{X-0}\\), where \\(X\\) is a random value. The second column contains batches of fractions where the denominator of each fraction is the random linear combination of the value in the range-checked column. Note that the numerator of each fraction is always -1, i.e. we apply a negation, because we want the sum of the first column to be equal to the sum of the second column.
+Then, we create two LogUp columns as part of the interaction trace. The first column contains in each row a fraction where the numerator is the multiplicity and the denominator is the random linear combination of the values in the range column. For example, for row 1, the fraction should be $\dfrac{2}{X-0}$, where $X$ is a random value. The second column contains batches of fractions where the denominator of each fraction is the random linear combination of the value in the range-checked column. Note that the numerator of each fraction is always -1, i.e. we apply a negation, because we want the sum of the first column to be equal to the sum of the second column.
 
 <figure id="fig-range-check" style="text-align: center;">
     <img src="./range-check.png" width="100%" />
@@ -33,7 +33,7 @@ First, we need to create the range-check column as a preprocessed column. This s
 {{#include ../../../stwo-examples/examples/static_lookups.rs:gen_trace}}
 ```
 
-Next, we create the original trace columns. The first two columns are random values in the range \\([0, 15]\\), and the third column contains the counts of the values in the range-check column.
+Next, we create the original trace columns. The first two columns are random values in the range $[0, 15]$, and the third column contains the counts of the values in the range-check column.
 
 ```rust,ignore
 {{#include ../../../stwo-examples/examples/static_lookups.rs:gen_logup_trace}}
@@ -47,13 +47,13 @@ Next, we create the original trace columns. The first two columns are random val
 
 Now we need to create the LogUp columns.
 
-First, note that we are creating a `SmallerThan16Elements` instance using the macro `relation!`. This macro creates an API for performing random linear combinations. Under the hood, it creates two random values \\(z, \alpha\\) that can create a random linear combination of an arbitrary number of elements. In our case, we only need to combine one value (value in \\([0,15]\\)), which is why we pass in `1` to the macro.
+First, note that we are creating a `SmallerThan16Elements` instance using the macro `relation!`. This macro creates an API for performing random linear combinations. Under the hood, it creates two random values $z, \alpha$ that can create a random linear combination of an arbitrary number of elements. In our case, we only need to combine one value (value in $[0,15]$), which is why we pass in `1` to the macro.
 
 Inside `gen_logup_trace`, we create a `LogupTraceGenerator` instance. This is a helper class that allows us to create LogUp columns. Every time we create a new column, we need to call `new_col()` on the `LogupTraceGenerator` instance.
 
 You may notice that we are iterating over `BaseColumn` in chunks of 16, or `1 << LOG_N_LANES` values. This is because we are using the `SimdBackend`, which runs 16 lanes simultaneously, so we need to preserve this structure. The `Packed` in `PackedSecureField` means that it packs 16 values into a single value.
 
-You may also notice that we are using a `SecureField` instead of just the `Field`. This is because the random value we created in `SmallerThan16Elements` will be in the degree-4 extension field \\(\mathbb{F}\_{p^4}\\). Interested readers can refer to the [Mersenne Primes](../../how-it-works/mersenne-prime.md) section for more details.
+You may also notice that we are using a `SecureField` instead of just the `Field`. This is because the random value we created in `SmallerThan16Elements` will be in the degree-4 extension field $\mathbb{F}_{p^4}$. Interested readers can refer to the [Mersenne Primes](../../how-it-works/mersenne-prime.md) section for more details.
 
 Once we set the fractions for each `simd_row`, we need to call `finalize_col()` to finalize the column. This process modifies the LogUp columns from individual fractions to cumulative sums of the fractions as shown in [Figure 2](#fig-finalize-col).
 

@@ -59,14 +59,14 @@ In this approach, each lookup polynomial is represented as a rational function w
 
 Let's walk through how LogUp is implemented in Stwo using a simple example where we look up values from a preprocessed trace.
 
-First, we create columns in the original trace, where all values are from the preprocessed trace \\(A\\).
+First, we create columns in the original trace, where all values are from the preprocessed trace $A$.
 
 <figure id="fig-lookup-implementation-1" style="text-align: center;">
     <img src="./lookups-1.png" width="80%" />
     <figcaption><center><span style="font-size: 0.9em">Figure 1: Create original trace columns that look up values from a preprocessed trace</span></center></figcaption>
 </figure>
 
-Then, we add a multiplicity column to the original trace indicating the number of times each value in \\(A\\) appears in the original trace.
+Then, we add a multiplicity column to the original trace indicating the number of times each value in $A$ appears in the original trace.
 
 <figure id="fig-lookup-implementation-2" style="text-align: center;">
     <img src="./lookups-2.png" width="90%" />
@@ -87,7 +87,7 @@ To create a constraint over the LogUp columns, Stwo modifies the LogUp columns t
     <figcaption><center><span style="font-size: 0.9em">Figure 4: Cumulative sum columns</span></center></figcaption>
 </figure>
 
-A constraint is created using the values of two rows of the cumulative sum LogUp column. For example, as in [Figure 5](#fig-lookup-implementation-5), we can create a constraint by subtracting \\(row_1\\) from \\(row_2\\) and checking that it equals the LogUp fraction created using values \\(a_2\\) and \\(m_2\\):
+A constraint is created using the values of two rows of the cumulative sum LogUp column. For example, as in [Figure 5](#fig-lookup-implementation-5), we can create a constraint by subtracting $row_1$ from $row_2$ and checking that it equals the LogUp fraction created using values $a_2$ and $m_2$:
 
 $$
 \dfrac{m_2}{X - a_2} = row\_2 - row\_1
@@ -98,7 +98,7 @@ $$
     <figcaption><center><span style="font-size: 0.9em">Figure 5: Constraint over two rows</span></center></figcaption>
 </figure>
 
-However, this constraint actually does not hold for the first row since \\(\dfrac{m_1}{X - a_1} \neq row_1 - row_n\\). A typical solution to this problem would be to disable this constraint for the first row and create a separate constraint that is enabled only on the first row.
+However, this constraint actually does not hold for the first row since $\dfrac{m_1}{X - a_1} \neq row_1 - row_n$. A typical solution to this problem would be to disable this constraint for the first row and create a separate constraint that is enabled only on the first row.
 
 But Stwo solves this problem differently. First, before we accumulate the original LogUp column rows, we subtract each row by the average of the total sum of the rows. Only then do we accumulate each row. This way, the last row of the column will always equal zero, so we do not need to make an exception for the first row. The final constraint for the second row looks as follows:
 
@@ -106,7 +106,7 @@ $$
 \dfrac{m_2}{X - a_2} = row\_2 - row\_1 + \text{avg}
 $$
 
-where \\(\text{avg}\\) is a witness value provided by the prover.
+where $\text{avg}$ is a witness value provided by the prover.
 
 <figure id="fig-lookup-implementation-6" style="text-align: center;">
     <img src="./lookups-6.png" width="100%" />
@@ -119,8 +119,8 @@ The right column in [Figure 6](#fig-lookup-implementation-6) is the final form o
 
 In general, batching multiple lookups together helps reduce the size of the proof as it reduces the number of LogUp columns, which means we can commit to fewer columns. However, we cannot batch an arbitrary number of fractions together because it increases the degree of the constraint polynomial.
 
-More specifically, the degree of the constraint polynomial increases linearly with the number of fractions in the batch. Let's say we want to batch \\(k\\) fractions together. This will create a constraint \\(\dfrac{1}{X - a_1} + \dfrac{1}{X - a_2} + ... + \dfrac{1}{X - a_k} = \text{sum} - \text{prev_sum}\\). Once we multiply both sides by the common denominator, we get a constraint of degree \\(k+1\\) from the product \\((X - a_1)\cdot \dots \cdot (X - a_k) \cdot \text{sum}\\).
+More specifically, the degree of the constraint polynomial increases linearly with the number of fractions in the batch. Let's say we want to batch $k$ fractions together. This will create a constraint $\dfrac{1}{X - a_1} + \dfrac{1}{X - a_2} + ... + \dfrac{1}{X - a_k} = \text{sum} - \text{prev\_sum}$. Once we multiply both sides by the common denominator, we get a constraint of degree $k+1$ from the product $(X - a_1)\cdot \dots \cdot (X - a_k) \cdot \text{sum}$.
 
-To illustrate the accounting for how many fractions we can batch together, we first need to understand how the degree of the composition polynomial is calculated in Stwo. Here, the composition polynomial is the constraint polynomial divided by the quotient polynomial, where the quotient polynomial is the vanishing polynomial of the trace domain (i.e. evaluates to 0 over the trace domain). So let's say we have a degree-\\(m\\) constraint on two columns: \\(a^m + b^m = 0\\). We can define the composition polynomial as \\(\dfrac{a^m + b^m}{x^N - 1}\\) where \\(N\\) is the trace height. The degree of \\(a\\) and \\(b\\) is \\(N-1\\) so, if the constraint holds, the degree of the composition polynomial is \\(m \cdot (N-1) - N = (m-1) \cdot N - m\\). Thus, given that we already has \\(N\\) evaluations, we can expand it by \\(m-1\\) to convince the verifier that the constraint holds since \\((m-1) \cdot N > (m-1) \cdot N - m\\).
+To illustrate the accounting for how many fractions we can batch together, we first need to understand how the degree of the composition polynomial is calculated in Stwo. Here, the composition polynomial is the constraint polynomial divided by the quotient polynomial, where the quotient polynomial is the vanishing polynomial of the trace domain (i.e. evaluates to 0 over the trace domain). So let's say we have a degree-$m$ constraint on two columns: $a^m + b^m = 0$. We can define the composition polynomial as $\dfrac{a^m + b^m}{x^N - 1}$ where $N$ is the trace height. The degree of $a$ and $b$ is $N-1$ so, if the constraint holds, the degree of the composition polynomial is $m \cdot (N-1) - N = (m-1) \cdot N - m$. Thus, given that we already has $N$ evaluations, we can expand it by $m-1$ to convince the verifier that the constraint holds since $(m-1) \cdot N > (m-1) \cdot N - m$.
 
-Now, coming back to the question of how many fractions we can batch together, we can see that we can batch up to exactly \\(k\\) fractions if the rate of expansion is \\(k\\).
+Now, coming back to the question of how many fractions we can batch together, we can see that we can batch up to exactly $k$ fractions if the rate of expansion is $k$.

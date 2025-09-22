@@ -4,7 +4,7 @@ Until now, we have only considered constraints that apply over values in a singl
 
 Turns out we can implement this as an AIR constraint, as long as the same constraints are applied to all rows. We will build upon the example in the previous section, where we created two columns and proved that they are permutations of each other by asserting that the second column looks up all values in the first column exactly once.
 
-Here, we will create two columns and prove that not only are they permutations of each other, but also that the second row is a sorted version of the first row. Since the sorted column will contain in order the values \\([0,num\\\_rows)\\), this is equivalent to asserting that **the difference between every current row and the previous row is \\(1\\)**.
+Here, we will create two columns and prove that not only are they permutations of each other, but also that the second row is a sorted version of the first row. Since the sorted column will contain in order the values $[0,num\_rows)$, this is equivalent to asserting that **the difference between every current row and the previous row is $1$**.
 
 We will implement this in three iterations, fixing a different issue in each iteration.
 

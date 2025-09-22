@@ -2,110 +2,124 @@
 
 Proof systems typically rely on finite field operations, where efficient field arithmetic is crucial for optimizing proof generation. In STARK protocols, there is no direct dependency between the security level of the proof system and the field size. This allows the use of small fields with highly efficient arithmetic.
 
-Stwo uses a particular family of primes called _Mersenne primes_. A Mersenne prime is defined as a prime number that is one less than a power of two, expressed as \\( P = 2^k -1 \\). Stwo uses the Mersenne prime \\( \textsf{M31} \\) of size \\( P = 2^{31} - 1 \\), which is implemented as follows:
+Stwo uses a particular family of primes called _Mersenne primes_. A Mersenne prime is defined as a prime number that is one less than a power of two, expressed as $P = 2^k -1$. Stwo uses the Mersenne prime $\textsf{M31}$ of size $P = 2^{31} - 1$, which is implemented as follows:
+
 ```rust,no_run,noplayground
 {{#webinclude https://raw.githubusercontent.com/starkware-libs/stwo/0790eba46b8af5697083d84fb75bd34b08a0b31f/crates/stwo/src/core/fields/m31.rs 32:32}}
 ```
 
-## Why \\( \textsf{M31} \\) ?
+## Why $\textsf{M31}$?
 
-The key advantage is extremely cheap modular reduction after a 31-bit multiplication. Consider computing \\( a \cdot b \\), where \\( a, b \in \textsf{M31} \\). This operation involves a 31-bit integer multiplication, producing a 62-bit intermediate result, which is then reduced modulo \\( P \\).
+The key advantage is extremely cheap modular reduction after a 31-bit multiplication. Consider computing $a \cdot b$, where $a, b \in \textsf{M31}$. This operation involves a 31-bit integer multiplication, producing a 62-bit intermediate result, which is then reduced modulo $P$.
 
-Suppose \\( x = a \cdot b \\) then we can decompose \\( x \\) into two 31-bit values \\( b \\) and \\( s \\), such that \\( x = 2^{31} \cdot b + s \\), as shown in the following figure.
+Suppose $x = a \cdot b$ then we can decompose $x$ into two 31-bit values $b$ and $s$, such that $x = 2^{31} \cdot b + s$, as shown in the following figure.
 
 <div style="text-align: center;">
-    <img src="./mersenne-mult.svg" alt="Mersenne Prime Multiplication" width="400px">
+    <figure id="fig-mersenne-prod" style="display: inline-block;">
+    <img src="./figures/mersenne-mult.svg" width="400px" style="border-radius: 8px;" />
+        <figcaption><span style="font-size: 0.9em">Figure 1: Product decomposition</span></figcaption>
+    </figure>
 </div>
 
 To perform modular reduction, we start with:
-\\[ x \equiv (2^{31} \cdot b + s) \quad mod \quad (2^{31} - 1) \\]
-Substituting \\( 2^{31} \equiv 1 \mod (2^{31} - 1) \\) gives:
-\\[ x \equiv (b + s) \quad mod \quad (2^{31} - 1) \\]
+$$x \equiv (2^{31} \cdot b + s) \quad mod \quad (2^{31} - 1)$$
+Substituting $2^{31} \equiv 1 \mod (2^{31} - 1)$ gives:
+$$x \equiv (b + s) \quad mod \quad (2^{31} - 1)$$
 
-Since \\( b \\) and \\( s \\) are both 31-bit values, they can be directly represented as field elements. Consequently, modular reduction is performed with a single field addition. This makes arithmetic over Mersenne primes exceptionally fast, making them an ideal choice for our STARK protocol. The above field multiplication is implemented as:
+Since $b$ and $s$ are both 31-bit values, they can be directly represented as field elements. Consequently, modular reduction is performed with a single field addition. This makes arithmetic over Mersenne primes exceptionally fast, making them an ideal choice for our STARK protocol. The above field multiplication is implemented as:
+
 ```rust,no_run,noplayground
 {{#webinclude https://raw.githubusercontent.com/starkware-libs/stwo/0790eba46b8af5697083d84fb75bd34b08a0b31f/crates/stwo/src/core/fields/m31.rs 105:107}}
 ```
-where `reduce` is a function which performs efficient reduction of the resulting number modulo \\( P \\).
+
+where `reduce` is a function which performs efficient reduction of the resulting number modulo $P$.
 
 ## Why We Need Extensions ?
 
-We cannot instantiate our STARK protocols using \\( \textsf{M31} \\) since it is not FFT-friendly field, meaning it does not contain a multiplicative subgroup of order that is a large power of two (commonly referred to as a _smooth_ subgroup). The multiplicative group of \\( \textsf{M31} \\) has the following order:
+We cannot instantiate our STARK protocols using $\textsf{M31}$ since it is not FFT-friendly field, meaning it does not contain a multiplicative subgroup of order that is a large power of two (commonly referred to as a _smooth_ subgroup). The multiplicative group of $\textsf{M31}$ has the following order:
 
-\\[ P-1 = 2^{31}-2\\]
+$$P-1 = 2^{31}-2$$
 
-As shown above, the multiplicative group of \\( \textsf{M31} \\) lack a smooth subgroup of size that is a large power of two because there is no large power of two that divides \\( P-1 \\). In other words, there does not exist a sufficiently large \\( n \\) such that \\( 2^n \\, | \\, P - 1 \\). To make \\( \textsf{M31} \\) compatible with STARKs, we will work over extensions of it.
+As shown above, the multiplicative group of $\textsf{M31}$ lacks a smooth subgroup of size that is a large power of two because there is no large power of two that divides $P-1$. In other words, there does not exist a sufficiently large $n$ such that $2^n|P - 1$. To make $\textsf{M31}$ compatible with STARKs, we will work over extensions of it.
 
 ## Field Operations
+
 Stwo avoids code duplication by providing two Rust macros, `impl_field!` and `impl_extension_field!`, for implementing field and extension field operations.
 
+For example, field operations for $\textsf{M31}$ are implemented using the Rust macro `impl_field!`, which takes as argument the field $\textsf{M31}$ and the size of the field $P = 2^{31} - 1$, as follows:
 
-For example, field operations for \\( \textsf{M31} \\) are implemented using the Rust macro `impl_field!`, which takes as argument the field \\( \textsf{M31} \\) and the size of the field \\( P = 2^{31} - 1 \\), as follows:
 ```rust,no_run,noplayground
 {{#webinclude https://raw.githubusercontent.com/starkware-libs/stwo/0790eba46b8af5697083d84fb75bd34b08a0b31f/crates/stwo/src/core/fields/m31.rs 35:35}}
 ```
 
+Since we work over extensions of $\textsf{M31}$, it has the type alias `BaseField`, as follows:
 
-Since we work over extensions of \\( \textsf{M31} \\), it has the type alias `BaseField`, as follows:
 ```rust,no_run,noplayground
 {{#webinclude https://raw.githubusercontent.com/starkware-libs/stwo/0790eba46b8af5697083d84fb75bd34b08a0b31f/crates/stwo/src/core/fields/m31.rs 33}}
 ```
 
-
 # Extensions of Mersenne Prime Field
 
-This section describes two extensions of \\( \textsf{M31} \\): _complex extension_ and _quartic extension_.
+This section describes two extensions of $\textsf{M31}$: _complex extension_ and _quartic extension_.
 
 ## Complex Extension
 
-We construct the degree-2 extension of \\( \textsf{M31} \\) denoted by \\( \textsf{CM31} \\) using the polynomial \\( X^2 +1 \\) which is irreducible over \\( \textsf{M31} \\).
+We construct the degree-2 extension of $\textsf{M31}$ denoted by $\textsf{CM31}$ using the polynomial $X^2 + 1$ which is irreducible over $\textsf{M31}$.
 
-\\[ \textsf{CM31} = \textsf{M31}[X] / (X^2 + 1) \\] 
+$$\textsf{CM31} = \textsf{M31}[X] / (X^2 + 1)$$
 
-This extension forms a field of size \\( P^2 \\), where elements can be represented as \\( (a, b) \\) or 
-\\[ a + i \cdot b \\] 
-where \\( a, b \in \textsf{M31} \\) and \\( i \\) is the root of the polynomial \\( X^2 + 1 \\) i.e. \\( i^2 + 1 = 0\\). This is implemented as follows:
+This extension forms a field of size $P^2$, where elements can be represented as $(a, b)$ or
+$$a + i \cdot b$$
+where $a, b \in \textsf{M31}$ and $i$ is the root of the polynomial $X^2 + 1$ i.e. $i^2 + 1 = 0$. This is implemented as follows:
+
 ```rust,no_run,noplayground
-{{#webinclude https://raw.githubusercontent.com/starkware-libs/stwo/0790eba46b8af5697083d84fb75bd34b08a0b31f/crates/stwo/src/core/fields/cm31.rs 13:17}}
+{{#webinclude https://raw.githubusercontent.com/starkware-libs/stwo/0790eba46b8af5697083d84fb75bd34b08a0b31f/crates/stwo/src/core/fields/cm31.rs 17:17}}
 ```
 
-The order of the multiplicative group of \\( \textsf{CM31} \\) is calculated as follows:
+The order of the multiplicative group of $\textsf{CM31}$ is calculated as follows:
 
-\\[  P^2 - 1 = (P-1) \cdot (P+1) = (2^{31}-2) \cdot (2^{31}) \\]
+$$P^2 - 1 = (P-1) \cdot (P+1) = (2^{31}-2) \cdot (2^{31})$$
 
-As shown above, \\( 2^{31} \\, | \\, P^2 - 1 \\) i.e. the multiplicative group of \\( \textsf{CM31} \\) contains a subgroup of size that is a large power of two. This makes it suitable for instantiating STARKs. This subgroup is what we refer to as the _Circle group_ (explored further in the next section).
+As shown above, $2^{31} | P^2 - 1$ i.e. the multiplicative group of $\textsf{CM31}$ contains a subgroup of size that is a large power of two. This makes it suitable for instantiating STARKs. This subgroup is what we refer to as the _Circle group_ (explored further in the next section).
 
-Similar to \\( \textsf{M31} \\), the operations of \\( \textsf{CM31} \\) are defined using the macros `impl_field!` and `impl_extension_field!` (which takes as argument the field \\( \textsf{CM31} \\) and the field to be extended i.e. \\( \textsf{M31} \\)). These are implemented as follows:
+Similar to $\textsf{M31}$, the operations of $\textsf{CM31}$ are defined using the macros `impl_field!` and `impl_extension_field!` (which takes as argument the field $\textsf{CM31}$ and the field to be extended i.e. $\textsf{M31}$). These are implemented as follows:
+
 ```rust,no_run,noplayground
 {{#webinclude https://raw.githubusercontent.com/starkware-libs/stwo/0790eba46b8af5697083d84fb75bd34b08a0b31f/crates/stwo/src/core/fields/cm31.rs 19:20}}
 ```
-where `P2` is the size of \\( \textsf{CM31} \\) i.e. \\( P^2 \\).
 
+where `P2` is the size of $\textsf{CM31}$ i.e. $P^2$.
 
 ## Quartic Extension
+
 For the soundness of the protocol, it is crucial that the verifier samples random challenges from a sufficiently large field to ensure that an adversary cannot guess or brute-force the challenges and generate a proof that passes verification without knowledge of the witness.
 
-If we use \\( P = 2^{31} -1 \\), then 31-bit random challenges are not sufficient to maintain the security of the protocol. To address this, the verifier draws random challenges from a degree-4 extension of \\( \textsf{M31} \\) denoted by \\( \textsf{QM31} \\), which is equivalent to degree-2 extension of \\( \textsf{CM31} \\), denoted as 
-\\[ \textsf{QM31} = \textsf{CM31}[X]/(X^2 - 2 - i) \\]
+If we use $P = 2^{31} -1$, then 31-bit random challenges are not sufficient to maintain the security of the protocol. To address this, the verifier draws random challenges from a degree-4 extension of $\textsf{M31}$ denoted by $\textsf{QM31}$, which is equivalent to degree-2 extension of $\textsf{CM31}$, denoted as
+$$\textsf{QM31} = \textsf{CM31}[X]/(X^2 - 2 - i)$$
 
-Here the polynomial \\( (X^2 - 2 - i) \\) is irreducible over \\( \textsf{CM31} \\).
+Here the polynomial $(X^2 - 2 - i)$ is irreducible over $\textsf{CM31}$.
 
-The elements of \\( \textsf{QM31} \\) can be represented as \\( (r, s) \\) or 
-\\[ r + u \cdot s \\] 
-where \\( r, s \in \textsf{CM31} \\) and \\( u \\) is the root of the polynomial \\( X^2 - 2 - i \\) i.e. \\( u^2 - 2 - i = 0\\). This is implemented as follows:
+The elements of $\textsf{QM31}$ can be represented as $(r, s)$ or
+$$r + u \cdot s$$
+where $r, s \in \textsf{CM31}$ and $u$ is the root of the polynomial $X^2 - 2 - i$ i.e. $u^2 - 2 - i = 0$. This is implemented as follows:
+
 ```rust,no_run,noplayground
-{{#webinclude https://raw.githubusercontent.com/starkware-libs/stwo/0790eba46b8af5697083d84fb75bd34b08a0b31f/crates/stwo/src/core/fields/qm31.rs 16:21}}
+{{#webinclude https://raw.githubusercontent.com/starkware-libs/stwo/0790eba46b8af5697083d84fb75bd34b08a0b31f/crates/stwo/src/core/fields/qm31.rs 20:21}}
 ```
 
-Since the verifier uses the field \\( \textsf{QM31} \\) to sample random challenges it is given the type alias `SecureField`.
+Since the verifier uses the field $\textsf{QM31}$ to sample random challenges it is given the type alias `SecureField`.
 
-Alternatively, the elements of \\( \textsf{QM31} \\) can also be represented as four elements of \\( \textsf{M31} \\) i.e. \\( ((a, b), (c, d)) \\) or 
-\\[ (a + i \cdot b) + (c + i \cdot d) \cdot u \\] 
+Alternatively, the elements of $\textsf{QM31}$ can also be represented as four elements of $\textsf{M31}$ i.e. $((a, b), (c, d))$ or
+$$(a + i \cdot b) + (c + i \cdot d) \cdot u$$
 
-where \\( a, b, c, d \in \textsf{M31} \\). With four elements from \\( \textsf{M31} \\), the challenge space consists of 124-bit values, offering a sufficiently large \\( 2^{124} \\) possibilities to sample a random challenge.
+where $a, b, c, d \in \textsf{M31}$. With four elements from $\textsf{M31}$, the challenge space consists of 124-bit values, offering a sufficiently large $2^{124}$ possibilities to sample a random challenge.
 
-Similar to \\( \textsf{CM31} \\), the operations of \\( \textsf{QM31} \\) are defined using the macros `impl_field!` and `impl_extension_field!`, implemented as follows:
+Similar to $\textsf{CM31}$, the operations of $\textsf{QM31}$ are defined using the macros `impl_field!` and `impl_extension_field!`, implemented as follows:
+
 ```rust,no_run,noplayground
 {{#webinclude https://raw.githubusercontent.com/starkware-libs/stwo/0790eba46b8af5697083d84fb75bd34b08a0b31f/crates/stwo/src/core/fields/qm31.rs 26:27}}
 ```
-where `P4` is the size of \\( \textsf{QM31} \\) i.e. \\( P^4 \\).
+
+where `P4` is the size of $\textsf{QM31}$ i.e. $P^4$.
+
+In the next section, we will explore the circle group, which is used to instantiate the STARK protocol.

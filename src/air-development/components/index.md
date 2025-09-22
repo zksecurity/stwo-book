@@ -8,7 +8,7 @@ One of the most common use cases of components is to separate frequently used fu
 
 ## Hash Function Example
 
-To illustrate how to use components, we will create two components where the main component calls a hash function component. For simplicity, instead of an actual hash function, the second component will compute \\(x^5 + 1\\) from an input \\(x\\). This component will have in total three columns: [input, intermediate, output], which will correspond to the values \\([x, x^3, x^5 + 1]\\). Our main component, on the other hand, will have two columns, [input, output], which corresponds to the values \\([x, x^5 + 1]\\).
+To illustrate how to use components, we will create two components where the main component calls a hash function component. For simplicity, instead of an actual hash function, the second component will compute $x^5 + 1$ from an input $x$. This component will have in total three columns: [input, intermediate, output], which will correspond to the values $[x, x^3, x^5 + 1]$. Our main component, on the other hand, will have two columns, [input, output], which corresponds to the values $[x, x^5 + 1]$.
 
 We'll now refer to the main component as the **scheduling component** and the hash function component the **computing component**, as the main component is essentially _scheduling_ the hash function component to run its function with a given input and the hash function component _computes_ on the provided input. As can be seen in [Figure 1](#fig-component-example), the input and output of each component are connected by lookups.
 
@@ -72,7 +72,7 @@ Next, let's check how the constraints are created.
 {{#include ../../../stwo-examples/examples/components.rs:computing_eval_evaluate}}
 ```
 
-As you can see, we define the LogUp constraints for each component, and we also add two constraints that make sure the computations \\(x^3\\) and \\(x^5 + 1\\) are correct.
+As you can see, we define the LogUp constraints for each component, and we also add two constraints that make sure the computations $x^3$ and $x^5 + 1$ are correct.
 
 ```rust,ignore
 {{#include ../../../stwo-examples/examples/components.rs:main_start}}

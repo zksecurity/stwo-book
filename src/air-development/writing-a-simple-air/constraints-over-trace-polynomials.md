@@ -22,7 +22,7 @@ Now let's say we want to add a new column `C` to our spreadsheet that computes t
 
 Obviously, as can be seen in [Figure 2](#fig-constraints-over-trace-polynomials-2), our new constraint is satisfied for every row in the table. This means that we can substitute creating a constraint for each row with a single constraint over the columns, i.e. the trace polynomials.
 
-Thus, `col1_row1 * col2_row1 + col1_row1 - col3_row1 = 0` becomes \\(f_1(x) \cdot f_2(x) + f_1(x) - f_3(x) = 0\\).
+Thus, `col1_row1 * col2_row1 + col1_row1 - col3_row1 = 0` becomes $f_1(x) \cdot f_2(x) + f_1(x) - f_3(x) = 0$.
 
 ```admonish
 The idea that all rows must have the same constraint may seem restrictive, compared to say a spreadsheet where we can define different functions for different rows. However, we will show in later sections how to handle such use-cases.
@@ -34,7 +34,7 @@ The idea that all rows must have the same constraint may seem restrictive, compa
 
 We will now give a name to the polynomial that expresses the constraint: a **composition polynomial**.
 
-\\(C(x) = f_1(x) \cdot f_2(x) + f_1(x) - f_3(x)\\)
+$C(x) = f_1(x) \cdot f_2(x) + f_1(x) - f_3(x)$
 
 Basically, in order to prove that the constraints are satisfied, we need to show that the composition polynomial evaluates to 0 over the original domain (i.e. the domain of size the number of rows in the table).
 

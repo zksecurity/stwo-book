@@ -1,6 +1,6 @@
 # Local Row Constraints
 
-Until now, we have only considered constraints that apply over values in a single row. But what if we want to express constraints over multiple rows? For example, we may want to ensure that the difference between the values in two adjacent rows is always the same.
+Until now, we have only considered constraints that apply over values in a single row. But what if we want to express constraints over multiple adjacent rows? For example, we may want to ensure that the difference between the values in two adjacent rows is always the same.
 
 Turns out we can implement this as an AIR constraint, as long as the same constraints are applied to all rows. We will build upon the example in the previous section, where we created two columns and proved that they are permutations of each other by asserting that the second column looks up all values in the first column exactly once.
 
@@ -20,7 +20,9 @@ Another change is in the `evaluate` function, where we call `eval.next_interacti
 
 Once we have these values, we can now assert that the difference between the current and previous row is always `1` with the constraint: `E::F::one() - (sorted_col_curr_row.clone() - sorted_col_prev_row.clone())`.
 
+```admonish question
 But this will fail with a `ConstraintsNotSatisfied` error, can you see why? (You can try running it yourself [here](https://github.com/zksecurity/stwo-book/blob/main/stwo-examples/examples/local_row_constraints_fails_1.rs))
+```
 
 ## Second Try
 

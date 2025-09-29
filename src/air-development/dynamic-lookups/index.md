@@ -25,7 +25,7 @@ Let's move on to the implementation.
 {{#include ../../../stwo-examples/examples/dynamic_lookups.rs:main_end}}
 ```
 
-Looking at the code above, we can see that it looks very similar to the implementation in the previous section. Instead of creating a preprocessed column, we create two columns where the first column is a random permutation of values `[0, 1 << log_size)` and the second column contains the values in order. Note that this is equivalent to "looking up" all values in the first trace column once. And since all the values are looked up only once, we do not need a separate multiplicity column.
+Looking at the code above, we can see that it looks very similar to the implementation in the previous section. Instead of creating a preprocessed column, we create two columns where the first column is a random permutation of values `[0, 1 << log_size)` and the second column contains the values in order. Note that this is equivalent to "looking up" all values in the first trace column once. And since all the values are looked up exactly once, we do not need a separate multiplicity column.
 
 Then, we create a LogUp column that contains the values $\frac{1}{original} - \frac{1}{permuted}$.
 

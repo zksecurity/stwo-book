@@ -1,6 +1,6 @@
 # Why Stwo?
 
-Before we dive into why we should choose Stwo, let's define some terminology. When we talked about proof systems in the previous section, we were only referring to the part that takes a statement and outputs a proof. In reality, however, we first need to structure the statement in a way that it can be proven by the proof system. This structuring part is often referred to as the **frontend**, and the proof system is commonly called the **backend**.
+Before we dive into why we should choose Stwo, let's define some terminology. When we talked about proof systems in the previous section, we mentioned we can create a proof of a statement using a proof system. In reality, however, we first need to structure the function involved in the statement in a way that it can be proven. This structuring part is often referred to as the **frontend**, and the rest of the process of creating a proof is commonly called the **backend**.
 
 With that out of the way, let's dive into some of the advantages of using Stwo.
 

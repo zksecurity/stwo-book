@@ -1,27 +1,55 @@
 # Static Lookups
 
-In the previous section, we showed how to create a preprocessed trace. In this section, we will introduce the concept of an interaction trace, and use it to implement **static lookups**.
+In the previous section, we showed how to create a preprocessed trace. In this section, we will introduce the concept of an interaction trace, and use it with the preprocessed trace to implement **static lookups**.
 
-```admonish
-Readers who are unfamiliar with the concept of lookups can refer to the [Lookups](../../how-it-works/lookups.md) section for a quick introduction.
-```
+Let's start with a brief introduction to lookups. A lookup is a way to connect values from one part of the table to another part of the table. A simple example is when we want to copy values across parts of the table. At first glance, this appears feasible using a constraint. For example, we can copy $col_1$ values to $col_2$ by creating a constraint that $col_1 - col_2$ is equal to $0$. The limitation with this approach, however, is that the same constraint needs to be satisfied over every row in the columns. In other words, we can only check that $col_2$ is an exact copy of $col_1$:
 
-An _interaction trace_ is a trace type that can express values that involve interaction between the prover and the verifier. A good example is lookups, where the LogUp values are determined by randomness provided by the verifier (e.g. in a LogUp fraction $\frac{1}{X-A}$ where $A$ is a lookup value, $X$ is a random value).
+$$
+col_1[i] = col_2[i] \quad \forall\, i
+$$
 
-We will use this interaction trace to implement a static lookup, which is a lookup where the values that are being looked up are static, i.e. fixed regardless of the values of the original trace. Specifically, we will implement a **range-check AIR**, which checks that a certain value is within a given range. This is useful especially for proof systems like Stwo that use finite fields because it allows checking for underflow and overflow.
+But what if we want to check that $col_2$ is a copy of $col_1$ regardless of the order of the values? This can be done by comparing that the grand product of the random linear combinations of all values in $col_1$ is equal to the grand product of the random linear combinations of all values in $col_2$:
+
+$$
+\prod_{i=0}^{n-1} (X - col_1[i]) = \prod_{i=0}^{n-1} (X - col_2[i])
+$$
+
+where $X$ is a random value from the verifier.
+
+By taking the logarithmic derivative of each sides, we can rewrite the equation as follows:
+
+$$
+\sum_{i=0}^{n-1} \frac{1}{X-col_1[i]} = \sum_{i=0}^{n-1} \frac{1}{X-col_2[i]}
+$$
+
+We can go further and allow each of the original values to be copied a different number of times. This is supported by modifying the check to the following:
+
+$$
+\sum_{i=0}^{n-1} \frac{1}{X-col_1[i]} = \sum_{i=0}^{n-1} \frac{m_i}{X-col_2[i]}
+$$
+
+where $m_i$ represents the multiplicity, or the number of times $col_1[i]$ appears in $col_2$.
+
+In Stwo, these fractions (which we will henceforth refer to as _LogUp fractions_) are stored in a special type of trace called an _interaction trace_. An interaction trace is used to contain values that involve interaction between the prover and the verifier. As mentioned above, a LogUp fraction requires a random value $X$ from the verifier, which is why it is stored in an interaction trace.
+
+## Range-check AIR
+
+We will now walk through the implementation of a static lookup, which is a lookup where the values that are being looked up are static, i.e. part of the preprocessed trace. Specifically, we will implement a **range-check AIR**, which checks that a certain value is within a given range. This is useful especially for frameworks like Stwo that use finite fields because it allows checking for underflow and overflow.
 
 A range-check checks that all values in a column are within a certain range. For example, as in [Figure 1](#fig-range-check), we can check that all values in the range-checked columns are between 0 and 3. We do this by first creating a multiplicity column that counts the number of times each value in the preprocessed trace appears in the range-checked columns.
 
-Then, we create two LogUp columns as part of the interaction trace. The first column contains in each row a fraction where the numerator is the multiplicity and the denominator is the random linear combination of the values in the range column. For example, for row 1, the fraction should be $\dfrac{2}{X-0}$, where $X$ is a random value. The second column contains batches of fractions where the denominator of each fraction is the random linear combination of the value in the range-checked column. Note that the numerator of each fraction is always -1, i.e. we apply a negation, because we want the sum of the first column to be equal to the sum of the second column.
+Then, we create two LogUp columns as part of the interaction trace. The first column contains in each row a fraction where the numerator is the multiplicity and the denominator is the random linear combination of the values in the range column. For example, for row 1, the fraction should be $\frac{2}{X-0}$, where $X$ is a random value. The second column contains batches of fractions where the denominator of each fraction is the random linear combination of the value in the range-checked column. Note that the numerator of each fraction is always -1, i.e. we apply a negation, because we want the sum of the first column to be equal to the sum of the second column.
 
 <figure id="fig-range-check" style="text-align: center;">
     <img src="./range-check.png" width="100%" />
     <figcaption><center><span style="font-size: 0.9em">Figure 1: Range-check lookup</span></center></figcaption>
 </figure>
 
-If you stare at the LogUp columns hard enough, you'll notice that if we add all the fractions in the two columns together, we get 0. This is no coincidence! The prover will provide the sum of the LogUp columns and the verifier check in the open that this value is indeed 0.
+If we add all the fractions in the two columns together, we get 0. This means that the verifier will be convinced with high probability that the values in the range-checked columns are a subset of the values in the range column.
 
-Now let's move on to the implementation. As Stwo requires the number of rows to be at least 16, we will create a 4-bit range-check, where the range column is of size 16. For convenience, we will set the size of the range-checked columns to be 16 as well.
+## Implementation
+
+Now let's move on to the implementation where we create a 4-bit range-check AIR. We do this by creating a preprocessed trace column with the integers $[0, 16)$, then using a lookup to force the values in the original trace columns to lie in the values of the preprocessed column.
 
 ```rust,ignore
 {{#include ../../../stwo-examples/examples/static_lookups.rs:range_check_column}}
@@ -53,7 +81,7 @@ Inside `gen_logup_trace`, we create a `LogupTraceGenerator` instance. This is a 
 
 You may notice that we are iterating over `BaseColumn` in chunks of 16, or `1 << LOG_N_LANES` values. This is because we are using the `SimdBackend`, which runs 16 lanes simultaneously, so we need to preserve this structure. The `Packed` in `PackedSecureField` means that it packs 16 values into a single value.
 
-You may also notice that we are using a `SecureField` instead of just the `Field`. This is because the random value we created in `SmallerThan16Elements` will be in the degree-4 extension field $\mathbb{F}_{p^4}$. Interested readers can refer to the [Mersenne Primes](../../how-it-works/mersenne-prime.md) section for more details.
+You may also notice that we are using a `SecureField` instead of just the `Field`. This is because the random value we created in `SmallerThan16Elements` will be in the degree-4 extension field $\mathbb{F}_{p^4}$. This is necessary for the security of the protocol and interested readers can refer to the [Mersenne Primes](../../how-it-works/mersenne-prime.md) section for more details.
 
 Once we set the fractions for each `simd_row`, we need to call `finalize_col()` to finalize the column. This process modifies the LogUp columns from individual fractions to cumulative sums of the fractions as shown in [Figure 2](#fig-finalize-col).
 
@@ -97,3 +125,6 @@ e.g.
 ```admonish
 Note that unlike what [Figure 1](#fig-range-check) shows, the size of the range column and the range-checked columns do not have to be the same. As we will learn in the [Components](../components/index.md) section, we can create separate components for the range-check and the range-checked columns to support such cases.
 ```
+
+$$
+$$

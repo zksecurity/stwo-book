@@ -6,7 +6,7 @@
 - [Why Stwo?](why-stwo.md)
 - [AIR Development](air-development/index.md)
 
-  - [Writing a Simple AIR](air-development/writing-a-simple-air/index.md)
+  - [First Breath of AIR](air-development/writing-a-simple-air/index.md)
 
     - [Hello World](air-development/writing-a-simple-air/hello-world.md)
     - [Writing a Spreadsheet](air-development/writing-a-simple-air/writing-a-spreadsheet.md)
@@ -36,37 +36,44 @@
   - [Circle Group](how-it-works/circle-group.md)
 
   - [Circle Polynomials](how-it-works/circle-polynomials/index.md)
+
     - [Columns](how-it-works/circle-polynomials/columns.md)
     - [Circle Evaluations and Polynomials](how-it-works/circle-polynomials/evals-and-poly.md)
     - [Secure Evaluations and Polynomials](how-it-works/circle-polynomials/secure-evals-and-poly.md)
-  
+
   - [Circle FFT](how-it-works/circle-fft/index.md)
+
     - [Algorithm](how-it-works/circle-fft/algorithm.md)
     - [Twiddles](how-it-works/circle-fft/twiddles.md)
     - [Interpolate](how-it-works/circle-fft/interpolation.md)
     - [Basis and Dimension Gap](how-it-works/circle-fft/basis.md)
-  
+
   - [Vector Commitment Scheme](how-it-works/vcs/index.md)
+
     - [Hash Functions](how-it-works/vcs/hash_functions.md)
     - [Merkle Prover](how-it-works/vcs/merkle_prover.md)
     - [Merkle Verifier](how-it-works/vcs/merkle_verifier.md)
-  
+
   - [AIR to Composition Polynomial](how-it-works/air/index.md)
+
     - [Technical Overview](how-it-works/air/overview.md)
     - [Components](how-it-works/air/components.md)
     - [Prover Components](how-it-works/air/prover_components.md)
-  
+
   - [Circle FRI](how-it-works/circle-fri/index.md)
+
     - [Technical Overview](how-it-works/circle-fri/overview.md)
     - [FRI Prover](how-it-works/circle-fri/fri_prover.md)
     - [FRI Verifier](how-it-works/circle-fri/fri_verifier.md)
 
   - [Polynomial Commitment Scheme](how-it-works/pcs/index.md)
+
     - [Technical Overview](how-it-works/pcs/overview.md)
     - [Polynomial Commitment Scheme Prover](how-it-works/pcs/prover.md)
     - [Polynomial Commitment Scheme Verifier](how-it-works/pcs/verifier.md)
 
   - [Proof Generation and Verification](how-it-works/stark_proof/index.md)
+
     - [STARK Prover](how-it-works/stark_proof/prove.md)
     - [STARK Verifier](how-it-works/stark_proof/verify.md)
 

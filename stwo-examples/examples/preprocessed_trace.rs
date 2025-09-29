@@ -72,9 +72,9 @@ impl FrameworkEval for TestEval {
         // If is_first is 1, then the constraint is col_1 * col_2 - col_3 = 0
         // If is_first is 0, then the constraint is col_1 * col_2 + col_1 - col_3 = 0
         eval.add_constraint(
-            (col_1.clone() * col_2.clone() - col_3.clone()) * is_first.clone()
-                + (col_1.clone() * col_2.clone() + col_1.clone() - col_3.clone())
-                    * (E::F::from(M31::from(1)) - is_first.clone()),
+            is_first.clone() * (col_1.clone() * col_2.clone() - col_3.clone())
+                + (E::F::from(M31::from(1)) - is_first.clone())
+                    * (col_1.clone() * col_2.clone() + col_1.clone() - col_3.clone()),
         );
 
         eval

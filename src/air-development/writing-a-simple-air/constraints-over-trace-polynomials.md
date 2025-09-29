@@ -11,7 +11,7 @@ When we want to perform computations over the cells in a spreadsheet, we don't w
 
 We can do the same thing with our table, except in addition to autofilling cells, we can also create a constraint that the result was computed correctly. Remember that the purpose of using a proof system is that the verifier can verify a computation was executed correctly without having to execute it themselves? Well, that's exactly why we need to create a constraint.
 
-Now let's say we want to add a new column `C` to our spreadsheet that computes the product of the previous columns plus the first column. We can set `C1` as `A1 * B1 + A1` as in [Figure 2](#fig-constraints-over-trace-polynomials-2). And then we can constrain the value of the third column by creating an equation that must equal 0: `col1_row1 * col2_row1 + col1_row1 - col3_row1 = 0`.
+Now let's say we want to add a new column `C` to our spreadsheet that computes the product of the previous columns plus the first column. We can set `C1` as `A1 * B1 + A1` as in [Figure 2](#fig-constraints-over-trace-polynomials-2). The corresponding constraint is expressed as `C1 = A1 * B1 + A1`. However, we use an alternate representation `A1 * B1 + A1 - C1 = 0` because we can only enforce constraints stating that an expression should equal zero. Generalizing this constraint to the whole column, we get `col1_row1 * col2_row1 + col1_row1 - col3_row1 = 0`.
 
 <figure id="fig-constraints-over-trace-polynomials-2">
     <img src="./constraints-over-trace-polynomials-2.png" width="100%" />
@@ -22,7 +22,11 @@ Now let's say we want to add a new column `C` to our spreadsheet that computes t
 
 Obviously, as can be seen in [Figure 2](#fig-constraints-over-trace-polynomials-2), our new constraint is satisfied for every row in the table. This means that we can substitute creating a constraint for each row with a single constraint over the columns, i.e. the trace polynomials.
 
-Thus, `col1_row1 * col2_row1 + col1_row1 - col3_row1 = 0` becomes $f_1(x) \cdot f_2(x) + f_1(x) - f_3(x) = 0$.
+Thus, `col1_row1 * col2_row1 + col1_row1 - col3_row1 = 0` becomes
+
+$$
+f_1(x,y) \cdot f_2(x,y) + f_1(x,y) - f_3(x,y) = 0
+$$
 
 ```admonish
 The idea that all rows must have the same constraint may seem restrictive, compared to say a spreadsheet where we can define different functions for different rows. However, we will show in later sections how to handle such use-cases.
@@ -34,21 +38,19 @@ The idea that all rows must have the same constraint may seem restrictive, compa
 
 We will now give a name to the polynomial that expresses the constraint: a **composition polynomial**.
 
-$C(x) = f_1(x) \cdot f_2(x) + f_1(x) - f_3(x)$
+$$
+C(x,y) = f_1(x,y) \cdot f_2(x,y) + f_1(x,y) - f_3(x,y)
+$$
 
 Basically, in order to prove that the constraints are satisfied, we need to show that the composition polynomial evaluates to 0 over the original domain (i.e. the domain of size the number of rows in the table).
 
-But first, as can be seen in [Figure 1](#fig-constraints-over-trace-polynomials-1), we need to expand the evaluations of the trace polynomials by a factor of 2. This is because when you multiply two trace polynomials of degree `n-1` (where `n` is the number of rows) to compute the constraint polynomial, the degree of the constraint polynomial will be the sum of the degrees of the trace polynomials, which is `2n-2`. To adjust for this increase in degree, we double the number of evaluations.
+But first, as can be seen in the upper part of [Figure 1](#fig-constraints-over-trace-polynomials-1), we need to expand the evaluations of the trace polynomials by a factor of 2. This is because when you multiply two trace polynomials of degree `n-1` (where `n` is the number of rows) to compute the constraint polynomial, the degree of the constraint polynomial will be the sum of the degrees of the trace polynomials, which is `2n-2`. To adjust for this increase in degree, we double the number of evaluations.
 
-Once we have the expanded evaluations, we can evaluate the composition polynomial. Checking that the composition polynomial evaluates to 0 over the original domain is done in FRI, so once again we need to expand the composition polynomial evaluations by a factor of 2 and commit to them.
+Once we have the expanded evaluations, we can evaluate the composition polynomial $C(x,y)$. Since we need to do a FRI operation on the composition polynomial as well, we expand the evaluations again by a factor of 2 and commit to them as a merkle tree. This part corresponds to the bottom part of [Figure 1](#fig-constraints-over-trace-polynomials-1).
 
-```admonish
-In the actual Stwo code, we commit not to the composition polynomial, but to the quotient polynomial. The quotient polynomial is the composition polynomial divided by the vanishing polynomial, i.e., a polynomial that evaluates to 0 in the original domain. However, we intentionally omit this detail for the sake of simplicity.
-```
+## Implementation
 
-We'll see in the code below how this is implemented.
-
-## Code
+Let's see how this is implemented in the code.
 
 ```rust,ignore
 {{#include ../../../stwo-examples/examples/constraints_over_trace_polynomials.rs:here_1}}
@@ -59,23 +61,23 @@ We'll see in the code below how this is implemented.
 {{#include ../../../stwo-examples/examples/constraints_over_trace_polynomials.rs:here_4}}
 ```
 
-First, we add a new column `col_3` that contains the result of the computation: `col_1 * col_2 + col_1`.
+First, we add a new column `col_3` that contains the result of the computation: `col_1 * col_2 + col_1`. Note that all the columns are padded with 0 to a length of 16 via `BaseColumn::zeros(num_rows)` and we got lucky because this satisfies our constraint (i.e. `0 * 0 + 0 - 0 = 0`), so we don't need to modify the constraint.
 
 Then, to create a constraint over the trace polynomials, we first create a `TestEval` struct that implements the `FrameworkEval` trait. Then, we add our constraint logic in the `FrameworkEval::evaluate` function. Note that this function is called for every row in the table, so we only need to define the constraint once.
 
-Inside `FrameworkEval::evaluate`, we call `eval.next_trace_mask()` consecutively three times, retrieving the cell values of all three columns (see [Figure 3](#fig-constraints-over-trace-polynomials-3) below for a visual representation). Once we retrieve all three column values, we add a constraint of the form `col_1 * col_2 + col_1 - col_3`, which should equal 0.
+Inside `FrameworkEval::evaluate`, we call `eval.next_trace_mask()` consecutively three times, retrieving the cell values of all three columns (see [Figure 3](#fig-constraints-over-trace-polynomials-3) below for a visual representation). Once we retrieve all three column values, we add a constraint of the form `col_1 * col_2 + col_1 - col_3`, which should equal 0. Note that `FrameworkEval::evaluate` will be called sequentially for every row in the table.
 
 <figure id="fig-constraints-over-trace-polynomials-3">
     <img src="./constraints-over-trace-polynomials-3.png" width="100%" />
     <figcaption><center><span style="font-size: 0.9em">Figure 3: Evaluate function</span></center></figcaption>
 </figure>
 
-We also need to implement `FrameworkEval::max_constraint_log_degree_bound(&self)` for `FrameworkEval`. As mentioned in the [Composition Polynomial section](#composition-polynomial), we need to expand the trace polynomial evaluations because the degree of our composition polynomial is higher than the trace polynomial. Expanding it by the lowest value `LOG_CONSTRAINT_EVAL_BLOWUP_FACTOR=1` is sufficient for our example as we only have one multiplication gate, so we return `self.log_size + LOG_CONSTRAINT_EVAL_BLOWUP_FACTOR`. For those who are interested in how to set this value in general, we leave a detailed note below.
+We also need to implement `FrameworkEval::max_constraint_log_degree_bound(&self)` for `FrameworkEval`. As mentioned in the [Composition Polynomial section](#composition-polynomial), we need to expand the trace polynomial evaluations because the degree of our composition polynomial is higher than that of the trace polynomial. Expanding it by `LOG_CONSTRAINT_EVAL_BLOWUP_FACTOR=1` is sufficient for our example as the total degree of the highest degree term $f_1(x,y) \cdot f_2(x,y)$ is 2, so we return `self.log_size + LOG_CONSTRAINT_EVAL_BLOWUP_FACTOR`. For those who are interested in how to set this value in general, we leave a detailed note below.
 
 ```admonish id="max_constraint_log_degree_bound"
 **What value to set for `max_constraint_log_degree_bound(&self)`?**
 
-`self.log_size + max(1, ceil(log2(max_degree - 1)))`, where `max_degree` is the maximum degree of all defined constraint polynomials.
+`self.log_size + max(1, ceil(log2(max_degree - 1)))`, where `max_degree` is the maximum total degree of all defined constraint polynomials. For example, the `max_degree` of constraint $f_1(x,y) \cdot f_2(x,y) = 0$ is 2, while that of $f_1(x,y) \cdot f_1(x,y) \cdot f_2(x,y) \cdot f_3(x,y) = 0$ is 4.
 
 e.g.
 - degree 1 - 3: `self.log_size + 1`
@@ -98,8 +100,9 @@ Now that we know the degree of the composition polynomial, we can also explain t
     );
 ```
 
-Why is the `log_size` of the domain set to `log_num_rows + LOG_CONSTRAINT_EVAL_BLOWUP_FACTOR + config.fri_config.log_blowup_factor` here? As we can see in [Figure 1](#fig-constraints-over-trace-polynomials-1), once we have the composition polynomial, we need to expand it again for before committing to it for the FRI step. Thus, the maximum size of the domain that we need in the entire proving process is the FRI blow-up factor times the degree of the composition polynomial.
+When precomputing twiddles, we need to set the `log_size` of the domain to `log_num_rows + LOG_CONSTRAINT_EVAL_BLOWUP_FACTOR + config.fri_config.log_blowup_factor`. Simply put, `log_num_rows + LOG_CONSTRAINT_EVAL_BLOWUP_FACTOR` corresponds to the log degree of the composition polynomial and `config.fri_config.log_blowup_factor` is required to run FRI on the composition polynomial.
 
+Note, however, that this is not a precise explanation, since we do not commit directly to the composition polynomial. Instead, we commit to the quotient polynomial $Q(x,y)$, which is computed by dividing the composition polynomial $C(x,y)$ by the vanishing polynomial $V(x,y)$. The vanishing polynomial vanishes (i.e. evaluates to 0) over the trace domain and thus has a degree of `1 << log_num_rows`. We can therefore calculate the size of the domain that we need as `(1 << (log_num_rows + LOG_CONSTRAINT_EVAL_BLOWUP_FACTOR) - 1 << log_num_rows) * (1 << config.fri_config.log_blowup_factor)`. However, since the size of the domain needs to be a power of 2, we will need to use the value `1 << (log_num_rows + LOG_CONSTRAINT_EVAL_BLOWUP_FACTOR + config.fri_config.log_blowup_factor)` unless `LOG_CONSTRAINT_EVAL_BLOWUP_FACTOR <= 1`. Thus, Stwo simply requires that the maximum domain size is to the value we defined above: the degree of the composition polynomial multiplied by the FRI blowup factor.
 ````
 
 Using the new `TestEval` struct, we can create a new `FrameworkComponent::<TestEval>` component, which the prover will use to evaluate the constraint. For now, we can ignore the other parameters of the `FrameworkComponent::<TestEval>` constructor.
@@ -111,7 +114,10 @@ Finally, we can break down what an Algebraic Intermediate Representation (AIR) m
 
 *Algebraic* means that we are using polynomials to represent the constraints.
 
-*Intermediate Representation* means that this is a modified representation of our statement so that it can be proven by a proof system.
+*Intermediate Representation* means that this is a modified representation of our statement so that it can be proven.
 
 So AIR is just another way of saying that we are representing statements to be proven as constraints over polynomials.
 ```
+
+$$
+$$

@@ -1,12 +1,16 @@
 # Preprocessed Trace
 
-> This section and the following sections are intended for developers who have completed the [Writing a Simple AIR](air-development/writing-a-simple-air/index.md) section or are already familiar with the workflow of creating an AIR. If you have not gone through the previous section, we recommend you to do so first as the following sections gloss over a lot of boilerplate code.
+> This section and the following sections are intended for developers who have completed the [First Breath of AIR](../writing-a-simple-air/index.md) section or are already familiar with the workflow of creating an AIR. If you have not gone through the previous section, we recommend you to do so first as the following sections gloss over a lot of boilerplate code.
 
-For those of you who have completed the [Writing a Simple AIR](air-development/writing-a-simple-air/index.md) tutorial, you should now be familiar with the concept of a trace as a table of integers that are filled in by the prover (we will now refer to this as the **original trace**).
+For those of you who have completed the [First Breath of AIR](../writing-a-simple-air/index.md) tutorial, you should now be familiar with the concept of a trace as a table of integers that are filled in by the prover (we will now refer to this as the **original trace**).
 
 In addition to the original trace, Stwo also has a concept of a **preprocessed trace**, which is a table whose values are fixed and therefore cannot be arbitrarily chosen by the prover. In other words, these are columns whose values are known in advance of creating a proof and essentially agreed upon by both the prover and the verifier.
 
-One of the use cases of the preprocessed trace is as _a selector for different constraints_. Remember that in an AIR, the same constraints are applied to every row of the trace? If we go back to the spreadsheet analogy, this means that we can't create a spreadsheet that runs different computations for different rows. We can get around this issue by composing multiple constraints using a selector column as part of the preprocessed trace. For example, let's say we want to create a constraint that runs different computations for the first 2 rows and the next 2 rows. We can do this by using a preprocessed trace that has value 1 for the first 2 rows and 0 for the next 2 rows, essentially as a selector for the first 2 rows. The resulting single constraint composes the two different constraints by adding them together: $(1 - \text{preprocessed\_trace}) \cdot \text{constraint\_1} + \text{preprocessed\_trace} \cdot \text{constraint\_2} = 0$
+One of the use cases of the preprocessed trace is as _a selector for different constraints_. Remember that in an AIR, the same constraints are applied to every row of the trace? If we go back to the spreadsheet analogy, this means that we can't create a spreadsheet that runs different computations for different rows. To get around this, note that if we multiply a constraint with a "selector" that is zero, the constraint will be trivially satisfied. Building on this, we can create a selector column of 0s and 1s, and multiply the constraint with the selector column. For example, let's say we want to create a constraint that runs different computations for the first 2 rows and the next 2 rows. We can do this by creating a selector column that has value 0 for the first 2 rows and 1 for the next 2 rows and combining it with the constraints as follows:
+
+$$
+(1 - \text{selector}) \cdot \text{constraint}_1 + \text{selector} \cdot \text{constraint}_2 = 0
+$$
 
 <figure id="fig-preprocessed-trace-selector">
     <img src="./preprocessed-trace-selector.png" width="100%" />
@@ -35,7 +39,7 @@ First, we need to define a `IsFirstColumn` struct that will be used as a preproc
 {{#include ../../../stwo-examples/examples/preprocessed_trace.rs:main_end}}
 ```
 
-Then, in our main function, we will create and commit to the preprocessed and original traces. For those of you who are curious about why we need to commit to the trace, please refer to the [Committing to the Trace Polynomials](../simplest-air/committing-to-the-trace-polynomials.md) section.
+Then, in our main function, we will create and commit to the preprocessed and original traces. For those of you who are curious about why we need to commit to the trace, please refer to the [Committing to the Trace Polynomials](../writing-a-simple-air/committing-to-the-trace-polynomials.md) section.
 
 ```rust,ignore
 {{#include ../../../stwo-examples/examples/preprocessed_trace.rs:test_eval}}

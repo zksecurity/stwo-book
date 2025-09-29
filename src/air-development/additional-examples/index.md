@@ -36,7 +36,7 @@ This way, we can create a constraint that uses the `IsZero` condition as part of
 
 When writing AIRs, we may want to expose some values in the trace to the verifier to check in the open. For example, when running an AIR for a Cairo program, we may want to check that the program that was executed is the correct one.
 
-In Stwo, we can achieve this by adding the public input portion of the trace as a LogUp column as negative multiplicity. As shown in [Figure 3](#fig-public-inputs), the public inputs $a_1, a_2$ are added as LogUp values with negative multiplicity $\dfrac{-1}{X - a_1}$ and $\dfrac{-1}{X - a_2}$. The public inputs are given to the verifier as part of the proof and the verifier can directly compute the LogUp values with positive multiplicity $\dfrac{1}{X - a_1}$ and $\dfrac{1}{X - a_2}$ and add it to the LogUp sum and check that the total sum is 0.
+In Stwo, we can achieve this by adding the public input portion of the trace as a LogUp column as negative multiplicity. As shown in [Figure 3](#fig-public-inputs), the public inputs $a_1, a_2$ are added as LogUp values with negative multiplicity $\frac{-1}{X - a_1}$ and $\frac{-1}{X - a_2}$. The public inputs are given to the verifier as part of the proof and the verifier can directly compute the LogUp values with positive multiplicity $\frac{1}{X - a_1}$ and $\frac{1}{X - a_2}$ and add it to the LogUp sum and check that the total sum is 0.
 
 <figure id="fig-public-inputs" style="text-align: center;">
     <img src="./public-inputs.png" width="70%" />
@@ -54,4 +54,4 @@ For example, [Figure 4](#fig-xor) shows the XOR operation for 4-bit integers. To
     <figcaption><center><span style="font-size: 0.9em">Figure 4: XOR operations for 4-bit integers</span></center></figcaption>
 </figure>
 
-Note that the M31 field does not fully support XOR operations for 31-bit integers since we cannot use $2^{31} -1$. If we want to use XOR operations for 31-bit integers, we need to decompose the integers into smaller limbs and perform the XOR operation separately on each of the limbs.
+Note that for larger integers, we may need to decompose into smaller limbs to avoid creating large tables. Also note that the M31 field does not fully support XOR operations for 31-bit integers since we cannot use $2^{31} -1$, although this is not feasible as it would require a table of size of around $2^{31} \times 2^{31}$.

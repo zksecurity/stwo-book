@@ -1,6 +1,6 @@
 # Preprocessed Trace
 
-> This section and the following sections are intended for developers who have completed the [First Breath of AIR](../writing-a-simple-air/index.md) section or are already familiar with the workflow of creating an AIR. If you have not gone through the previous section, we recommend you to do so first as the following sections gloss over a lot of boilerplate code.
+> This section and the following sections are intended for developers who have completed the [First Breath of AIR](../writing-a-simple-air/index.md) section or are already familiar with the workflow of creating an AIR. If you have not gone through the previous section, we recommend doing so first as the following sections gloss over a lot of boilerplate code.
 
 For those of you who have completed the [First Breath of AIR](../writing-a-simple-air/index.md) tutorial, you should now be familiar with the concept of a trace as a table of integers that are filled in by the prover (we will now refer to this as the **original trace**).
 
@@ -17,9 +17,9 @@ $$
     <figcaption><center><span style="font-size: 0.9em">Figure 1: Preprocessed trace as a selector</span></center></figcaption>
 </figure>
 
-Another use case is to use the preprocessed trace for _expressing constant values used in the constraints_. For example, when creating a hash function in an AIR, we often need to use round constants, which the verifier needs to be able to verify or the resulting hash may be invalid. We can also "look up" the constant values as an optimization technique, which we will discuss in more detail in the next section.
+Another use case is to use the preprocessed trace to _express constant values used in constraints_. For example, when creating a hash function in an AIR, we often need to use round constants, which the verifier needs to be able to verify or the resulting hash may be invalid. We can also "look up" the constant values as an optimization technique, which we will discuss in more detail in the next section.
 
-In this section, we will explore how to implement a preprocessed trace as a selector, and we will implement the simplest form: a single `isFirst` column, where the value is 1 for the first row and 0 for all other rows.
+In this section, we will explore how to implement a preprocessed trace as a selector, and we will implement the simplest form: a single `IsFirst` column, where the value is 1 for the first row and 0 for all other rows.
 
 ```admonish
 Boilerplate code is omitted for brevity. Please refer to the [full example code](https://github.com/zksecurity/stwo-book/blob/main/stwo-examples/examples/preprocessed_trace.rs) for the full implementation.
@@ -47,7 +47,7 @@ Then, in our main function, we will create and commit to the preprocessed and or
 
 Now that we have the traces, we need to create a struct that contains the logic for evaluating the constraints. As mentioned before, we need to use the `is_first_id` field to retrieve the row value of the `IsFirstColumn` struct. Then, we compose two constraints using the `IsFirstColumn` row value as a selector and adding them together.
 
-If you're unfamiliar with how `max_constraint_log_degree_bound(&self)` should be implemented, please refer to [this note](../simplest-air/constraints-over-trace-polynomials.md#max_constraint_log_degree_bound).
+If you're unfamiliar with how `max_constraint_log_degree_bound(&self)` should be implemented, please refer to [this note](../writing-a-simple-air/constraints-over-trace-polynomials.md#max_constraint_log_degree_bound).
 
 ```rust,ignore
 {{#include ../../../stwo-examples/examples/preprocessed_trace.rs:main_start}}

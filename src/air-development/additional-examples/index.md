@@ -43,6 +43,8 @@ In Stwo, we can achieve this by adding the public input portion of the trace as 
     <figcaption><center><span style="font-size: 0.9em">Figure 3: Public inputs</span></center></figcaption>
 </figure>
 
+One important thing to note is that the public inputs must be added to the Fiat-Shamir channel before drawing random elements for the interaction trace. We refer the reader to this [example implementation](https://github.com/zksecurity/stwo-book/blob/main/stwo-examples/examples/public_input.rs) for reference.
+
 ## XOR
 
 We can also handle XOR operations as part of the AIR. First, as we did in the [Components](../components/index.md) section, we create a computing component and a scheduling component. Then, we connect the two components using lookups: the computing component sets the LogUp value as a negative multiplicity and the scheduling component sets the same value as a positive multiplicity.

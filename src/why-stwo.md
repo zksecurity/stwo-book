@@ -1,12 +1,12 @@
 # Why Stwo?
 
-Before we dive into why we should choose Stwo, let's define some terminology. When we talked about proof systems in the previous section, we were only referring to the part that takes a statement and outputs a proof. In reality, however, we first need to structure the statement in a way that it can be proven by the proof system. This structuring part is often referred to as the **frontend**, and the proof system is commonly called the **backend**.
+Before we dive into why we should choose Stwo, let's define some terminology. When we talked about proof systems in the previous section, we mentioned that we can create a proof of a statement using a proof system. In reality, however, we first need to structure the function involved in the statement in a way that it can be proven. This structuring part is often referred to as the **frontend**, while the rest of the process of creating a proof is commonly referred to as the **backend**.
 
 With that out of the way, let's dive into some of the advantages of using Stwo.
 
 First, Stwo is a standalone framework that provides both the frontend and backend and therefore handles the entire proving process. There are other frameworks that only provide the frontend or the backend, which has its advantages as its modular structure makes it possible to pick and choose a backend or frontend of one's liking. However, having a single integrated frontend and backend reduces the complexity of the system and is also easier to maintain.
 
-In addition, Stwo's frontend structures statements in the **Algebraic Intermediate Representation (AIR)**, which is a representation that is especially useful for proving statements that are repetitive (e.g. the CPU in a VM, which essentially repeats the same fetch-decode-execute over and over again).
+In addition, Stwo's frontend structures statements as an **Algebraic Intermediate Representation (AIR)**, which is a representation that is especially useful for proving statements that are repetitive (e.g. the CPU in a VM, which essentially repeats the same fetch-decode-execute over and over again).
 
 Stwo's backend is also optimized for prover performance. This is due to largely three factors.
 

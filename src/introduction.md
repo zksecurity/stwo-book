@@ -6,4 +6,4 @@ Stwo is a state-of-the-art framework for creating STARK proofs that provides the
 - A backend that leverages Circle STARKs over the Mersenne31 prime field for fast prover performance
 - Seamlessly integrated with Cairo
 
-This book will guide you through the process of creating your own constraints and then proving them using Stwo and also provide in-depth explanations of the inner workings of Stwo.
+This book will guide you through the process of creating your own constraints and then proving them using Stwo. It will also provide in-depth explanations of the inner workings of how Stwo implements Circle STARKs.

@@ -6,7 +6,7 @@
 - [Why Stwo?](why-stwo.md)
 - [AIR Development](air-development/index.md)
 
-  - [Writing a Simple AIR](air-development/writing-a-simple-air/index.md)
+  - [First Breath of AIR](air-development/writing-a-simple-air/index.md)
 
     - [Hello World](air-development/writing-a-simple-air/hello-world.md)
     - [Writing a Spreadsheet](air-development/writing-a-simple-air/writing-a-spreadsheet.md)
@@ -36,21 +36,24 @@
   - [Circle Group](how-it-works/circle-group.md)
 
   - [Circle Polynomials](how-it-works/circle-polynomials/index.md)
+
     - [Columns](how-it-works/circle-polynomials/columns.md)
     - [Circle Evaluations and Polynomials](how-it-works/circle-polynomials/evals-and-poly.md)
     - [Secure Evaluations and Polynomials](how-it-works/circle-polynomials/secure-evals-and-poly.md)
-  
+
   - [Circle FFT](how-it-works/circle-fft/index.md)
+
     - [Algorithm](how-it-works/circle-fft/algorithm.md)
     - [Twiddles](how-it-works/circle-fft/twiddles.md)
-    - [Interpolate](how-it-works/circle-fft/interpolation.md)
+    - [Interpolation](how-it-works/circle-fft/interpolation.md)
     - [Basis and Dimension Gap](how-it-works/circle-fft/basis.md)
-  
+
   - [Vector Commitment Scheme](how-it-works/vcs/index.md)
+
     - [Hash Functions](how-it-works/vcs/hash_functions.md)
     - [Merkle Prover](how-it-works/vcs/merkle_prover.md)
     - [Merkle Verifier](how-it-works/vcs/merkle_verifier.md)
-  
+
   - [Lookups](how-it-works/lookups.md)
 
 - [Awesome Stwo](awesome-stwo/index.md)

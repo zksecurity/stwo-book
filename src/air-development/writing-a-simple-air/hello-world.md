@@ -6,7 +6,7 @@ Let's first set up a Rust project with Stwo.
 $ cargo new stwo-example
 ```
 
-We need to specify the nightly Rust compiler to use Stwo.
+We need to specify the nightly Rust version to use Stwo.
 
 ```bash
 $ echo -e "[toolchain]\nchannel = \"nightly-2025-01-02\"" > rust-toolchain.toml

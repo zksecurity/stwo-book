@@ -4,13 +4,13 @@ So now that we know how to create a self-contained AIR, the inevitable question 
 
 Fortunately, Stwo provides an abstraction called **components** that allows us to create independent AIRs and compose them together. In other proving frontends, this is also commonly referred to as a _chip_, but the idea is the same.
 
-One of the most common use cases of components is to separate frequently used functions (e.g. a hash function) from the main component into a separate component and reuse it, avoiding trace column bloat. Even if the function is not frequently used, it could be useful to separate it into a component to avoid the degree of the constraints becoming too high. This second point is possible because when we create a new component and connect it to the old component, we do it by using lookups, which means that the constraints of the new component are not added to the degree of the old component.
+One of the most common use cases of components is to separate frequently used functions (e.g. a hash function) from the main component into a separate component and reuse it, avoiding trace column bloat. Even if the function is not frequently used, it can be useful to separate it into a component to avoid the degree of the constraints becoming too high. This second point is possible because when we create a new component and connect it to the old component, we do it by using lookups, which means that the constraints of the new component are not added to the degree of the old component.
 
 ## Hash Function Example
 
-To illustrate how to use components, we will create two components where the main component calls a hash function component. For simplicity, instead of an actual hash function, the second component will compute $x^5 + 1$ from an input $x$. This component will have in total three columns: [input, intermediate, output], which will correspond to the values $[x, x^3, x^5 + 1]$. Our main component, on the other hand, will have two columns, [input, output], which corresponds to the values $[x, x^5 + 1]$.
+To illustrate how to use components, we will create two components where the main component calls a hash function component. For simplicity, instead of an actual hash function, the second component will compute $x^5 + 1$ from an input $x$. This component will have, in total, three columns: [input, intermediate, output], which will correspond to the values $[x, x^3, x^5 + 1]$. Our main component, on the other hand, will have two columns, [input, output], which corresponds to the values $[x, x^5 + 1]$.
 
-We'll now refer to the main component as the **scheduling component** and the hash function component the **computing component**, as the main component is essentially _scheduling_ the hash function component to run its function with a given input and the hash function component _computes_ on the provided input. As can be seen in [Figure 1](#fig-component-example), the input and output of each component are connected by lookups.
+We'll refer to the main component as the **scheduling component** and the hash function component as the **computing component**, since the main component is essentially _scheduling_ the hash function component to run its function with a given input and the hash function component _computes_ on the provided input. As can be seen in [Figure 1](#fig-component-example), the input and output of each component are connected by lookups.
 
 <figure id="fig-component-example" style="text-align: center;">
     <img src="./component-example.png" width="100%" />
@@ -24,21 +24,37 @@ We'll now refer to the main component as the **scheduling component** and the ha
     <figcaption><center><span style="font-size: 0.9em">Figure 2: Traces of each component</span></center></figcaption>
 </figure>
 
-When we implement this in Stwo, the traces of each component will look like [Figure 2](#fig-component-trace) above. Each component has its own original and LogUp traces, and each the inputs and outputs of each component are connected by lookups. Since the scheduling component sets the LogUp value as a positive multiplicity and the computing component sets the same value as a negative multiplicity, the verifier can simply check that the sum of the two LogUp columns is zero. Note that we combine the input and output randomly (as $\dfrac{1}{Z - x \cdot \alpha^0 - (x^5+1) \cdot \alpha^1}$) to form a single lookup. This is because we want to ensure that each input is paired with the correct output. If we add the input and output as separate lookups (as $\dfrac{1}{Z - x} + \dfrac{1}{Z - (x^5+1)}$), a malicious prover can switch the output with a different row and still come up with a valid proof. For example, the following traces would be valid:
+When we implement this in Stwo, the traces of each component will look like [Figure 2](#fig-component-trace) above. Each component has its own original and LogUp traces, and the inputs and outputs of each component are connected by lookups. Since the scheduling component sets the LogUp value as a positive multiplicity and the computing component sets the same value as a negative multiplicity, the verifier can simply check that the sum of the two LogUp columns is zero. Note that we combine the input and output randomly as
 
-    Scheduling component
-    ------------
-    | x | H(y) |
-    | y | H(x) |
-    ------------
+$$
+\frac{1}{Z - x \cdot \alpha^0 - (x^5+1) \cdot \alpha^1}
+$$
 
-    Computing component
-    ----------------------
-    | x | x^5 + 1 | H(x) |
-    | y | y^5 + 1 | H(y) |
-    ----------------------
+to form a single lookup. This is because we want to ensure that each input is paired with the correct output. If we add the input and output as separate lookups as
 
-## Code
+$$
+\frac{1}{Z - x} + \frac{1}{Z - (x^5+1)}
+$$
+
+a malicious prover can switch the output with a different row and still come up with a valid proof. For example, the following scheduling component
+
+| Input | Output  |
+| ----- | ------- |
+| x     | y^5 + 1 |
+| y     | x^5 + 1 |
+
+and the following computing component
+
+| Input | Intermediate | Output  |
+| ----- | ------------ | ------- |
+| x     | x^3 + 1      | x^5 + 1 |
+| y     | y^3 + 1      | y^5 + 1 |
+
+would be valid.
+
+## Implementation
+
+Let's move on to the implementation.
 
 ```rust,ignore
 {{#include ../../../stwo-examples/examples/components.rs:main_start}}
@@ -60,7 +76,7 @@ Let's take a closer look at how the LogUp columns are generated.
 {{#include ../../../stwo-examples/examples/components.rs:gen_computing_logup_trace_end}}
 ```
 
-As you can see, the LogUp values of the input and output columns of both the scheduling and computing components are batched together, but in the scheduling component, the output LogUp value is subtracted from the input LogUp value, while in the computing component, the input LogUp value is subtracted from the output LogUp value. This means that when the LogUp sums from both components are added together, they should cancel out and equal zero.
+As you can see, the LogUp values of the input and output columns of both the scheduling and computing components are batched together, but in the scheduling component, the output LogUp value is subtracted from the input LogUp value, while in the computing component, the input LogUp value is subtracted from the output LogUp value. This means that when the LogUp sums from both components are added together, they should cancel out to zero.
 
 Next, let's check how the constraints are created.
 

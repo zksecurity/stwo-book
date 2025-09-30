@@ -4,9 +4,9 @@ Here, we introduce some additional AIRs that may help in designing more complex 
 
 ## Selectors
 
-A selector is a column of 0s and 1s that is used to selectively enable or disable a constraint. One example of a selector is the `IsFirst` column which has a value of 1 only on the first row. This can be used when constraints are defined over both the current and previous rows but we need to make an exception for the first row.
+A selector is a column of 0s and 1s that selectively enables or disables a constraint. One example of a selector is the `IsFirst` column which has a value of 1 only on the first row. This can be used when constraints are defined over both the current and previous rows but we need to make an exception for the first row.
 
-For example, as seen in [Figure 1](#fig-selectors), when we want to track the cumulative sum of a column, i.e. $b_2 = a_1 + a_2$, the previous row of the first row will point to the last row, creating an incorrect constraint $a_1 = b_4 + b_1$. Thus, we need to disable the constraint for the first row and enable a separate constraint $a_1 = b_1$. This can be achieved by using a selector column that has a value of 1 on the first row and 0 on the other rows and multiplying the constraint by the selector column:
+For example, as seen in [Figure 1](#fig-selectors), when we want to track the cumulative sum of a column, i.e. $b_2 = a_1 + a_2$, the previous row of the first row points to the last row, creating an incorrect constraint $a_1 = b_4 + b_1$. Thus, we need to disable the constraint for the first row and enable a separate constraint $a_1 = b_1$. This can be achieved by using a selector column that has a value of 1 on the first row and 0 on the other rows and multiplying the constraint by the selector column:
 
 $$
 (1 - \text{IsFirst(X)}) \cdot (A(\omega \cdot X) - B(X) - B(\omega \cdot X)) + \text{IsFirst(X)} \cdot (A(X) - B(X)) = 0
@@ -23,7 +23,7 @@ where $X$ refers to the previous value of $\omega\cdot X$ in the multiplicative 
 
 Checking that a certain field element is zero is a common use case when writing AIRs. To do this efficiently, we can use the property of finite fields that a non-zero field element always has a multiplicative inverse.
 
-For example, in [Figure 2](#fig-is-zero), we want to check that a field element in $\mathbb{F}_5$ is zero. We create a new column that contains the multiplicative inverse of each field element $a_i$. We then use the multiplication of the two columns and check whether the result is 0 or 1. Note that if the existing column has a zero element, we can insert any value in the new column since the multiplication will always be zero.
+For example, in [Figure 2](#fig-is-zero), we want to check whether a field element in $\mathbb{F}_5$ is zero. We create a new column that contains the multiplicative inverse of each field element $a_i$. We then use the multiplication of the two columns and check whether the result is 0 or 1. Note that if the existing column has a zero element, we can insert any value in the new column since the multiplication will always be zero.
 
 This way, we can create a constraint that uses the `IsZero` condition as part of the constraint, e.g. $(1 - (A(X) \cdot Inv(X))) \cdot (\text{constraint\_1}) + (A(X) \cdot Inv(X)) \cdot (\text{constraint\_2}) = 0$, which checks $\text{constraint\_1}$ if $A(X)$ is 0 and $\text{constraint\_2}$ if $A(X)$ is not 0.
 

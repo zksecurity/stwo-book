@@ -14,7 +14,7 @@ The memory is also non-deterministic: the prover provides the values of the memo
 
 ## Registers
 
-In physical CPUs, accessing memory is expensive compared to accessing registers due to physical proximity. This is why instructions typically operate over registers rather than directly over memory cells. In Cairo, accessing memory and registers incur the same cost, so Cairo instructions operate directly over memory cells. Thus, the three registers used in Cairo do not store instructions or operand values like in physical CPUs, but rather pointers to the memory cells where the instructions and operands are stored:
+In physical CPUs, accessing memory is expensive compared to accessing registers due to physical proximity. This is why instructions typically operate over registers rather than directly over memory cells. In Cairo, accessing memory and registers incur the same cost, so Cairo instructions operate directly over memory cells. Thus, the three registers used by Cairo do not store instructions or operand values like in physical CPUs, but rather pointers to the memory cells where the instructions and operands are stored:
 
 - `pc` is the **program counter**, which points to the current Cairo instruction
 - `ap` is the **allocation pointer**, which points to the current available memory address
@@ -37,7 +37,7 @@ The next 15 bits are flags. The `dst_reg` and `op0_reg` 1-bit flags indicate whe
 For a more detailed explanation of the flags, please refer to Section 4.5 of the [Cairo paper](https://eprint.iacr.org/2021/1063.pdf).
 ```
 
-Finally, the last bit is fixed to 0, but as we will see in the next section, this design is modified in the current version of Cairo to support opcode extensions.
+Finally, the last bit is fixed to 0, but as we will see in the next section, this design has been modified in the current version of Cairo to support opcode extensions.
 
 ### Opcodes and Opcode Extensions
 

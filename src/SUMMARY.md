@@ -45,7 +45,7 @@
 
     - [Algorithm](how-it-works/circle-fft/algorithm.md)
     - [Twiddles](how-it-works/circle-fft/twiddles.md)
-    - [Interpolate](how-it-works/circle-fft/interpolation.md)
+    - [Interpolation](how-it-works/circle-fft/interpolation.md)
     - [Basis and Dimension Gap](how-it-works/circle-fft/basis.md)
 
   - [Vector Commitment Scheme](how-it-works/vcs/index.md)

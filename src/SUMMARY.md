@@ -56,6 +56,11 @@
     - [Components](how-it-works/air/components.md)
     - [Prover Components](how-it-works/air/prover_components.md)
   
+  - [Circle FRI](how-it-works/circle-fri/index.md)
+    - [Technical Overview](how-it-works/circle-fri/overview.md)
+    - [FRI Prover](how-it-works/circle-fri/fri_prover.md)
+    - [FRI Verifier](how-it-works/circle-fri/fri_verifier.md)
+
   - [Lookups](how-it-works/lookups.md)
 
 - [Awesome Stwo](awesome-stwo/index.md)

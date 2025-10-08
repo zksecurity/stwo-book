@@ -61,6 +61,11 @@
     - [FRI Prover](how-it-works/circle-fri/fri_prover.md)
     - [FRI Verifier](how-it-works/circle-fri/fri_verifier.md)
 
+  - [Polynomial Commitment Scheme](how-it-works/pcs/index.md)
+    - [Technical Overview](how-it-works/pcs/overview.md)
+    - [Polynomial Commitment Scheme Prover](how-it-works/pcs/prover.md)
+    - [Polynomial Commitment Scheme Verifier](how-it-works/pcs/verifier.md)
+
   - [Lookups](how-it-works/lookups.md)
 
 - [Awesome Stwo](awesome-stwo/index.md)

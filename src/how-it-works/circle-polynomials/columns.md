@@ -26,8 +26,6 @@ Here, `bit_reverse` performs a naive bit-reversal permutation on the `column`.
 
 ## Secure Field Columns
 
-<!-- TODO: add figure to showing secure columns -->
-
 An element of the secure field (`SecureField` = `QM31`) cannot be stored in a single `BaseField` column because it is a quartic extension of `M31`. Instead, each secure field element is represented by four base field coordinates and stored in four consecutive columns.
 
 ```rust,no_run,noplayground

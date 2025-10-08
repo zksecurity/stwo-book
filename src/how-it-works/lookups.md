@@ -62,28 +62,28 @@ Let's walk through how LogUp is implemented in Stwo using a simple example where
 First, we create columns in the original trace, where all values are from the preprocessed trace $A$.
 
 <figure id="fig-lookup-implementation-1" style="text-align: center;">
-    <img src="./lookups-1.png" width="80%" />
+    <img src="./figures/lookups-1.png" width="80%" />
     <figcaption><center><span style="font-size: 0.9em">Figure 1: Create original trace columns that look up values from a preprocessed trace</span></center></figcaption>
 </figure>
 
 Then, we add a multiplicity column to the original trace indicating the number of times each value in $A$ appears in the original trace.
 
 <figure id="fig-lookup-implementation-2" style="text-align: center;">
-    <img src="./lookups-2.png" width="90%" />
+    <img src="./figures/lookups-2.png" width="90%" />
     <figcaption><center><span style="font-size: 0.9em">Figure 2: Add a multiplicity column</span></center></figcaption>
 </figure>
 
 Next, we create LogUp columns as part of the interaction trace, one for the preprocessed trace and the multiplicity column, and another for the batch of all lookups.
 
 <figure id="fig-lookup-implementation-3" style="text-align: center;">
-    <img src="./lookups-3.png" width="100%" />
+    <img src="./figures/lookups-3.png" width="100%" />
     <figcaption><center><span style="font-size: 0.9em">Figure 3: Create LogUp columns</span></center></figcaption>
 </figure>
 
 To create a constraint over the LogUp columns, Stwo modifies the LogUp columns to contain the cumulative sum of the fractions in each row. This results in columns that look like the following:
 
 <figure id="fig-lookup-implementation-4" style="text-align: center;">
-    <img src="./lookups-4.png" width="70%" />
+    <img src="./figures/lookups-4.png" width="70%" />
     <figcaption><center><span style="font-size: 0.9em">Figure 4: Cumulative sum columns</span></center></figcaption>
 </figure>
 
@@ -94,7 +94,7 @@ $$
 $$
 
 <figure id="fig-lookup-implementation-5" style="text-align: center;">
-    <img src="./lookups-5.png" width="80%" />
+    <img src="./figures/lookups-5.png" width="80%" />
     <figcaption><center><span style="font-size: 0.9em">Figure 5: Constraint over two rows</span></center></figcaption>
 </figure>
 
@@ -109,7 +109,7 @@ $$
 where $\text{avg}$ is a witness value provided by the prover.
 
 <figure id="fig-lookup-implementation-6" style="text-align: center;">
-    <img src="./lookups-6.png" width="100%" />
+    <img src="./figures/lookups-6.png" width="100%" />
     <figcaption><center><span style="font-size: 0.9em">Figure 6: Trick to not create a separate constraint for the first row</span></center></figcaption>
 </figure>
 

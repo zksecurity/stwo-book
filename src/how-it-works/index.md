@@ -1,4 +1,16 @@
-# How Does It Work?
+# Stwo: Under the Hood
 
-<!-- TODO: update this section in the end, add commit used to describe the implementation -->
-> This section is for those who want an in-depth explanation of various components of Stwo.
+> This section provides an overview of the core components and protocols that make up Stwo. It is intended for readers who want to understand the technical details and inner workings of the system implementation. Throughout this section, we describe the implementation as available in this [commit](https://github.com/starkware-libs/stwo/tree/0790eba46b8af5697083d84fb75bd34b08a0b31f).
+
+The following topics are covered:
+
+- [**Mersenne Primes**](./mersenne-prime.md): Introduction to the Mersenne31 prime field used in Stwo for efficient arithmetic.
+- [**Circle Group**](./circle-group.md): Explains the algebraic structure underlying FFT and polynomial operations.
+- [**Circle Polynomials**](./circle-polynomials/index.md): Details the representation and evaluation of polynomials in the circle group.
+- [**Circle FFT**](./circle-fft/index.md): Describes the fast Fourier transform algorithm adapted for the circle group.
+- [**Vector Commitment Scheme (VCS)**](./vcs/index.md): Covers the use of Merkle trees for committing to vectors and enabling efficient proofs of inclusion.
+- [**AIR to Composition Polynomial**](./air/index.md): Shows how algebraic constraints are encoded as polynomials for proof generation.
+- [**Circle FRI**](./circle-fri/index.md): Explains the FRI protocol for low-degree testing of polynomials over the circle group.
+- [**Polynomial Commitment Scheme (PCS)**](./pcs/index.md): Describes the protocol for committing to and opening polynomials with soundness guarantees.
+- [**Proof Generation and Verification**](./stark_proof/index.md): Walks through the process of generating and verifying a STARK proof in Stwo.
+- [**Lookups**](./lookups.md): Discusses lookup arguments and their implementation in Stwo for efficient constraint checking.

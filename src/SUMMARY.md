@@ -29,7 +29,7 @@
   - [Main Components](cairo-air/main-components/index.md)
   - [`ADD` Opcode Walkthrough](cairo-air/add-opcode/index.md)
 
-- [How Does It Work?](how-it-works/index.md)
+- [Stwo: Under the Hood](how-it-works/index.md)
 
   - [Mersenne Primes](how-it-works/mersenne-prime.md)
 

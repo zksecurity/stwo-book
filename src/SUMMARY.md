@@ -66,6 +66,10 @@
     - [Polynomial Commitment Scheme Prover](how-it-works/pcs/prover.md)
     - [Polynomial Commitment Scheme Verifier](how-it-works/pcs/verifier.md)
 
+  - [Proof Generation and Verification](how-it-works/stark_proof/index.md)
+    - [STARK Prover](how-it-works/stark_proof/prove.md)
+    - [STARK Verifier](how-it-works/stark_proof/verify.md)
+
   - [Lookups](how-it-works/lookups.md)
 
 - [Awesome Stwo](awesome-stwo/index.md)

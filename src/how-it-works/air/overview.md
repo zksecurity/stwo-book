@@ -2,7 +2,7 @@
 
 As shown in an earlier section (refer to [Components](../../air-development/components/index.md)), Stwo represents the trace using multiple tables where each table is referred to as a _component_. An AIR in Stwo is a collection of multiple components. Components can interact with one another, and the consistency of these interactions is verified using [_logUp_](https://eprint.iacr.org/2022/1530.pdf). 
 
-For example, in the [hash function example](../../air-development/components/index.md#hash-function-example), the scheduling component and computing component interact with each other: the computing component looks up inputs from the scheduling component, and the scheduling component looks up outputs from the computing component. The consistency of this interaction is then verified by adding logUp constraints to each component.
+For example, in the [hash function example](../../air-development/components/index.md#hash-function-example), the scheduling component and computing component interact with each other, where both the components lookup the input and output pair. The consistency of this interaction is then verified by adding logUp constraints to each component.
 
 Each component consists of a trace table of a specific height along with a set of constraints. These constraints include computation constraints as well as lookup constraints (refer to [Lookups](../lookups.md)).
 
@@ -18,7 +18,7 @@ The prover interpolates the trace polynomials for each component and then evalua
 
 Both component tables define computation constraints and lookup constraints for their specific component. The component constraints are proven table-wise, each with its separate domain quotient, which are then combined into a single cross-domain composition polynomial. 
 
-The verifier sends $\gamma \in \mathsf{QM31}$ to the prover, which is used to compute the random linear combination of all constraints on component $\mathscr{T}_0$ to obtain the component-level composition polynomial $p_0$. Similarly, the prover uses powers of $\gamma$ to compute the component-level composition polynomial $p_1$ for component $\mathscr{T}_1$.
+The verifier sends $\gamma \in \mathsf{QM31}$ to the prover. We use the same $\gamma$ to combine all constraints across different component tables. First, $\gamma$ is used to compute the random linear combination of all constraints on component $\mathscr{T}_0$ to obtain the component-level composition polynomial $p_0$. Then, the prover uses the same $\gamma$ to compute the component-level composition polynomial $p_1$ for component $\mathscr{T}_1$.
 
 The prover then computes the quotient for component table $\mathscr{T}_0$ as $q_0 = p_0 / v_{n_0}$, where $v_{n_0}$ is the vanishing polynomial for trace domain $D_{n_0}$. Similarly, the prover computes the quotient for component table $\mathscr{T}_1$ as $q_1 = p_1 / v_{n_1}$.
 

@@ -24,7 +24,7 @@ $$
 
 > **Why check proximity to a polynomial?**
 >
-> The prover sends evaluations of a function to the verifier. However, the verifier does not know if this function is a polynomial, or if it satisfies a pre-specified degree bound. FRI allows the verifier to check that the evaluations sent by the prover are indeed "close" to some polynomial of bounded degree. Here, the verifier only checks for proximity; that is, the verifier accepts even if the evaluations sent by the prover are "close enough" to those of a polynomial of bounded degree, they need not be exactly equal.
+> The prover sends evaluations of a function to the verifier. However, the verifier does not know if this function is a polynomial, or if it satisfies a pre-specified degree bound. FRI allows the verifier to check that the evaluations sent by the prover are indeed "close" to some polynomial of bounded degree. Here, the verifier only checks for proximity; that is, the verifier accepts even if the evaluations sent by the prover are "close enough" to those of a polynomial of bounded degree. Thus, the evaluations sent by the prover need not be exactly equal to evaluations of some polynomial of bounded degree.
 
 In Stwo, we can represent the trace over multiple tables, with each trace table defined for a domain of different size. Thus, we are interested in circle FRI for the multi-table setting. We will now see an adaptation of circle FRI for the multi-table setting using an example. Consider three functions: $h_{0}$ defined over the domain $H_0$, $h_{1}$ defined over the domain $H_1$, and $h_{2}$ defined over the domain $H_2$:
 $$
@@ -60,20 +60,20 @@ Using circle FRI, the prover will prove proximity of functions $h_{0}$ to polyno
     $$
     The prover will find the evaluations of functions $h_{0,0}\;,\; h_{0,1}$ over the domain $I_0$ using the evaluations of $h_0$ over domain $H_0$ as follows:
     $$
-    h_{0,0}(x) = \frac{h_0(x,y)+h_0(x,-y)}{2} \quad, \quad h_{0,1} = \frac{h_0(x,y)-h_0(x,-y)}{2y}.
+    h_{0,0}(x) = \frac{h_0(x,y)+h_0(x,-y)}{2} \quad, \quad h_{0,1}(x) = \frac{h_0(x,y)-h_0(x,-y)}{2y}.
     $$
     Note that this decomposition and the process of finding evaluations of the decomposed functions is very similar to the circle FFT algorithm. Now the prover will fold the evaluations of $h_{0,0}$ and $h_{0,1}$ over the domain $I_0$ using the randomness $\lambda_0 \xleftarrow{\$} F$ from the verifier as follows:
     $$
-    g_0(x) = h_{0,0}(x) + \lambda_0 \cdot h_{0, 1}(x)
+    g_0(x) = {\lambda_0}^2 \cdot (h_{0,0}(x) + \lambda_0 \cdot h_{0, 1}(x))
     $$
     The prover commits and gives the verifier oracle access to the evaluations $g_0 \in F^{I_0}$.
     - **Round 1**: The prover will decompose the function $h_1$ over the domain $H_1$ into two functions $h_{1,0}\;,\; h_{1,1}$ over the domain $I_1$, same as the decomposition of $h_0$ in **Round 0**. The prover will also decompose the function $g_0$ over domain $I_0$ into two functions $g_{0,0}$ and $g_{0,1}$ over the domain $I_1$ as follows:
     $$
-    g_0(x) = g_{0,0}(2x^2 - 1) + y \cdot g_{0,1}(2x^2 - 1)
+    g_0(x) = g_{0,0}(2x^2 - 1) + x \cdot g_{0,1}(2x^2 - 1)
     $$
     The prover will find the evaluations of functions $g_{0,0}$ and $g_{0,1}$ over the domain $I_1$ using the evaluations of $g_0$ over domain $I_0$ as follows:
     $$
-    g_{0,0}(2x^2 - 1) = \frac{g_0(x)+g_0(-x)}{2} \quad, \quad g_{0,1}(2x^2 - 1) = \frac{g_0(x)-g_0(-x)}{2y}.
+    g_{0,0}(2x^2 - 1) = \frac{g_0(x)+g_0(-x)}{2} \quad, \quad g_{0,1}(2x^2 - 1) = \frac{g_0(x)-g_0(-x)}{2x}.
     $$
     Now the prover will fold the evaluations of $h_{1,0}$, $h_{1,1}$, $g_{0,0}$, and $g_{0,1}$ over the domain $I_1$ using the randomness $\lambda_1 \xleftarrow{\$} F$ from the verifier as follows:
     $$

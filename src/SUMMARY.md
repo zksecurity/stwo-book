@@ -51,6 +51,11 @@
     - [Merkle Prover](how-it-works/vcs/merkle_prover.md)
     - [Merkle Verifier](how-it-works/vcs/merkle_verifier.md)
   
+  - [AIR to Composition Polynomial](how-it-works/air/index.md)
+    - [Technical Overview](how-it-works/air/overview.md)
+    - [Components](how-it-works/air/components.md)
+    - [Prover Components](how-it-works/air/prover_components.md)
+  
   - [Lookups](how-it-works/lookups.md)
 
 - [Awesome Stwo](awesome-stwo/index.md)

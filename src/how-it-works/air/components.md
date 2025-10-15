@@ -53,5 +53,5 @@ The inputs to this function are as follows:
 
 The function body operates as follows. First, an `evaluation_accumulator` is instantiated. Then, for each component, the evaluation of the component-level quotient is added to the `evaluation_accumulator`. For the [example AIR containing two components](./overview.md#air-to-composition-polynomial), this adds the evaluations of component-level quotients $q_0$ and $q_1$ at the input `point` to the `evaluation_accumulator`. Finally, the `finalize()` function is called on the `evaluation_accumulator`, which outputs the random linear combination evaluated at the input `point`.
 $$
-q = \gamma^{e_0} \cdot q_0 + \gamma^{e_1} \cdot q_1
+q = q_0 + \gamma^{c_0} \cdot q_1
 $$

@@ -16,7 +16,7 @@ Consider an AIR composed of two components with trace tables: $\mathscr{T}_0$ an
 
 The prover interpolates the trace polynomials for each component and then evaluates the trace polynomials over an evaluation domain that is a blowup factor $B = 2^\beta$ times larger than the trace domain. Thus, the evaluation domain for component table $\mathscr{T}_0$ is $D_{n_0 + \beta}$ of size $2^{n_0 + \beta}$. Similarly, the evaluation domain for component table $\mathscr{T}_1$ is $D_{n_1 + \beta}$ of size $2^{n_1 + \beta}$. Both interpolation and evaluation use [circle FFT](../circle-fft/index.md). The prover then commits to the evaluations of trace polynomials from all components using a single [Merkle tree](../vcs/index.md).
 
-Both component tables define computation constraints and lookup constraints for their specific component. The component constraints are proven table-wise, each with its separate domain quotient, which are then combined into a single cross-domain composition polynomial. 
+Both component tables define computation constraints and lookup constraints for their specific component. The component constraints are proven table-wise, each with its separate domain quotient, which are then combined into a single cross-domain composition polynomial. Suppose the component tables $\mathscr{T}_0$ and $\mathscr{T}_1$ have a total of $c_0$ and $c_1$ constraints, respectively.
 
 The verifier sends $\gamma \in \mathsf{QM31}$ to the prover. We use the same $\gamma$ to combine all constraints across different component tables. First, $\gamma$ is used to compute the random linear combination of all constraints on component $\mathscr{T}_0$ to obtain the component-level composition polynomial $p_0$. Then, the prover uses the same $\gamma$ to compute the component-level composition polynomial $p_1$ for component $\mathscr{T}_1$.
 
@@ -24,8 +24,8 @@ The prover then computes the quotient for component table $\mathscr{T}_0$ as $q_
 
 Finally, the prover computes the cross-domain composition polynomial as
 $$
-q = \gamma^{e_0} \cdot q_0 + \gamma^{e_1} \cdot q_1
+q = q_0 + \gamma^{c_0} \cdot q_1
 $$
-where $e_0, e_1$ are powers of $\gamma$ that have not been used earlier.
+where $c_0$ is the total number of constraints of the component table $\mathscr{T}_0$.
 
 The next section examines how these concepts are implemented.

@@ -3,7 +3,7 @@ authors = ["Jason Park", "Varun Thakore"]
 language = "en"
 multilingual = false
 src = "src"
-title = "stwo-book"
+title = "Stwo Book"
 
 [preprocessor.admonish]
 command = "mdbook-admonish"

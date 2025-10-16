@@ -33,8 +33,6 @@ $$p(x, y) = p_a(x, y) + i \cdot p_b(x, y) + u \cdot p_c(x, y) + iu \cdot p_d(x, 
 
 where $p_a(x,y)$ is a `CirclePoly` with coefficients $a_j \in \mathsf{M31}$, similarly for $p_b(x, y), p_c(x, y)$ and $p_d(x, y)$. This is implemented as follows:
 
-<!-- TODO: Add a figure or example to explain this implementation. -->
-
 ```rust,no_run,noplayground
 {{#webinclude https://raw.githubusercontent.com/starkware-libs/stwo/0790eba46b8af5697083d84fb75bd34b08a0b31f/crates/stwo/src/prover/poly/circle/secure_poly.rs 14:14}}
 ```

@@ -29,7 +29,7 @@
   - [Main Components](cairo-air/main-components/index.md)
   - [`ADD` Opcode Walkthrough](cairo-air/add-opcode/index.md)
 
-- [How Does It Work?](how-it-works/index.md)
+- [Stwo: Under the Hood](how-it-works/index.md)
 
   - [Mersenne Primes](how-it-works/mersenne-prime.md)
 
@@ -60,6 +60,15 @@
     - [Technical Overview](how-it-works/circle-fri/overview.md)
     - [FRI Prover](how-it-works/circle-fri/fri_prover.md)
     - [FRI Verifier](how-it-works/circle-fri/fri_verifier.md)
+
+  - [Polynomial Commitment Scheme](how-it-works/pcs/index.md)
+    - [Technical Overview](how-it-works/pcs/overview.md)
+    - [Polynomial Commitment Scheme Prover](how-it-works/pcs/prover.md)
+    - [Polynomial Commitment Scheme Verifier](how-it-works/pcs/verifier.md)
+
+  - [Proof Generation and Verification](how-it-works/stark_proof/index.md)
+    - [STARK Prover](how-it-works/stark_proof/prove.md)
+    - [STARK Verifier](how-it-works/stark_proof/verify.md)
 
   - [Lookups](how-it-works/lookups.md)
 

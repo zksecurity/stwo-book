@@ -53,7 +53,7 @@ Out-of-domain sampling relates to the notion of "closeness" described in the [FR
 2. **List Decoding Regime**: We operate in this regime if there is a list of polynomials which are "close" to the function provided by the prover. In this case, since the function can be "close" to a _list_ of polynomials, we cannot be sure that it represents a unique polynomial.
 
 
-In practice, we are usually operating in the list decoding regime. So there can be multiple polynomials which are "close" to the function provided by the prover. This affects the binding property of the polynomial commitment scheme, since the function sent by the prover represents a list of polynomials rather than some unique polynomial.
+In practice, we are usually operate in the list decoding regime. So there can be multiple polynomials which are "close" to the function provided by the prover. This affects the binding property of the polynomial commitment scheme, since the function sent by the prover represents a list of polynomials rather than some unique polynomial.
 
 
 To bind the prover to a unique polynomial from the list, we ask the prover to open the polynomial at an out-of-domain point. This is also referred to as _Domain Extension for Eliminating Pretenders_ (or the _DEEP method_). This is the informal motivation for out-of-domain sampling. For more details, please refer to ["A summary on the FRI low degree test"](https://eprint.iacr.org/2022/1216.pdf).

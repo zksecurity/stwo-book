@@ -1,0 +1,10 @@
+# Circle FRI
+
+> This section introduces the Circle FRI protocol, which is used to check proximity to low-degree polynomials. We provide a technical overview, walk through a concrete example, and detail the implementation of both the prover and verifier.
+
+This section is organized as follows:
+
+- **[Technical Overview](./overview.md)**: Explains the mathematical foundations and protocol steps of Circle FRI, including a multi-table example and security analysis.
+- **[FRI Prover](./fri_prover.md)**: Describes the implementation of the prover, including protocol configuration, commitment, and decommitment phases.
+- **[FRI Verifier](./fri_verifier.md)**: Details the verifier's implementation, covering query generation and verification logic.
+

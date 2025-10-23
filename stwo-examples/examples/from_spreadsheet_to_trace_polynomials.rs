@@ -1,4 +1,4 @@
-use stwo_prover::core::{
+use stwo::prover::{
     backend::{
         simd::{
             column::BaseColumn,
@@ -7,11 +7,14 @@ use stwo_prover::core::{
         },
         Column,
     },
-    fields::m31::M31,
     poly::{
-        circle::{CanonicCoset, CircleEvaluation},
+        circle::{CircleEvaluation},
         BitReversedOrder,
     },
+};
+use stwo::core::{
+    fields::m31::M31,
+    poly::circle::CanonicCoset,
     ColumnVec,
 };
 

@@ -1,25 +1,25 @@
 use num_traits::identities::Zero;
-use stwo_prover::{
-    constraint_framework::{
-        preprocessed_columns::PreProcessedColumnId, EvalAtRow, FrameworkComponent, FrameworkEval,
-        TraceLocationAllocator,
+use stwo::core::verifier::verify;
+use stwo::core::{
+    air::Component,
+    channel::{Blake2sChannel, Channel},
+    fields::{m31::M31, qm31::QM31},
+    pcs::{CommitmentSchemeVerifier, PcsConfig},
+    poly::circle::CanonicCoset,
+    vcs::blake2_merkle::Blake2sMerkleChannel,
+};
+use stwo::prover::{
+    backend::simd::{column::BaseColumn, m31::LOG_N_LANES, SimdBackend},
+    backend::Column,
+    poly::{
+        circle::{CircleEvaluation, PolyOps},
+        BitReversedOrder,
     },
-    core::{
-        air::Component,
-        backend::{
-            simd::{column::BaseColumn, m31::LOG_N_LANES, SimdBackend},
-            Column,
-        },
-        channel::{Blake2sChannel, Channel},
-        fields::{m31::M31, qm31::QM31},
-        pcs::{CommitmentSchemeProver, CommitmentSchemeVerifier, PcsConfig},
-        poly::{
-            circle::{CanonicCoset, CircleEvaluation, PolyOps},
-            BitReversedOrder,
-        },
-        prover::{prove, verify},
-        vcs::blake2_merkle::Blake2sMerkleChannel,
-    },
+    prove, CommitmentSchemeProver,
+};
+use stwo_constraint_framework::{
+    preprocessed_columns::PreProcessedColumnId, EvalAtRow, FrameworkComponent, FrameworkEval,
+    TraceLocationAllocator,
 };
 
 // ANCHOR: is_first_column

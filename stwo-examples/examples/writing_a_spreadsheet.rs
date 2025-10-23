@@ -1,10 +1,10 @@
-use stwo_prover::core::{
+use stwo::prover::{
     backend::{
         simd::{column::BaseColumn, m31::N_LANES},
         Column,
     },
-    fields::m31::M31,
 };
+use stwo::core::fields::m31::M31;
 
 fn main() {
     let num_rows = N_LANES;

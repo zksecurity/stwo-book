@@ -1,4 +1,12 @@
-use stwo_prover::core::{
+use stwo::core::{
+    channel::{Blake2sChannel, Channel},
+    fields::m31::M31,
+    pcs::PcsConfig,
+    poly::circle::CanonicCoset,
+    vcs::blake2_merkle::Blake2sMerkleChannel,
+    ColumnVec,
+};
+use stwo::prover::{
     backend::{
         simd::{
             column::BaseColumn,
@@ -7,15 +15,11 @@ use stwo_prover::core::{
         },
         Column,
     },
-    channel::{Blake2sChannel, Channel},
-    fields::m31::M31,
-    pcs::{CommitmentSchemeProver, PcsConfig},
     poly::{
-        circle::{CanonicCoset, CircleEvaluation, PolyOps},
+        circle::{CircleEvaluation, PolyOps},
         BitReversedOrder,
     },
-    vcs::blake2_merkle::Blake2sMerkleChannel,
-    ColumnVec,
+    CommitmentSchemeProver,
 };
 
 // ANCHOR: here_1

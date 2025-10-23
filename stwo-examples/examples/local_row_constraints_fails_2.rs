@@ -1,28 +1,27 @@
 use num_traits::{identities::Zero, One};
 use rand::prelude::SliceRandom;
-use stwo_prover::{
-    constraint_framework::{
-        logup::LogupTraceGenerator, preprocessed_columns::PreProcessedColumnId, EvalAtRow,
-        FrameworkComponent, FrameworkEval, Relation, RelationEntry, TraceLocationAllocator,
-        ORIGINAL_TRACE_IDX,
+use stwo::core::{
+    air::Component,
+    channel::Blake2sChannel,
+    fields::{m31::M31, qm31::SecureField},
+    pcs::{CommitmentSchemeVerifier, PcsConfig},
+    poly::circle::CanonicCoset,
+    vcs::blake2_merkle::Blake2sMerkleChannel,
+    verifier::verify,
+};
+use stwo::prover::{
+    backend::simd::{column::BaseColumn, m31::LOG_N_LANES, qm31::PackedSecureField, SimdBackend},
+    backend::Column,
+    poly::{
+        circle::{CircleEvaluation, PolyOps},
+        BitReversedOrder,
     },
-    core::{
-        air::Component,
-        backend::{
-            simd::{column::BaseColumn, m31::LOG_N_LANES, qm31::PackedSecureField, SimdBackend},
-            Column,
-        },
-        channel::Blake2sChannel,
-        fields::{m31::M31, qm31::SecureField},
-        pcs::{CommitmentSchemeProver, CommitmentSchemeVerifier, PcsConfig},
-        poly::{
-            circle::{CanonicCoset, CircleEvaluation, PolyOps},
-            BitReversedOrder,
-        },
-        prover::{prove, verify},
-        vcs::blake2_merkle::Blake2sMerkleChannel,
-    },
-    relation,
+    prove, CommitmentSchemeProver,
+};
+use stwo_constraint_framework::relation;
+use stwo_constraint_framework::{
+    preprocessed_columns::PreProcessedColumnId, EvalAtRow, FrameworkComponent, FrameworkEval,
+    LogupTraceGenerator, Relation, RelationEntry, TraceLocationAllocator, ORIGINAL_TRACE_IDX,
 };
 
 // ANCHOR: is_first_column

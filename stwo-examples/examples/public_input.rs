@@ -1,32 +1,33 @@
-use num_traits::{identities::Zero, One};
-use stwo_prover::{
-    constraint_framework::{
-        logup::LogupTraceGenerator, EvalAtRow, FrameworkComponent, FrameworkEval, Relation,
-        RelationEntry, TraceLocationAllocator,
+use num_traits::One;
+use num_traits::Zero;
+use stwo::core::fields::FieldExpOps;
+use stwo::core::verifier::verify;
+use stwo::core::{
+    air::Component,
+    channel::{Blake2sChannel, Channel},
+    fields::{m31::M31, qm31::SecureField},
+    pcs::{CommitmentSchemeVerifier, PcsConfig},
+    poly::circle::CanonicCoset,
+    vcs::blake2_merkle::Blake2sMerkleChannel,
+    ColumnVec,
+};
+use stwo::prover::{
+    backend::simd::{
+        column::BaseColumn,
+        m31::{PackedM31, LOG_N_LANES},
+        qm31::PackedSecureField,
+        SimdBackend,
     },
-    core::{
-        air::Component,
-        backend::{
-            simd::{
-                column::BaseColumn,
-                m31::{PackedM31, LOG_N_LANES},
-                qm31::PackedSecureField,
-                SimdBackend,
-            },
-            Column,
-        },
-        channel::{Blake2sChannel, Channel},
-        fields::{m31::M31, qm31::SecureField, FieldExpOps},
-        pcs::{CommitmentSchemeProver, CommitmentSchemeVerifier, PcsConfig},
-        poly::{
-            circle::{CanonicCoset, CircleEvaluation, PolyOps},
-            BitReversedOrder,
-        },
-        prover::{prove, verify},
-        vcs::blake2_merkle::Blake2sMerkleChannel,
-        ColumnVec,
+    backend::Column,
+    poly::{
+        circle::{CircleEvaluation, PolyOps},
+        BitReversedOrder,
     },
-    relation,
+    prove, CommitmentSchemeProver,
+};
+use stwo_constraint_framework::{
+    relation, EvalAtRow, FrameworkComponent, FrameworkEval, LogupTraceGenerator, Relation,
+    RelationEntry, TraceLocationAllocator,
 };
 
 struct PublicDataClaim {

@@ -106,7 +106,7 @@ $$
 \frac{m_2}{X - a_2} = row\_2 - row\_1 + \text{avg}
 $$
 
-where $\text{avg}$ is a witness value provided by the prover.
+Where $\text{avg}$ is a witness value provided by the prover.
 
 <figure id="fig-lookup-implementation-6" style="text-align: center;">
     <img src="./figures/lookups-6.png" width="100%" />

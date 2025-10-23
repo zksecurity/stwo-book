@@ -36,14 +36,14 @@ $$
 \frac{1}{Z - x} + \frac{1}{Z - (x^5+1)}
 $$
 
-a malicious prover can switch the output with a different row and still come up with a valid proof. For example, the following scheduling component
+A malicious prover can switch the output with a different row and still come up with a valid proof. For example, the following scheduling component
 
 | Input | Output  |
 | ----- | ------- |
 | x     | y^5 + 1 |
 | y     | x^5 + 1 |
 
-and the following computing component
+And the following computing component
 
 | Input | Intermediate | Output  |
 | ----- | ------------ | ------- |
@@ -62,7 +62,7 @@ Let's move on to the implementation.
 {{#include ../../../stwo-examples/examples/components.rs:main_end}}
 ```
 
-The code above for proving the components should look pretty familiar by now. Since we need to do everything twice the amount of times, we create structs like `ComponentsStatement0`, `ComponentsStatement1`, `Components` and `ComponentsProof`, but the main logic is the same.
+The code above for proving the components should look pretty familiar by now. Since we need to do everything twice as many times, we create structs like `ComponentsStatement0`, `ComponentsStatement1`, `Components`, and `ComponentsProof`, but the main logic is the same.
 
 Let's take a closer look at how the LogUp columns are generated.
 

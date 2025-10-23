@@ -28,7 +28,7 @@ $$
 \sum_{i=0}^{n-1} \frac{1}{X-col_1[i]} = \sum_{i=0}^{n-1} \frac{m_i}{X-col_2[i]}
 $$
 
-where $m_i$ represents the multiplicity, or the number of times $col_1[i]$ appears in $col_2$.
+Where $m_i$ represents the multiplicity, or the number of times $col_1[i]$ appears in $col_2$.
 
 In Stwo, these fractions (which we will hereafter refer to as _LogUp fractions_) are stored in a special type of trace called an _interaction trace_. An interaction trace is used to contain values that involve interaction between the prover and the verifier. As mentioned above, a LogUp fraction requires a random value $X$ from the verifier, which is why it is stored in an interaction trace.
 
@@ -125,6 +125,3 @@ e.g.
 ```admonish
 Note that unlike what [Figure 1](#fig-range-check) shows, the size of the range column and the range-checked columns do not have to be the same. As we will learn in the [Components](../components/index.md) section, we can create separate components for the range-check and the range-checked columns to support such cases.
 ```
-
-$$
-$$

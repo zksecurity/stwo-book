@@ -29,7 +29,7 @@ Boilerplate code is omitted for brevity. Please refer to the [full example code]
 {{#include ../../../stwo-examples/examples/preprocessed_trace.rs:is_first_column}}
 ```
 
-First, we need to define a `IsFirstColumn` struct that will be used as a preprocessed trace. We will use the `gen_column()` function to generate a `CircleEvaluation` struct that is 1 for the first row and 0 for all other rows. The `id()` function is needed to identify this column when evaluating the constraints.
+First, we need to define an `IsFirstColumn` struct that will be used as a preprocessed trace. We will use the `gen_column()` function to generate a `CircleEvaluation` struct that is 1 for the first row and 0 for all other rows. The `id()` function is needed to identify this column when evaluating the constraints.
 
 ```rust,ignore
 {{#include ../../../stwo-examples/examples/preprocessed_trace.rs:main_start}}

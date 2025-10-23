@@ -22,7 +22,7 @@ Now let's say we want to add a new column `C` to our spreadsheet that computes t
 
 Obviously, as can be seen in [Figure 2](#fig-constraints-over-trace-polynomials-2), our new constraint is satisfied for every row in the table. This means that we can substitute creating a constraint for each row with a single constraint over the columns, i.e. the trace polynomials.
 
-Thus, `col1_row1 * col2_row1 + col1_row1 - col3_row1 = 0` becomes
+Thus, `col1_row1 * col2_row1 + col1_row1 - col3_row1 = 0` becomes:
 
 $$
 f_1(x,y) \cdot f_2(x,y) + f_1(x,y) - f_3(x,y) = 0
@@ -65,7 +65,7 @@ First, we add a new column `col_3` that contains the result of the computation: 
 
 Then, to create a constraint over the trace polynomials, we first create a `TestEval` struct that implements the `FrameworkEval` trait. Then, we add our constraint logic in the `FrameworkEval::evaluate` function. Note that this function is called for every row in the table, so we only need to define the constraint once.
 
-Inside `FrameworkEval::evaluate`, we call `eval.next_trace_mask()` consecutively three times, retrieving the cell values of all three columns (see [Figure 3](#fig-constraints-over-trace-polynomials-3) below for a visual representation). Once we retrieve all three column values, we add a constraint of the form `col_1 * col_2 + col_1 - col_3`, which should equal 0. Note that `FrameworkEval::evaluate` will be called sequentially for every row in the table.
+Inside `FrameworkEval::evaluate`, we call `eval.next_trace_mask()` consecutively three times, retrieving the cell values of all three columns (see [Figure 3](#fig-constraints-over-trace-polynomials-3) below for a visual representation). Once we retrieve all three column values, we add a constraint of the form `col_1 * col_2 + col_1 - col_3`, which should equal 0. Note that `FrameworkEval::evaluate` will be called for every row in the table.
 
 <figure id="fig-constraints-over-trace-polynomials-3">
     <img src="./constraints-over-trace-polynomials-3.png" width="100%" />
@@ -88,7 +88,8 @@ e.g.
 ```
 
 ````admonish
-Now that we know the degree of the composition polynomial, we can also explain the following code:
+Now that we know the degree of the composition polynomial, we can now why we need to set the `log_size` of the domain to `log_num_rows + LOG_CONSTRAINT_EVAL_BLOWUP_FACTOR + config.fri_config.log_blowup_factor` when precomputing twiddles in the following code:
+
 ```rust,ignore
     // Precompute twiddles for evaluating and interpolating the trace
     let twiddles = SimdBackend::precompute_twiddles(
@@ -100,9 +101,11 @@ Now that we know the degree of the composition polynomial, we can also explain t
     );
 ```
 
-When precomputing twiddles, we need to set the `log_size` of the domain to `log_num_rows + LOG_CONSTRAINT_EVAL_BLOWUP_FACTOR + config.fri_config.log_blowup_factor`. Simply put, `log_num_rows + LOG_CONSTRAINT_EVAL_BLOWUP_FACTOR` corresponds to the log degree of the composition polynomial and `config.fri_config.log_blowup_factor` is required to run FRI on the composition polynomial.
+To prove that the composition polynomial evaluates to 0 over the trace domain (since the composition polynomial is composed of constraints that evaluates to 0 over the trace domain), we first divide the composition polynomial by the **vanishing polynomial**, which is a polynomial that evaluates to 0 over the trace domain. If the composition polynomial is created correctly, this will result in a polynomial instead of a rational function, and we can perform FRI over this polynomial to prove this.
 
-Note, however, that this is not a precise explanation, since we do not commit directly to the composition polynomial. Instead, we commit to the quotient polynomial $Q(x,y)$, which is computed by dividing the composition polynomial $C(x,y)$ by the vanishing polynomial $V(x,y)$. The vanishing polynomial vanishes (i.e. evaluates to 0) over the trace domain and thus has a degree of `1 << log_num_rows`. We can therefore calculate the size of the domain that we need as `(1 << (log_num_rows + LOG_CONSTRAINT_EVAL_BLOWUP_FACTOR) - 1 << log_num_rows) * (1 << config.fri_config.log_blowup_factor)`. However, since the size of the domain needs to be a power of 2, we will need to use the value `1 << (log_num_rows + LOG_CONSTRAINT_EVAL_BLOWUP_FACTOR + config.fri_config.log_blowup_factor)` unless `LOG_CONSTRAINT_EVAL_BLOWUP_FACTOR <= 1`. Thus, Stwo simply requires that the maximum domain size is to the value we defined above: the degree of the composition polynomial multiplied by the FRI blowup factor.
+Thus, we need to commit to this new polynomial, which is called the **quotient polynomial**. We can calculate its degree by subtracting the degree of the vanishing polynomial from the degree of the composition polynomial. Since the trace is of size `1 << log_num_rows`, the degree of the vanishing polynomial will be `1 << log_num_rows - 1`, so the resulting degree will be `1 << (log_num_rows + LOG_CONSTRAINT_EVAL_BLOWUP_FACTOR) - (1 << log_num_rows - 1)`. However, since we can only commit to a power of two degree, we can just use the `1 << (log_num_rows + LOG_CONSTRAINT_EVAL_BLOWUP_FACTOR)` value.
+
+If we apply the FRI blowup as well, we finally end up with the following log domain size: `log_num_rows + LOG_CONSTRAINT_EVAL_BLOWUP_FACTOR + config.fri_config.log_blowup_factor`.
 ````
 
 Using the new `TestEval` struct, we can create a new `FrameworkComponent::<TestEval>` component, which the prover will use to evaluate the constraint. For now, we can ignore the other parameters of the `FrameworkComponent::<TestEval>` constructor.
@@ -118,6 +121,3 @@ Finally, we can break down what an Algebraic Intermediate Representation (AIR) m
 
 So AIR is just another way of saying that we are representing statements to be proven as constraints over polynomials.
 ```
-
-$$
-$$

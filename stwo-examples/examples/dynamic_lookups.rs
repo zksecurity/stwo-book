@@ -1,26 +1,26 @@
 use num_traits::{identities::Zero, One};
 use rand::prelude::SliceRandom;
-use stwo_prover::{
-    constraint_framework::{
-        logup::LogupTraceGenerator, EvalAtRow, FrameworkComponent, FrameworkEval, Relation,
-        RelationEntry, TraceLocationAllocator,
+use stwo::core::verifier::verify;
+use stwo::core::{
+    air::Component,
+    channel::{Blake2sChannel, Channel},
+    fields::{m31::M31, qm31::SecureField},
+    pcs::{CommitmentSchemeVerifier, PcsConfig},
+    poly::circle::CanonicCoset,
+    vcs::blake2_merkle::Blake2sMerkleChannel,
+};
+use stwo::prover::{
+    backend::simd::{column::BaseColumn, m31::LOG_N_LANES, qm31::PackedSecureField, SimdBackend},
+    poly::{
+        circle::{CircleEvaluation, PolyOps},
+        BitReversedOrder,
     },
-    core::{
-        air::Component,
-        backend::simd::{
-            column::BaseColumn, m31::LOG_N_LANES, qm31::PackedSecureField, SimdBackend,
-        },
-        channel::{Blake2sChannel, Channel},
-        fields::{m31::M31, qm31::SecureField},
-        pcs::{CommitmentSchemeProver, CommitmentSchemeVerifier, PcsConfig},
-        poly::{
-            circle::{CanonicCoset, CircleEvaluation, PolyOps},
-            BitReversedOrder,
-        },
-        prover::{prove, verify},
-        vcs::blake2_merkle::Blake2sMerkleChannel,
-    },
-    relation,
+    prove, CommitmentSchemeProver,
+};
+use stwo_constraint_framework::relation;
+use stwo_constraint_framework::{
+    EvalAtRow, FrameworkComponent, FrameworkEval, LogupTraceGenerator, Relation, RelationEntry,
+    TraceLocationAllocator,
 };
 
 // ANCHOR: test_eval

@@ -1,31 +1,31 @@
 use num_traits::{identities::Zero, One};
 use rand::prelude::SliceRandom;
-use stwo_prover::{
-    constraint_framework::{
-        logup::LogupTraceGenerator, EvalAtRow, FrameworkComponent, FrameworkEval, Relation,
-        RelationEntry, TraceLocationAllocator, ORIGINAL_TRACE_IDX,
+use stwo::core::{
+    air::Component,
+    channel::Blake2sChannel,
+    fields::{m31::M31, qm31::SecureField},
+    pcs::{CommitmentSchemeVerifier, PcsConfig},
+    poly::circle::CanonicCoset,
+    vcs::blake2_merkle::Blake2sMerkleChannel,
+    verifier::verify,
+};
+use stwo::prover::{
+    backend::simd::{column::BaseColumn, m31::LOG_N_LANES, qm31::PackedSecureField, SimdBackend},
+    poly::{
+        circle::{CircleEvaluation, PolyOps},
+        BitReversedOrder,
     },
-    core::{
-        air::Component,
-        backend::simd::{
-            column::BaseColumn, m31::LOG_N_LANES, qm31::PackedSecureField, SimdBackend,
-        },
-        channel::Blake2sChannel,
-        fields::{m31::M31, qm31::SecureField},
-        pcs::{CommitmentSchemeProver, CommitmentSchemeVerifier, PcsConfig},
-        poly::{
-            circle::{CanonicCoset, CircleEvaluation, PolyOps},
-            BitReversedOrder,
-        },
-        prover::{prove, verify},
-        vcs::blake2_merkle::Blake2sMerkleChannel,
-    },
-    relation,
+    prove, CommitmentSchemeProver,
+};
+use stwo_constraint_framework::relation;
+use stwo_constraint_framework::{
+    EvalAtRow, FrameworkComponent, FrameworkEval, LogupTraceGenerator, Relation, RelationEntry,
+    TraceLocationAllocator, ORIGINAL_TRACE_IDX,
 };
 
 struct TestEval {
     log_size: u32,
-    lookup_elements: LookupElements,
+    lookup_elements: ComputationLookupElements,
 }
 
 impl FrameworkEval for TestEval {
@@ -69,7 +69,7 @@ impl FrameworkEval for TestEval {
 
 const LOG_CONSTRAINT_EVAL_BLOWUP_FACTOR: u32 = 1;
 
-relation!(LookupElements, 1);
+relation!(ComputationLookupElements, 1);
 
 fn gen_trace(log_size: u32) -> Vec<CircleEvaluation<SimdBackend, M31, BitReversedOrder>> {
     // Create a table with random values
@@ -93,7 +93,7 @@ fn gen_logup_trace(
     log_size: u32,
     unsorted_col: &BaseColumn,
     sorted_col: &BaseColumn,
-    lookup_elements: &LookupElements,
+    lookup_elements: &ComputationLookupElements,
 ) -> (
     Vec<CircleEvaluation<SimdBackend, M31, BitReversedOrder>>,
     SecureField,
@@ -144,7 +144,7 @@ fn main() {
     tree_builder.commit(channel);
 
     // Draw random elements to use when creating the random linear combination of lookup values in the LogUp columns
-    let lookup_elements = LookupElements::draw(channel);
+    let lookup_elements = ComputationLookupElements::draw(channel);
 
     // Create and commit to the LogUp columns
     let (logup_cols, claimed_sum) =

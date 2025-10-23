@@ -1,6 +1,6 @@
 # Main Components
 
-Now that we have a basic understanding of how Cairo works and the basic building blocks that are used to build the Cairo AIR, let's take a look at the main components of the Cairo AIR.
+Now that we have a basic understanding of Cairo and the building blocks that are used to build the Cairo AIR, let's take a look at the main components of the Cairo AIR.
 
 ```admonish
 For readers who are unfamiliar with the concepts of components and lookups, we suggest going over the [Components](../../air-development/components/index.md) section of the book.

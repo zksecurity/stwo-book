@@ -1,10 +1,10 @@
 # Local Row Constraints
 
-Until now, we have only considered constraints that apply over values in a single row. But what if we want to express constraints over multiple rows? For example, we may want to ensure that the difference between the values in two adjacent rows is always the same.
+Until now, we have only considered constraints that apply over values in a single row. But what if we want to express constraints over multiple adjacent rows? For example, we may want to ensure that the difference between the values in two adjacent rows is always the same.
 
 Turns out we can implement this as an AIR constraint, as long as the same constraints are applied to all rows. We will build upon the example in the previous section, where we created two columns and proved that they are permutations of each other by asserting that the second column looks up all values in the first column exactly once.
 
-Here, we will create two columns and prove that not only are they permutations of each other, but also that the second row is a sorted version of the first row. Since the sorted column will contain in order the values $[0,num\_rows)$, this is equivalent to asserting that **the difference between every current row and the previous row is $1$**.
+Here, we will create two columns and prove that not only are they permutations of each other, but also that the second column is a sorted version of the first column. Since the sorted column will contain in order the values $[0,num\_rows)$, this is equivalent to asserting that **the difference between every current row and the previous row is $1$**.
 
 We will implement this in three iterations, fixing a different issue in each iteration.
 
@@ -18,9 +18,11 @@ The logic for creating the trace and LogUp columns is basically the same as in t
 
 Another change is in the `evaluate` function, where we call `eval.next_interaction_mask(ORIGINAL_TRACE_IDX, [-1, 0])` instead of `eval.next_trace_mask()`. The function `next_trace_mask()` is a wrapper for `next_interaction_mask(ORIGINAL_TRACE_IDX, [0])`, where the first parameter specifies which part of the trace to retrieve values from (see [this figure](../static-lookups/index.md#fig-range-check) for an example of the different parts of a trace). Since we want to retrieve values from the original trace, we set the value of the first parameter to `ORIGINAL_TRACE_IDX`. Next, the second parameter indicates the row offset of the value we want to retrieve. Since we want to retrieve both the previous and current row values for the sorted column, we set the value of the second parameter to `[-1, 0]`.
 
-Once we have these values, we can now assert that the difference between the current and previous row is always `1` with the constraint: `E::F::one() - (sorted_col_curr_row.clone() - sorted_col_prev_row.clone())`.
+Once we have these values, we can now assert that the difference between the current and previous row is always one with the constraint: `E::F::one() - (sorted_col_curr_row.clone() - sorted_col_prev_row.clone())`.
 
+```admonish question
 But this will fail with a `ConstraintsNotSatisfied` error, can you see why? (You can try running it yourself [here](https://github.com/zksecurity/stwo-book/blob/main/stwo-examples/examples/local_row_constraints_fails_1.rs))
+```
 
 ## Second Try
 
@@ -54,7 +56,7 @@ Thus, every time we create a `CircleEvaluation` instance, we need to convert the
 {{#include ../../../stwo-examples/examples/local_row_constraints.rs:gen_trace}}
 ```
 
-And voilà, we have successfully implemented the constraint. You can run it [here](https://github.com/zksecurity/stwo-book/blob/main/stwo-examples/examples/local_row_constraints.rs).
+Voilà, we have successfully implemented the constraint. You can run it [here](https://github.com/zksecurity/stwo-book/blob/main/stwo-examples/examples/local_row_constraints.rs).
 
 ```admonish summary
 Things to consider when implementing constraints over multiple rows:

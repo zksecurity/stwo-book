@@ -1,27 +1,27 @@
 use itertools::chain;
 use num_traits::{identities::Zero, One};
 use rand::Rng;
-use stwo_prover::{
-    constraint_framework::{
-        logup::LogupTraceGenerator, EvalAtRow, FrameworkComponent, FrameworkEval, InfoEvaluator,
-        Relation, RelationEntry, TraceLocationAllocator,
+use stwo::core::{
+    air::Component,
+    channel::{Blake2sChannel, Channel},
+    fields::{m31::M31, qm31::SecureField},
+    pcs::{CommitmentSchemeVerifier, PcsConfig, TreeVec},
+    poly::circle::CanonicCoset,
+    proof::StarkProof,
+    vcs::{blake2_merkle::Blake2sMerkleChannel, MerkleHasher},
+    verifier::verify,
+};
+use stwo::prover::{
+    backend::simd::{column::BaseColumn, m31::LOG_N_LANES, qm31::PackedSecureField, SimdBackend},
+    poly::{
+        circle::{CircleEvaluation, PolyOps},
+        BitReversedOrder,
     },
-    core::{
-        air::{Component, ComponentProver},
-        backend::simd::{
-            column::BaseColumn, m31::LOG_N_LANES, qm31::PackedSecureField, SimdBackend,
-        },
-        channel::{Blake2sChannel, Channel},
-        fields::{m31::M31, qm31::SecureField, FieldExpOps},
-        pcs::{CommitmentSchemeProver, CommitmentSchemeVerifier, PcsConfig, TreeVec},
-        poly::{
-            circle::{CanonicCoset, CircleEvaluation, PolyOps},
-            BitReversedOrder,
-        },
-        prover::{prove, verify, StarkProof},
-        vcs::{blake2_merkle::Blake2sMerkleChannel, ops::MerkleHasher},
-    },
-    relation,
+    prove, CommitmentSchemeProver, ComponentProver,
+};
+use stwo_constraint_framework::{
+    relation, EvalAtRow, FrameworkComponent, FrameworkEval, InfoEvaluator, LogupTraceGenerator,
+    Relation, RelationEntry, TraceLocationAllocator,
 };
 
 struct ComponentsProof<H: MerkleHasher> {
@@ -42,7 +42,7 @@ impl Components {
         statement1: &ComponentsStatement1,
     ) -> Self {
         let tree_span_provider =
-            &mut TraceLocationAllocator::new_with_preproccessed_columns(&vec![]);
+            &mut TraceLocationAllocator::new_with_preprocessed_columns(&vec![]);
 
         let scheduling_component = SchedulingComponent::new(
             tree_span_provider,
@@ -244,7 +244,7 @@ fn gen_scheduling_trace(
         scheduling_col_1
             .as_slice()
             .iter()
-            .map(|&v| (v.pow(5) + M31::from(1))),
+            .map(|&v| M31::from(v.0.pow(5) + 1)),
     );
 
     // Convert table to trace polynomials
@@ -264,11 +264,11 @@ fn gen_computing_trace(
     let intermediate_values = scheduling_col_1
         .as_slice()
         .iter()
-        .map(|&v| v.pow(3))
+        .map(|&v| v.0.pow(3))
         .collect::<Vec<_>>();
     let intermediate_trace = CircleEvaluation::new(
         CanonicCoset::new(log_size).circle_domain(),
-        BaseColumn::from_iter(intermediate_values),
+        BaseColumn::from_iter(intermediate_values.iter().map(|&v| M31::from(v))),
     );
 
     vec![

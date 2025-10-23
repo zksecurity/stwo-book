@@ -1,25 +1,25 @@
 use num_traits::identities::Zero;
-use stwo_prover::{
-    constraint_framework::{
-        preprocessed_columns::PreProcessedColumnId, EvalAtRow, FrameworkComponent, FrameworkEval,
-        TraceLocationAllocator,
+use stwo::core::verifier::verify;
+use stwo::core::{
+    air::Component,
+    channel::{Blake2sChannel, Channel},
+    fields::{m31::M31, qm31::QM31},
+    pcs::{CommitmentSchemeVerifier, PcsConfig},
+    poly::circle::CanonicCoset,
+    vcs::blake2_merkle::Blake2sMerkleChannel,
+};
+use stwo::prover::{
+    backend::simd::{column::BaseColumn, m31::LOG_N_LANES, SimdBackend},
+    backend::Column,
+    poly::{
+        circle::{CircleEvaluation, PolyOps},
+        BitReversedOrder,
     },
-    core::{
-        air::Component,
-        backend::{
-            simd::{column::BaseColumn, m31::LOG_N_LANES, SimdBackend},
-            Column,
-        },
-        channel::{Blake2sChannel, Channel},
-        fields::{m31::M31, qm31::QM31},
-        pcs::{CommitmentSchemeProver, CommitmentSchemeVerifier, PcsConfig},
-        poly::{
-            circle::{CanonicCoset, CircleEvaluation, PolyOps},
-            BitReversedOrder,
-        },
-        prover::{prove, verify},
-        vcs::blake2_merkle::Blake2sMerkleChannel,
-    },
+    prove, CommitmentSchemeProver,
+};
+use stwo_constraint_framework::{
+    preprocessed_columns::PreProcessedColumnId, EvalAtRow, FrameworkComponent, FrameworkEval,
+    TraceLocationAllocator,
 };
 
 // ANCHOR: is_first_column
@@ -72,9 +72,9 @@ impl FrameworkEval for TestEval {
         // If is_first is 1, then the constraint is col_1 * col_2 - col_3 = 0
         // If is_first is 0, then the constraint is col_1 * col_2 + col_1 - col_3 = 0
         eval.add_constraint(
-            (col_1.clone() * col_2.clone() - col_3.clone()) * is_first.clone()
-                + (col_1.clone() * col_2.clone() + col_1.clone() - col_3.clone())
-                    * (E::F::from(M31::from(1)) - is_first.clone()),
+            is_first.clone() * (col_1.clone() * col_2.clone() - col_3.clone())
+                + (E::F::from(M31::from(1)) - is_first.clone())
+                    * (col_1.clone() * col_2.clone() + col_1.clone() - col_3.clone()),
         );
 
         eval

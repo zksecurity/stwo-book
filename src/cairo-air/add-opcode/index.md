@@ -55,7 +55,7 @@ carry_limb_2 * (carry_limb_2 - 1) = 0
 op0[27] + op1[27] + carry_limb_27 - dst[27] = 0
 ```
 
-We divide `op0[0] + op1[0] - dst[0]` by `2^9` since this quantity is either `2^9` (if a carry exists) or `0` (if no carry exists). Dividing by `2^9` yields `1` or `0`, respectively. To check that the carry is either `0` or `1`, we add the constraint `carry_limb_0 * (carry_limb_0 - 1) = 0`. For the final limb, we simply check that the addition is correct.
+We divide `op0[0] + op1[0] - dst[0]` by `2^9` since this quantity is either `2^9` (if a carry exists) or `0` (if no carry exists). Dividing by `2^9` yields one or zero, respectively. To check that the carry is either `0` or `1`, we add the constraint `carry_limb_0 * (carry_limb_0 - 1) = 0`. For the final limb, we simply check that the addition is correct.
 
 ### Handling overflow beyond the 252-bit prime field
 

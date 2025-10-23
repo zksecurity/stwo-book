@@ -1,27 +1,31 @@
 use num_traits::identities::Zero;
-use stwo_prover::{
-    constraint_framework::{EvalAtRow, FrameworkComponent, FrameworkEval, TraceLocationAllocator},
-    core::{
-        air::Component,
-        backend::{
-            simd::{
-                column::BaseColumn,
-                m31::{LOG_N_LANES, N_LANES},
-                SimdBackend,
-            },
-            Column,
+use stwo::core::{
+    air::Component,
+    channel::{Blake2sChannel, Channel},
+    fields::{m31::M31, qm31::QM31},
+    pcs::{CommitmentSchemeVerifier, PcsConfig},
+    poly::circle::CanonicCoset,
+    vcs::blake2_merkle::Blake2sMerkleChannel,
+    verifier::verify,
+    ColumnVec,
+};
+use stwo::prover::{
+    backend::{
+        simd::{
+            column::BaseColumn,
+            m31::{LOG_N_LANES, N_LANES},
+            SimdBackend,
         },
-        channel::{Blake2sChannel, Channel},
-        fields::{m31::M31, qm31::QM31},
-        pcs::{CommitmentSchemeProver, CommitmentSchemeVerifier, PcsConfig},
-        poly::{
-            circle::{CanonicCoset, CircleEvaluation, PolyOps},
-            BitReversedOrder,
-        },
-        prover::{prove, verify},
-        vcs::blake2_merkle::Blake2sMerkleChannel,
-        ColumnVec,
+        Column,
     },
+    poly::{
+        circle::{CircleEvaluation, PolyOps},
+        BitReversedOrder,
+    },
+    prove, CommitmentSchemeProver,
+};
+use stwo_constraint_framework::{
+    EvalAtRow, FrameworkComponent, FrameworkEval, TraceLocationAllocator,
 };
 
 struct TestEval {

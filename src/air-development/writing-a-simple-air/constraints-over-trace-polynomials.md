@@ -88,7 +88,7 @@ e.g.
 ```
 
 ````admonish
-Now that we know the degree of the composition polynomial, we can now why we need to set the `log_size` of the domain to `log_num_rows + LOG_CONSTRAINT_EVAL_BLOWUP_FACTOR + config.fri_config.log_blowup_factor` when precomputing twiddles in the following code:
+Now that we know the degree of the composition polynomial, we can see why we need to set the `log_size` of the domain to `log_num_rows + LOG_CONSTRAINT_EVAL_BLOWUP_FACTOR + config.fri_config.log_blowup_factor` when precomputing twiddles in the following code:
 
 ```rust,ignore
     // Precompute twiddles for evaluating and interpolating the trace
